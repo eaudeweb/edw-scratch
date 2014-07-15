@@ -61,3 +61,17 @@ def parse_award(html):
     """ Parse a contract award HTML
     """
     return {}
+
+
+def parse_winners_list(html):
+    """Parse a list of contract awards and return a list of URLs
+    """
+
+    soup = BeautifulSoup(html)
+    winners = soup.find_all('div', CSS_ROW_LIST_NAME)
+    winners_list = [
+        ENDPOINT_URI + winner.contents[1].a['href'] + '.html'
+        for winner in winners
+    ]
+
+    return winners_list

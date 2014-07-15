@@ -1,0 +1,645 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>IT Development services</title>
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link href='https://Fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link href="/Styles/reset.css" rel="stylesheet"/>
+
+    <link href="/Content/themes/base/css?v=VoojUpqdwnlKEE17c4KLohLdg9kA5g40AueSkZ42p0E1" rel="stylesheet"/>
+
+    <link href="/Styles/UNGM.css" rel="stylesheet"/>
+
+
+    <script src="/bundles/modernizr?v=qh2nuTRukNSXYrnHiDDS0d4ECNKHH-y20yeursV7Cao1"></script>
+
+    <script src="/bundles/jquery?v=EGpo6w9i6wcjrnDsA2SLAMtYnxnUNoG8peL-AT8yI501"></script>
+
+    <script src="/bundles/jqueryui?v=VELlHM42jCyESzLdJ5r_r5TtkB2-53OPqksAQMi7GiQ1"></script>
+
+
+    <script src="/Scripts/Feedback/jquery.unopsfeedback.js"></script>
+
+
+    <script src="/Scripts/UNGM.js"></script>
+
+
+    <script src="/bundles/ungmcommon?v=ltRlKwtej6h6lrpFa9FAkbAW58K5XU5oeb3f8hUIu-c1"></script>
+
+
+
+    <script src="/scripts/Feedback/excanvas.js"></script>
+
+
+            <script type="text/javascript">
+                // Different approach to keep compatibility with previous app on www.ungm.org
+                (function (i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+                                    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                                    ga('create', 'UA-38238990-2', 'ungm.org');
+                                    ga('send', 'pageview');
+            </script>
+
+</head>
+<body>
+    <!--[if IE 6]>
+        <div class="browserWarning">
+            You appear to be using an unsupported browser for the UNGM site. It is likely that the site will not work correctly for you. We strongly recommend that you upgrade your browser to the latest version of <a href = 'http://www.google.com/chrome'>Chrome</a>, <a href = 'http://mozilla.org/firefox'>Firefox</a> or <a href = 'http://windows.microsoft.com/en-us/internet-explorer/download-ie'>Internet Explorer</a>.
+        </div>
+    <![endif]-->
+    <!--[if (IE 7)|(IE 8)]>
+        <div class="browserWarning">
+            You appear to be using an out of date browser to use UNGM. We strongly recommend that you upgrade your browser to the latest version of <a href = 'http://www.google.com/chrome'>Chrome</a>, <a href = 'http://mozilla.org/firefox'>Firefox</a> or <a href = 'http://windows.microsoft.com/en-us/internet-explorer/download-ie'>Internet Explorer</a>.
+        </div>
+    <![endif]-->
+    <div id="background"></div>
+    <div id="wholePage">
+        <header>
+            <div id="topMenu">
+
+                <div id="searchMenuItem" class="topMenuItem">
+                    <input type="text" id="txtSearchUngm" placeholder="Search UNGM" />
+                    <div id="searchResults"></div>
+                </div>
+
+
+                <div class="topMenuItem" id="loginMenuItem">
+                    <section id="login">
+                            <ul class="login">
+        <li><a href="/Vendor/Registration" id="registerLink">Register</a></li>
+        <li>&bull;</li>
+        <li><a href="/Account/Account/Login" id="loginLink">Log in</a></li>
+    </ul>
+
+                    </section>
+                </div>
+
+
+                <div id="languageMenuItem" class="topMenuItem">
+
+<div class="topBarDropdown">
+        <div class="ddSelection" id="selectedLanguage">
+            <span class="liLanguage liLanguageSelected" id="en">English</span>
+        </div>
+        <div class="ddOptions" id="altLanguages">
+            <div class="ddOption">
+                <span class="liLanguage" id="fr">Fran&ccedil;ais</span>
+            </div>
+            <div class="ddOption">
+                <span class="liLanguage" id="es">Espa&ntilde;ol</span>
+            </div>
+        </div>
+</div>
+                </div>
+
+                <div class="clear"></div>
+            </div>
+            <div id="top">
+                <div id="navIconMobile"></div>
+                <div id="mobileSettingsMenu" class="menuHolder" style="display: none;">
+                        <div><a href="/Account/Account/Login" id="loginLink">Log in</a></div>
+                        <div><a href="/Vendor/Registration" id="registerLink">Register</a></div>
+                </div>
+                <div class="logoHolder">
+                </div>
+                <div id="menuIconMobile">
+                </div>
+                <div class="headerTitle">
+                    <h2>
+                        IT Development services
+                    </h2>
+                </div>
+                <div id="helpHolder">
+                     <input type="button" value='Help' id="btnFeedback" />
+                </div>
+                <div class="clear"></div>
+            </div>
+
+        </header>
+        <div id="main">
+            <nav id="left">
+                <div class="menuHeader">Public</div>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/Public/CodeOfConduct">Code of conduct</a></li>
+                    <li><a href="/Public/Notice" id="mnuLnkPublicNotice">Tender notices</a></li>
+                    <li><a href="/Public/ContractAward" id="mnuLnkPublicAward">Contract awards</a></li>
+
+
+                    <li>
+                        <a href="/Public/KnowledgeCentre">Knowledge centre</a>
+                        <ul class="navLevel3">
+                            <li><a href="/Public/KnowledgeCentre/StatisticalReport">Annual Statistical Report on UN Procurement</a></li>
+                            <li><a href="/Public/KnowledgeCentre/Guidelines">Supplying the UN</a></li>
+                            <li><a href="/Public/KnowledgeCentre/Publications">Publications</a></li>
+                            <li><a href="/Public/KnowledgeCentre/UNLinks">UN Useful Links</a></li>
+                            <li><a href="/Public/KnowledgeCentre/UNOrganizations">UN System of Organizations</a></li>
+                            <li><a href="/Public/KnowledgeCentre/PNApp">Procurement Network App</a></li>
+                            <li>
+                                <a href="/Public/KnowledgeCentre/SustainableProcurement">Sustainable Procurement</a>
+                                <ul class="navLevel4">
+                                     <li>
+                                         <a href="/Public/KnowledgeCentre/SustainableProcurement/Why">
+                                             Why sustainable procurement?
+                                         </a>
+                                     </li>
+                                     <li>
+                                         <a href="/Public/KnowledgeCentre/SustainableProcurement/Threat">
+                                             The threat of climate change
+                                         </a>
+                                     </li>
+                                     <li><a href="/UNUser/SustainableProcurement/OnlineCourse">Sustainable procurement training course</a></li>
+                                     <li>
+                                         <a href="/Public/KnowledgeCentre/SustainableProcurement/Tools">
+                                             Tools for UN procurers
+                                         </a>
+                                     </li>
+                                     <li>
+                                         <a href="/Public/KnowledgeCentre/SustainableProcurement/ToolsForSuppliers">
+                                             Tools for suppliers
+                                         </a>
+                                     </li>
+                                     <li>
+                                         <a href="/Public/KnowledgeCentre/SustainableProcurement/MoreInfo">
+                                             More on Sustainable Procurement
+                                         </a>
+                                     </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="/Public/ContractAward/Harmonization">UN Procurement Harmonization</a>
+                                <ul class="navLevel4">
+                                    <li><a href="/Public/KnowledgeCentre/Harmonization/Guidelines">Guidelines</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="/Public/Pages/About">About UNGM</a></li>
+                    <li><a href="/Public/Pages/RegistrationProcess">Registration process</a></li>
+                    <li><a href="/Public/UNSPSC">UNSPSC</a></li>
+                 </ul>
+
+            </nav>
+            <div id="centre">
+
+
+<div class="awardDetail">
+
+    <script>
+        $(document).ready(function () {
+            UNGM.ExpandableContacts.init();
+        });
+    </script>
+
+        <div class="tabs">
+        <div class="tabHeaders">
+            <div class="tabHeader" id="tabHeaderGeneral">General</div>
+            <div class="tabHeader" id="tabHeaderContacts">Contacts</div>
+            <div class="tabHeader" id="tabHeaderUNSPSC">UNSPSC</div>
+        </div>
+        <div class="tabBodies">
+            <div class="tab">
+                <fieldset>
+    <legend>General information</legend>
+    <div class="reportRow">
+        <label for="Title">Title</label>
+        <span id="awardTitle" class="value">IT Development services</span>
+    </div>
+    <div class="reportRow">
+        <label for="AgencyId">UN organization</label>
+        <span class="value">United Nations Educational, Scientific and Cultural Organization </span>
+    </div>
+    <div class="reportRow">
+        <label for="Reference">Reference</label>
+        <span class="value">RFP-2014-01-HR workflows-AT</span>
+    </div>
+    <div class="reportRow">
+        <label for="AwardDate">Award date</label>
+        <span class="value">07-May-2014</span>
+    </div>
+    <div class="reportRow">
+        <label for="SupplierName">Vendor</label>
+        <span class="value">Softfluent, France</span>
+    </div>
+    <div class="reportRow">
+        <label for="ContractValue">Contract value ($)</label>
+        <span class="value">88727.00</span>
+    </div>
+    <div class="reportRow">
+        <label for="Description">Description</label>
+    </div>
+    <div class="raw clear">
+        <p>Contract Ref. : 4500239091</p>
+
+    </div>
+</fieldset>
+
+
+                <fieldset>
+    <legend>Countries</legend>
+        <div class="formRow clear">
+            France
+        </div>
+</fieldset>
+
+
+            </div>
+            <div class="tab">
+                <input type="button" class="btnCollapseAll" value="Collapse all" style="float:right;" />
+<input type="button" class="btnExpandAll" value="Expand all" style="float:right;" />
+<div class="clear"></div>
+
+    <div class="editableListItem">
+        <span class="options">
+            <input type="button" value="Show details" />
+        </span>
+
+
+        <span>
+            <strong>
+                    Alexandra Mercea - a.mercea@unesco.org, Tel: +33 145681000
+            </strong>
+        </span>
+        <div class="clear"></div>
+
+        <div class="contactDetails" style="display: none;">
+            <div class="reportRow">
+                <label for="FirstName">First name</label>
+                <span class="value">Alexandra</span>
+            </div>
+            <div class="reportRow">
+                <label for="LastName">Last name</label>
+                <span class="value">Mercea</span>
+            </div>
+            <div class="reportRow">
+                <label for="Email">Email</label>
+                <span class="value">a.mercea@unesco.org</span>
+            </div>
+            <div class="reportRow">
+                <label for="TelephoneCountryId">Telephone country code</label>
+                <span class="value">France</span>
+            </div>
+            <div class="reportRow">
+                <label for="TelephoneNumber">Telephone number</label>
+                <span class="value">145681000 </span>
+            </div>
+            <div class="reportRow">
+                <label for="TelephoneExtension">Telephone extension</label>
+                <span class="value"></span>
+            </div>
+            <div class="reportRow">
+                <label for="FaxCountryId">Fax country code</label>
+            </div>
+            <div class="reportRow">
+                <label for="FaxNumber">Fax number</label>
+                <span class="value"></span>
+            </div>
+            <div class="reportRow">
+                <label for="ContactText">Contact Text</label>
+                <span class="value">Alexandra Mercea - a.mercea@unesco.org, Tel: +33 145681000 </span>
+            </div>
+        </div>
+    </div>
+<script>
+    UNGM.ExpandableContacts.btnHideDetailsText = "Hide details";
+    UNGM.ExpandableContacts.btnShowDetailsText = "Show details";
+</script>
+
+            </div>
+            <div class="tab">
+<div class= "unspscSelector">
+    <div class="unspscSectionHeader">
+        <span>
+            <a class="lnkExpandAll" href="javascript:;">
+                Expand all
+            </a>
+        </span>
+        <span>
+            <a class="lnkCollapseAll" href="javascript:;">
+                Collapse all
+            </a>
+        </span>
+        <div class="clear"></div>
+    </div>
+    <div class= "unspscTree">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="unspscNode" data-isparent="True">
+    <span class="nodeName expanded filtered">G - Business, Communication &amp; Technology Equipment &amp; Supplies</span>
+    <div class="unspscChildren">
+
+
+<div class="unspscNode" data-isparent="True">
+    <span class="nodeName expanded filtered">43000000 - Information Technology Broadcasting and Telecommunications</span>
+    <div class="unspscChildren">
+
+
+<div class="unspscNode" data-isparent="True">
+    <span class="nodeName expanded filtered">43230000 - Software</span>
+    <div class="unspscChildren">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="unspscNode" data-isparent="True">
+    <span class="nodeName expanded filtered">43231500 - Business function specific software</span>
+    <div class="unspscChildren">
+
+
+
+
+
+
+
+
+<div class="unspscNode" data-isparent="False">
+    <span class="nodeName  ">43231505 - Human resources software</span>
+    <div class="unspscChildren">
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+<div class="unspscNode" data-isparent="True">
+    <span class="nodeName expanded filtered">J - Services</span>
+    <div class="unspscChildren">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="unspscNode" data-isparent="True">
+    <span class="nodeName expanded filtered">81000000 - Engineering and Research and Technology Based Services</span>
+    <div class="unspscChildren">
+
+
+
+
+<div class="unspscNode" data-isparent="True">
+    <span class="nodeName expanded filtered">81110000 - Computer services</span>
+    <div class="unspscChildren">
+
+
+
+
+<div class="unspscNode" data-isparent="True">
+    <span class="nodeName  ">81111600 - Computer programmers</span>
+    <div class="unspscChildren">
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+    </div>
+</div>
+<div class="clear"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type ="text/javascript">
+    $(document).ready(function () {
+        UNGM.initTabs();
+    });
+</script>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+        <footer>
+            <div class="content-wrapper">
+                <div class="footer">
+                    <p>
+                        <span>&copy; 2014 - United Nations Global Marketplace&nbsp;&bull;&nbsp;</span>
+                        <span id="termsLink"><a href="/Public/Pages/Terms">Terms and Conditions</a></span>
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        <div id="mainThrobber" class="throbber">
+            <div id="throbberInner"></div>
+        </div>
+        <div id="languageSuggestionModal">
+            <div id="frMsg" style="display: none;">
+                <div class="suggestionMsg">
+                    <div>Nous avons d&#233;tect&#233; que votre langue pr&#233;f&#233;r&#233;e est le fran&#231;ais. Voulez-vous afficher www.ungm.org en fran&#231;ais?</div>
+                    <div class="clear"></div>
+                    <input class="btnAcceptLanguageSuggestion action" type="button" userlanguage="fr" value="Oui" />
+                    <input class="btnCancelLanguageSuggestion action" type="button" value="Non, merci" />
+                </div>
+                <div class="enMsg" style="display: none;">
+                    <div>We have detected that your preferred language may be French. Would you like to display www.ungm.org in French?</div>
+                    <div class="clear"></div>
+                    <input class="btnAcceptLanguageSuggestion action" type="button" userlanguage="fr" value="Yes, please" />
+                    <input class="btnCancelLanguageSuggestion action" type="button" value="No, thank you" />
+                </div>
+            </div>
+
+            <div id="esMsg" style="display: none;">
+                <div class="suggestionMsg">
+                    <div>Hemos detectado que el idioma predeterminado de su navegador es espa&#241;ol. &#191;Desea cambiar el idioma de UNGM a espa&#241;ol?</div>
+                    <div class="clear"></div>
+                    <input class="btnAcceptLanguageSuggestion action" type="button" userlanguage="es" value="S&#237;" />
+                    <input class="btnCancelLanguageSuggestion action" type="button" value="No, gracias" />
+                </div>
+                <div class="enMsg" style="display: none;">
+                    <div>We have detected that your preferred language may be Spanish. Would you like to display www.ungm.org in Spanish?</div>
+                    <div class="clear"></div>
+                    <input class="btnAcceptLanguageSuggestion action" type="button" userlanguage="es" value="Yes, please" />
+                    <input class="btnCancelLanguageSuggestion action" type="button" value="No, thank you" />
+                </div>
+            </div>
+
+            <div class="clear"></div>
+            <div class="englishMessage" id="englishMessage">View this message in English</div>
+        </div>
+
+        <script type="text/javascript">
+
+            UNGM.PasswordVeryWeak = "Very weak";
+            UNGM.PasswordWeak = "Weak";
+            UNGM.PasswordMediocre = "Medium";
+            UNGM.PasswordStrong = "Strong";
+            UNGM.PasswordVeryStrong = "Very strong";
+
+            UNGM.ErrorDialogTitle = "Something Went Wrong";
+            UNGM.ErrorDialogMessage = "Oops, something went wrong. Sorry, please try again. If the problem persists please let us know by using the Help? button.";
+            UNGM.ErrorDialogBtnSendFeedback = "Send feedback";
+            UNGM.ErrorDialogBtnCancel = "OK";
+
+            UNGM.siteRoot = 'https://www.ungm.org/';
+
+
+            UNGM.editableListAddText = "Add another";
+            UNGM.editableListConfirmDialogTitle = "Confirm";
+            UNGM.editableListConfirmDialogText = "Are you sure you want to delete this item?";
+            UNGM.editableListConfirmDialogYes= "Yes";
+            UNGM.editableListConfirmDialogNo = "No";
+            UNGM.editableListEditDialogTitle = "Edit";
+            UNGM.editableListAddDialogTitle = "Add";
+
+            UNGM.editableListNames = {};
+            UNGM.editableListNames.emailTemplate = "email template";
+            UNGM.editableListNames.financialDocument = "financial document";
+            UNGM.editableListNames.referenceLetter = "reference letter";
+            UNGM.editableListNames.reference = "reference";
+            UNGM.editableListNames.optionalDocument = "document";
+        </script>
+    </div>
+</body>
+</html>

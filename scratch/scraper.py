@@ -9,7 +9,9 @@ DOWNLOAD_PATH = '/UNUser/Documents/DownloadPublicDocument?docId='
 
 
 def string_to_date(date):
-    return datetime.strptime(date, '%d-%b-%Y').date()
+    if date:
+        return datetime.strptime(date, '%d-%b-%Y').date()
+    return None
 
 
 def parse_tender(html):
@@ -22,14 +24,14 @@ def parse_tender(html):
     documents = soup.find_all('div', 'docslist')[0].find_all('div', 'filterDiv')
 
     tender = {
-        'title': details[2].span.string,
-        'organization': details[3].span.string,
-        'reference': details[4].span.string,
+        'title': details[2].span.string or None,
+        'organization': details[3].span.string or None,
+        'reference': details[4].span.string or None,
         'published': string_to_date(details[5].span.string),
         'deadline': string_to_date(details[6].span.string.split(' ')[0]),
         'documents': [
             {
-                'name': document.span.string,
+                'name': document.span.string or None,
                 'download_url': (
                     ENDPOINT_URI + DOWNLOAD_PATH + document['data-documentid']
                 )

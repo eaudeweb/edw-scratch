@@ -1,7 +1,10 @@
+import pprint
+
 from flask.ext.script import Manager
 
 
 scrap_manager = Manager()
+pp = pprint.PrettyPrinter(indent=4)
 
 
 def create_manager(app):
@@ -17,7 +20,7 @@ def parse_tender_html(filename):
     with open(filename, 'r') as fin:
         data = fin.read()
 
-        print parse_tender(data)
+        pp.pprint(parse_tender(data))
 
 
 @scrap_manager.command
@@ -26,7 +29,7 @@ def parse_tender_list_html(filename):
     with open(filename, 'r') as fin:
         data = fin.read()
 
-        print parse_tenders_list(data)
+        pp.pprint(parse_tenders_list(data))
 
 
 @scrap_manager.command
@@ -35,9 +38,13 @@ def parse_winners_list_html(filename):
     with open(filename, 'r') as fin:
         data = fin.read()
 
-        print parse_winners_list(data)
+        pp.pprint(parse_winners_list(data))
 
 
 @scrap_manager.command
-def parse_contract_html(filename):
-    pass
+def parse_winner_html(filename):
+    from scratch.scraper import parse_winner
+    with open(filename, 'r') as fin:
+        data = fin.read()
+
+        pp.pprint(parse_winner(data))

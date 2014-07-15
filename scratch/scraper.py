@@ -46,15 +46,14 @@ def parse_tender_list(html):
     """
 
     soup = BeautifulSoup(html)
-    rows = soup.find_all('div', CSS_ROW_LIST_NAME)
-    tender_list = []
+    tenders = soup.find_all('div', CSS_ROW_LIST_NAME)
 
-    for row in rows:
-        href = row.contents[3].a['href']
-        url = ENDPOINT_URI + unicode(href) + '.html'
-        tender_list.append(url)
+    tenders_list = [
+        ENDPOINT_URI + tender.contents[3].a['href'] + '.html'
+        for tender in tenders
+    ]
 
-    return tender_list
+    return tenders_list
 
 
 def parse_award(html):

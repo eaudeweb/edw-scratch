@@ -44,14 +44,18 @@ def parse_tender(html):
 
 
 def parse_tenders_list(html):
-    """ Parse a list of tenders and return a list of URLs.
+    """ Parse a list of tenders and return a list of tenders
+    Example: [{reference: ... , url: ...}, ...]
     """
 
     soup = BeautifulSoup(html)
     tenders = soup.find_all('div', CSS_ROW_LIST_NAME)
 
     tenders_list = [
-        ENDPOINT_URI + tender.contents[3].a['href'] + '.html'
+        {
+            'reference': tender.contents[13].span.string or None,
+            'url': ENDPOINT_URI + tender.contents[3].a['href'] + '.html'
+        }
         for tender in tenders
     ]
 
@@ -78,13 +82,19 @@ def parse_winner(html):
 
 
 def parse_winners_list(html):
-    """Parse a list of contract awards and return a list of URLs
+    """Parse a list of contract awards and return a list winners
+    Example: [{reference: ... , url: ...}, ...]
     """
 
     soup = BeautifulSoup(html)
     winners = soup.find_all('div', CSS_ROW_LIST_NAME)
+
     winners_list = [
-        ENDPOINT_URI + winner.contents[1].a['href'] + '.html'
+        {
+            'reference': winner.contents[7].span.string or None,
+            'url': ENDPOINT_URI + winner.contents[1].a['href'] + '.html'
+
+        }
         for winner in winners
     ]
 

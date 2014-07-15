@@ -24,7 +24,7 @@ def parse_tender_html(filename):
 
 
 @scrap_manager.command
-def parse_tender_list_html(filename):
+def parse_tenders_list_html(filename):
     from scratch.scraper import parse_tenders_list
     with open(filename, 'r') as fin:
         data = fin.read()

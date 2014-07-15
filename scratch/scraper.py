@@ -41,7 +41,7 @@ def parse_tender(html):
     return tender
 
 
-def parse_tender_list(html):
+def parse_tenders_list(html):
     """ Parse a list of tenders and return a list of URLs.
     """
 

@@ -56,10 +56,23 @@ def parse_tenders_list(html):
     return tenders_list
 
 
-def parse_award(html):
-    """ Parse a contract award HTML
+def parse_winner(html):
+    """ Parse a contract award HTML and return a dictionary with information
+     such as: title, reference, vendor etc
     """
-    return {}
+
+    soup = BeautifulSoup(html)
+    details = soup.find_all('div', CSS_ROW_DETAIL_NAME)
+
+    winner = {
+        'title': details[0].span.string or None,
+        'organization': details[1].span.string or None,
+        'reference': details[2].span.string or None,
+        'vendor': details[4].span.string or None,
+        'value': float(details[5].span.string) or None
+    }
+
+    return winner
 
 
 def parse_winners_list(html):

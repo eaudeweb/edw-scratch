@@ -2,6 +2,8 @@ import pprint
 
 from flask.ext.script import Manager
 
+from models import db_manager
+
 
 scrap_manager = Manager()
 pp = pprint.PrettyPrinter(indent=4)
@@ -10,6 +12,7 @@ pp = pprint.PrettyPrinter(indent=4)
 def create_manager(app):
     manager = Manager(app)
     manager.add_command('scrap', scrap_manager)
+    manager.add_command('db', db_manager)
 
     return manager
 

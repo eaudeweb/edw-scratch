@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block title %} Tenders {% endblock %}
+
+{% block content %}
+  <table class="table table-condensed table-hover">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>UN Organization</th>
+          <th>Reference</th>
+          <th>Published</th>
+          <th>Deadline</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for tender in tenders %}
+            <tr>
+                <td>{{ tender.title }}</td>
+                <td>{{ tender.organization }}</td>
+                <td>{{ tender.reference }}</td>
+                <td>{{ tender.published }}</td>
+                <td>{{ tender.deadline }}</td>
+            </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+{% endblock %}

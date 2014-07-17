@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, date
 
 
 CSS_ROW_LIST_NAME = 'tableRow dataRow'
@@ -8,9 +8,15 @@ ENDPOINT_URI = 'https://www.ungm.org'
 DOWNLOAD_PATH = '/UNUser/Documents/DownloadPublicDocument?docId='
 
 
-def string_to_date(date):
-    if date:
-        return datetime.strptime(date, '%d-%b-%Y').date()
+def string_to_date(string_date):
+    if string_date:
+        return datetime.strptime(string_date, '%d-%b-%Y').date()
+    return None
+
+
+def string_to_datetime(string_date):
+    if string_date:
+        return datetime.strptime(string_date, '%d-%b-%Y %H:%M')
     return None
 
 
@@ -27,8 +33,8 @@ def parse_tender(html):
         'title': details[2].span.string or None,
         'organization': details[3].span.string or None,
         'reference': details[4].span.string or None,
-        'published': string_to_date(details[5].span.string),
-        'deadline': string_to_date(details[6].span.string.split(' ')[0]),
+        'published': string_to_date(details[5].span.string) or date.today(),
+        'deadline': string_to_datetime(details[6].span.string),
         'documents': [
             {
                 'name': document.span.string or None,
@@ -74,6 +80,7 @@ def parse_winner(html):
         'title': details[0].span.string or None,
         'organization': details[1].span.string or None,
         'reference': details[2].span.string or None,
+        'award_date': details[3].span.string or date.today(),
         'vendor': details[4].span.string or None,
         'value': float(details[5].span.string) or None
     }

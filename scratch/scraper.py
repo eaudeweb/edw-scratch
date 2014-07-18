@@ -78,16 +78,18 @@ def parse_winner(html):
     soup = BeautifulSoup(html)
     details = soup.find_all('div', CSS_ROW_DETAIL_NAME)
 
-    winner = {
+    tender_fields = {
         'title': details[0].span.string or None,
         'organization': details[1].span.string or None,
         'reference': details[2].span.string or None,
-        'award_date': details[3].span.string or date.today(),
+    }
+    winner_fields = {
+        'award_date': string_to_date(details[3].span.string) or date.today(),
         'vendor': details[4].span.string or None,
         'value': float(details[5].span.string) or None
     }
 
-    return winner
+    return tender_fields, winner_fields
 
 
 def parse_winners_list(html):

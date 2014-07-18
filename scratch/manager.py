@@ -2,7 +2,7 @@ import pprint
 
 from flask.ext.script import Manager
 
-from models import db, db_manager, Tender, TenderDocument
+from models import db, db_manager, Tender, Winner, TenderDocument
 
 
 scrap_manager = Manager()
@@ -52,10 +52,11 @@ def parse_winner_html(filename):
     with open(filename, 'r') as fin:
         data = fin.read()
 
-        pp.pprint(parse_winner(data))
+        tender_fields, winner_fields = parse_winner(data)
+        pp.pprint(tender_fields.update(winner_fields))
 
 
-def add_tenders_from_html(html):
+def add_tender_from_html(html):
     from scratch.scraper import parse_tender
 
     tender = parse_tender(html)
@@ -69,7 +70,28 @@ def add_tenders_from_html(html):
 
 
 @add_manager.command
-def add_tenders(filename):
+def add_tender(filename):
     with open(filename, 'r') as fin:
         html = fin.read()
-    add_tenders_from_html(html)
+    add_tender_from_html(html)
+
+
+def add_winner_from_html(html):
+    from scratch.scraper import parse_winner
+
+    tender_fields, winner_fields = parse_winner(html)
+    tender = Tender.query.filter_by(**tender_fields).first()
+    if not tender:
+        tender_entry = Tender(**tender_fields)
+        db.session.add(tender_entry)
+        db.session.commit()
+    winner_entry = Winner(tender=tender_entry, **winner_fields)
+    db.session.add(winner_entry)
+    db.session.commit()
+
+
+@add_manager.command
+def add_winner(filename):
+    with open(filename, 'r') as fin:
+        html = fin.read()
+    add_winner_from_html(html)

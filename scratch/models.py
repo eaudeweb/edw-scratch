@@ -43,7 +43,7 @@ class Winner(db.Model):
     id = Column(Integer, primary_key=True)
     vendor = Column(String(255), nullable=True)
     value = Column(Float, nullable=True)
-    award_date = Column(DateTime)
+    award_date = Column(Date)
 
     tender_id = Column(ForeignKey('tender.id'), nullable=True)
 

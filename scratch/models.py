@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    Column, Integer, String, Float, Date, DateTime, ForeignKey
+    Column, Integer, String, Float, Date, DateTime, ForeignKey, Text
 )
 from flask.ext.script import Manager
 from sqlalchemy.orm import relationship
@@ -18,6 +18,7 @@ class Tender(db.Model):
     organization = Column(String(255), nullable=True)
     published = Column(Date)
     deadline = Column(DateTime, nullable=True)
+    description = Column(Text(5095), nullable=True)
 
     documents = relationship("TenderDocument", backref="tender")
     winner = relationship("Winner", backref="tender")

@@ -4,6 +4,7 @@ from datetime import datetime, date
 
 CSS_ROW_LIST_NAME = 'tableRow dataRow'
 CSS_ROW_DETAIL_NAME = 'reportRow'
+CSS_DESCRIPTION = 'raw clear'
 ENDPOINT_URI = 'https://www.ungm.org'
 DOWNLOAD_PATH = '/UNUser/Documents/DownloadPublicDocument?docId='
 
@@ -28,13 +29,14 @@ def parse_tender(html):
     soup = BeautifulSoup(html)
     details = soup.find_all('div', CSS_ROW_DETAIL_NAME)
     documents = soup.find_all('div', 'docslist')[0].find_all('div', 'filterDiv')
-
+    description = soup.find_all('div', CSS_DESCRIPTION)
     tender = {
         'title': details[2].span.string or None,
         'organization': details[3].span.string or None,
         'reference': details[4].span.string or None,
         'published': string_to_date(details[5].span.string) or date.today(),
         'deadline': string_to_datetime(details[6].span.string),
+        'description': str(description[0]),
         'documents': [
             {
                 'name': document.span.string or None,

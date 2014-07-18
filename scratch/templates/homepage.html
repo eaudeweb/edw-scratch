@@ -11,8 +11,8 @@
       <th class = 'text-center col-sm-1'>Reference</th>
       <th class = 'text-center col-sm-1'>Published</th>
       <th class = 'text-center col-sm-1'>Deadline</th>
-      <th class = 'text-center col-sm-4'>Description</th>
-      <th class = 'text-center col-sm-6'>Documents</th>
+      <th class = 'text-center col-sm-5'>Description</th>
+      <th class = 'text-center col-sm-4'>Documents</th>
     </tr>
     </thead>
     <tbody>
@@ -24,24 +24,13 @@
         <td class = 'text-center'>{{ tender.published }}</td>
         <td class = 'text-center'>{{ tender.deadline }}</td>
         <td>{{ tender.description|safe }}</td>
-        <td>
-          <table class='table table-condensed table-striped'>
-            <thead>
-            <tr>
-              <th>Name</th>
-              <th>URL</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for document in tender.documents %}
-              <tr>
-                <th>{{ document.name }}</th>
-                <th><a href='{{ document.download_url }}'>Download document</a></th>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
-        </td>
+        <td><ol>
+          {% for document in tender.documents %}
+            <li>
+              <a href='{{ document.download_url }}'>{{ document.name }}</a>
+            </li>
+          {% endfor %}
+        </ol></td>
       </tr>
     {% endfor %}
     </tbody>

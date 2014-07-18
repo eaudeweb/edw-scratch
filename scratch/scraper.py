@@ -82,7 +82,7 @@ def parse_winner(html):
         'title': details[0].span.string or None,
         'organization': details[1].span.string or None,
         'reference': details[2].span.string or None,
-        'description': str(description[0]),
+        'description': str(description[0]) or None,
     }
     winner_fields = {
         'award_date': string_to_date(details[3].span.string) or date.today(),

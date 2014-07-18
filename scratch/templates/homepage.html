@@ -1,28 +1,48 @@
 {% extends 'layout.html' %}
 
-{% block title %} Tenders {% endblock %}
+{% block title %}Tenders{% endblock %}
 
 {% block content %}
   <table class="table table-condensed table-hover">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>UN Organization</th>
-          <th>Reference</th>
-          <th>Published</th>
-          <th>Deadline</th>
-        </tr>
-      </thead>
-      <tbody>
-          {% for tender in tenders %}
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>UN Organization</th>
+      <th>Reference</th>
+      <th>Published</th>
+      <th>Deadline</th>
+      <th>Documents</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for tender in tenders %}
+      <tr>
+        <td>{{ tender.title }}</td>
+        <td>{{ tender.organization }}</td>
+        <td>{{ tender.reference }}</td>
+        <td>{{ tender.published }}</td>
+        <td>{{ tender.deadline }}</td>
+        <td>
+          <table class="table table-striped">
+            <thead>
             <tr>
-                <td>{{ tender.title }}</td>
-                <td>{{ tender.organization }}</td>
-                <td>{{ tender.reference }}</td>
-                <td>{{ tender.published }}</td>
-                <td>{{ tender.deadline }}</td>
+              <th>Name</th>
+              <th>URL</th>
             </tr>
-          {% endfor %}
-      </tbody>
+            </thead>
+            <tbody>
+            {% for document in tender.documents %}
+              <tr>
+                <th>{{ document.name }}</th>
+                <th><a href="{{ document.download_url }}">Download document</a></th>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
   </table>
+
 {% endblock %}

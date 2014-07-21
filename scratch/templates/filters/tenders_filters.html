@@ -1,4 +1,11 @@
 <form id="filter" method="post">
-  {{ organization_form.organization.label }}{{ organization_form.organization }}
-  <input type="submit" value="Filter">
+  {{ filter_form.organization.label }}{{ filter_form.organization }}
+  {{ filter_form.title.label }}{{ filter_form.title}}
+  <input type="submit" name='type' value="Filter">
+</form>
+
+<br/>
+
+<form id="reset-filter" method="post">
+  <input type="submit" name='type' value="Reset filters">
 </form>

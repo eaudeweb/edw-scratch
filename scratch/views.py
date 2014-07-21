@@ -14,22 +14,33 @@ def homepage():
     """
 
     if request.method == 'GET':
-        organization_form = OrganizationFilter()
+        filter_form = OrganizationFilter()
         tenders = Tender.query.all()
 
     if request.method == 'POST':
-        organization = request.form['organization']
-        organization_form = OrganizationFilter(organization=organization)
-        if organization_form.validate():
-            if organization:
-                tenders = Tender.query.filter_by(organization=organization)
-            else:
-                tenders = Tender.query.all()
+        if request.form['type'] == 'Reset filters':
+            filter_form = OrganizationFilter()
+            tenders = Tender.query.all()
+            pass
+        else:
+            organization = request.form['organization']
+            title = request.form['title']
+            filter_form = OrganizationFilter(
+                organization=organization,
+                title=title,
+            )
+            if filter_form.validate():
+                tenders = Tender.query
+                if organization:
+                    tenders = tenders.filter_by(organization=organization)
+                if title:
+                    tenders = tenders.filter_by(title=title)
+                tenders = tenders.all()
 
     return render_template(
         'homepage.html',
         tenders=tenders,
-        organization_form=organization_form,
+        filter_form=filter_form,
     )
 
 

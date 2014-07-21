@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 
 from scratch.models import Tender, Winner
-from scratch.forms import OrganizationFilter
+from scratch.forms import TendersFilter, WinnerFilter
 
 
 views = Blueprint(__name__, 'views')
@@ -14,18 +14,17 @@ def homepage():
     """
 
     if request.method == 'GET':
-        filter_form = OrganizationFilter()
+        filter_form = TendersFilter()
         tenders = Tender.query.all()
 
     if request.method == 'POST':
         if request.form['type'] == 'Reset filters':
-            filter_form = OrganizationFilter()
+            filter_form = TendersFilter()
             tenders = Tender.query.all()
-            pass
         else:
             organization = request.form['organization']
             title = request.form['title']
-            filter_form = OrganizationFilter(
+            filter_form = TendersFilter(
                 organization=organization,
                 title=title,
             )
@@ -44,11 +43,38 @@ def homepage():
     )
 
 
-@views.route('/award_winners')
+@views.route('/award_winners', methods=['GET', 'POST'])
 def award_winners():
     """ Display a list of contract awards from local database.
     """
 
-    winners = Winner.query.all()
+    if request.method == 'GET':
+        filter_form = WinnerFilter()
+        winners = Winner.query.all()
 
-    return render_template('award_winners.html', winners=winners)
+    if request.method == 'POST':
+        if request.form['type'] == 'Reset filters':
+            filter_form = WinnerFilter()
+            winners = Winner.query.all()
+        else:
+            organization = request.form['organization']
+            vendor = request.form['vendor']
+            filter_form = WinnerFilter(
+                organization=organization,
+                vendor=vendor,
+            )
+            if filter_form.validate():
+                winners = Winner.query
+                if organization:
+                    winners = winners.filter(
+                        Winner.tender.has(organization=organization)
+                    )
+                if vendor:
+                    winners = winners.filter_by(vendor=vendor)
+                winners = winners.all()
+
+    return render_template(
+        'award_winners.html',
+        winners=winners,
+        filter_form=filter_form,
+    )

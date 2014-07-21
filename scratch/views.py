@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 
 from scratch.models import Tender, Winner
-from scratch.forms import TendersFilter, WinnerFilter
+from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
 views = Blueprint(__name__, 'views')
@@ -18,23 +18,19 @@ def homepage():
         tenders = Tender.query.all()
 
     if request.method == 'POST':
-        if request.form['type'] == 'Reset filters':
-            filter_form = TendersFilter()
-            tenders = Tender.query.all()
-        else:
-            organization = request.form['organization']
-            title = request.form['title']
-            filter_form = TendersFilter(
-                organization=organization,
-                title=title,
-            )
-            if filter_form.validate():
-                tenders = Tender.query
-                if organization:
-                    tenders = tenders.filter_by(organization=organization)
-                if title:
-                    tenders = tenders.filter_by(title=title)
-                tenders = tenders.all()
+        organization = request.form['organization']
+        title = request.form['title']
+        filter_form = TendersFilter(
+            organization=organization,
+            title=title,
+        )
+        if filter_form.validate():
+            tenders = Tender.query
+            if organization:
+                tenders = tenders.filter_by(organization=organization)
+            if title:
+                tenders = tenders.filter_by(title=title)
+            tenders = tenders.all()
 
     return render_template(
         'homepage.html',
@@ -53,25 +49,32 @@ def award_winners():
         winners = Winner.query.all()
 
     if request.method == 'POST':
-        if request.form['type'] == 'Reset filters':
-            filter_form = WinnerFilter()
-            winners = Winner.query.all()
-        else:
-            organization = request.form['organization']
-            vendor = request.form['vendor']
-            filter_form = WinnerFilter(
-                organization=organization,
-                vendor=vendor,
-            )
-            if filter_form.validate():
-                winners = Winner.query
-                if organization:
+        organization = request.form['organization']
+        vendor = request.form['vendor']
+        value = request.form['value']
+
+        filter_form = WinnerFilter(
+            organization=organization,
+            vendor=vendor,
+            value=value,
+        )
+        if filter_form.validate():
+            winners = Winner.query
+            if organization:
+                winners = winners.filter(
+                    Winner.tender.has(organization=organization)
+                )
+            if vendor:
+                winners = winners.filter_by(vendor=vendor)
+            if value:
+                if value == 'max':
+                    winners = winners.filter(Winner.value >= MAX)
+                else:
                     winners = winners.filter(
-                        Winner.tender.has(organization=organization)
+                        Winner.value >= int(value),
+                        Winner.value <= int(value) + STEP
                     )
-                if vendor:
-                    winners = winners.filter_by(vendor=vendor)
-                winners = winners.all()
+            winners = winners.all()
 
     return render_template(
         'award_winners.html',

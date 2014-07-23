@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
-from datetime import datetime, date
+from datetime import date
+
+from utils import string_to_date, string_to_datetime
 
 
 CSS_ROW_LIST_NAME = 'tableRow dataRow'
@@ -7,18 +9,6 @@ CSS_ROW_DETAIL_NAME = 'reportRow'
 CSS_DESCRIPTION = 'raw clear'
 ENDPOINT_URI = 'https://www.ungm.org'
 DOWNLOAD_PATH = '/UNUser/Documents/DownloadPublicDocument?docId='
-
-
-def string_to_date(string_date):
-    if string_date:
-        return datetime.strptime(string_date, '%d-%b-%Y').date()
-    return None
-
-
-def string_to_datetime(string_date):
-    if string_date:
-        return datetime.strptime(string_date, '%d-%b-%Y %H:%M')
-    return None
 
 
 def parse_tender(html):
@@ -61,6 +51,7 @@ def parse_tenders_list(html):
 
     tenders_list = [
         {
+            'published': tender.contents[7].span.string or date.today(),
             'reference': tender.contents[13].span.string or None,
             'url': ENDPOINT_URI + tender.contents[3].a['href'] + '.html'
         }

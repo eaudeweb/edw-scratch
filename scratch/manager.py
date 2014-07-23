@@ -1,8 +1,12 @@
 import pprint
 
+from sqlalchemy import desc
 from flask.ext.script import Manager
 
 from models import db, db_manager, Tender, Winner, TenderDocument
+from scratch.requests import request_tenders
+from scratch.scraper import parse_tenders_list
+from utils import string_to_date
 
 
 scrap_manager = Manager()
@@ -101,4 +105,27 @@ def add_winner(filename):
 
 @worker_manager.command
 def update():
-    pass
+    tenders = (
+        Tender.query
+        .with_entities(Tender.reference, Tender.published)
+        .order_by(desc(Tender.published))
+    )
+
+    newest_published_date = tenders.first().published
+
+    newest_references = (
+        tenders.filter_by(published=newest_published_date)
+        .with_entities(Tender.reference)
+        .all()
+    )
+
+    html_tenders = request_tenders()
+    tenders = parse_tenders_list(html_tenders)
+    new_tenders = filter(
+        lambda x: (
+            string_to_date(x['published']) >= newest_published_date and
+            (x['reference'], ) not in newest_references
+        ),
+        tenders
+    )
+    pp.pprint(new_tenders)

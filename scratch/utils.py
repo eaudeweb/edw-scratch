@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime
 
 
 def string_to_date(string_date):

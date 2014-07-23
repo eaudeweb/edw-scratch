@@ -4,8 +4,10 @@ from sqlalchemy import desc
 from flask.ext.script import Manager
 
 from models import db, db_manager, Tender, Winner, TenderDocument
-from scratch.requests import request_tenders
-from scratch.scraper import parse_tenders_list
+from scratch.requests import (request_tenders_list, request_winners_list,
+                              request_tender, request_winner)
+from scratch.scraper import (parse_tenders_list, parse_winners_list,
+                             parse_tender, parse_winner)
 from utils import string_to_date
 
 
@@ -26,40 +28,28 @@ def create_manager(app):
 
 
 @scrap_manager.command
-def parse_tender_html(filename):
-    from scratch.scraper import parse_tender
-    with open(filename, 'r') as fin:
-        data = fin.read()
-
-        pp.pprint(parse_tender(data))
+def parse_tender_html():
+    data = request_tender()
+    pp.pprint(parse_tender(data))
 
 
 @scrap_manager.command
-def parse_tenders_list_html(filename):
-    from scratch.scraper import parse_tenders_list
-    with open(filename, 'r') as fin:
-        data = fin.read()
-
-        pp.pprint(parse_tenders_list(data))
+def parse_winner_html():
+    data = request_winner()
+    tender_fields, winner_fields = parse_winner(data)
+    pp.pprint(tender_fields.update(winner_fields))
 
 
 @scrap_manager.command
-def parse_winners_list_html(filename):
-    from scratch.scraper import parse_winners_list
-    with open(filename, 'r') as fin:
-        data = fin.read()
-
-        pp.pprint(parse_winners_list(data))
+def parse_tenders_list_html():
+    data = request_tenders_list()
+    pp.pprint(parse_tenders_list(data))
 
 
 @scrap_manager.command
-def parse_winner_html(filename):
-    from scratch.scraper import parse_winner
-    with open(filename, 'r') as fin:
-        data = fin.read()
-
-        tender_fields, winner_fields = parse_winner(data)
-        pp.pprint(tender_fields.update(winner_fields))
+def parse_winners_list_html():
+    data = request_winners_list()
+    pp.pprint(parse_winners_list(data))
 
 
 def add_tender_from_html(html):
@@ -119,7 +109,7 @@ def update():
         .all()
     )
 
-    html_tenders = request_tenders()
+    html_tenders = request_tenders_list()
     tenders = parse_tenders_list(html_tenders)
     new_tenders = filter(
         lambda x: (

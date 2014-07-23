@@ -66,10 +66,9 @@ def add_tender_from_html(html):
 
 
 @add_manager.command
-def add_tender(filename):
-    with open(filename, 'r') as fin:
-        html = fin.read()
-    add_tender_from_html(html)
+def add_tender():
+    data = request_tender()
+    add_tender_from_html(data)
 
 
 def add_winner_from_html(html):
@@ -89,10 +88,9 @@ def add_winner_from_html(html):
 
 
 @add_manager.command
-def add_winner(filename):
-    with open(filename, 'r') as fin:
-        html = fin.read()
-    add_winner_from_html(html)
+def add_winner():
+    data = request_tender()
+    add_winner_from_html(data)
 
 
 @worker_manager.command

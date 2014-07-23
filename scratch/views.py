@@ -12,7 +12,6 @@ views = Blueprint(__name__, 'views')
 def homepage():
     """ Display a list of tenders from local database.
     """
-
     if request.method == 'GET':
         filter_form = TendersFilter()
         tenders = Tender.query.all()
@@ -80,4 +79,20 @@ def award_winners():
         'award_winners.html',
         winners=winners,
         filter_form=filter_form,
+    )
+
+
+@views.route('/search', methods=['GET'])
+def search():
+    query = request.args['query']
+    if query:
+        results = Tender.query.whoosh_search(query, 20).all()
+    else:
+        results = {}
+        query = ''
+
+    return render_template(
+        'search.html',
+        query=query,
+        results=results,
     )

@@ -5,12 +5,14 @@ from flask.ext.script import Manager
 from sqlalchemy.orm import relationship
 from flask.ext.sqlalchemy import SQLAlchemy
 
+
 db_manager = Manager()
 db = SQLAlchemy()
 
 
 class Tender(db.Model):
     __tablename__ = 'tender'
+    __searchable__ = ['title', 'reference', 'organization', 'description']
 
     id = Column(Integer, primary_key=True)
     reference = Column(String(255), unique=True)
@@ -29,6 +31,7 @@ class Tender(db.Model):
 
 class TenderDocument(db.Model):
     __tablename__ = 'tender_document'
+    __searchable__ = ['name']
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=True)
@@ -39,6 +42,7 @@ class TenderDocument(db.Model):
 
 class Winner(db.Model):
     __tablename__ = 'winner'
+    __searchable__ = ['vendor']
 
     id = Column(Integer, primary_key=True)
     vendor = Column(String(255), nullable=True)

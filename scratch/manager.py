@@ -81,6 +81,8 @@ def add_winner_from_html(html):
         tender_entry = Tender(**tender_fields)
         db.session.add(tender_entry)
         db.session.commit()
+    else:
+        tender_entry = tender
     winner_entry = Winner(tender=tender_entry, **winner_fields)
     db.session.add(winner_entry)
     db.session.commit()

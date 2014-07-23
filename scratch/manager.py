@@ -7,6 +7,7 @@ from models import db, db_manager, Tender, Winner, TenderDocument
 
 scrap_manager = Manager()
 add_manager = Manager()
+worker_manager = Manager()
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -15,6 +16,7 @@ def create_manager(app):
     manager.add_command('scrap', scrap_manager)
     manager.add_command('db', db_manager)
     manager.add_command('add', add_manager)
+    manager.add_command('worker', worker_manager)
 
     return manager
 
@@ -95,3 +97,8 @@ def add_winner(filename):
     with open(filename, 'r') as fin:
         html = fin.read()
     add_winner_from_html(html)
+
+
+@worker_manager.command
+def update():
+    pass

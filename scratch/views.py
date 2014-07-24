@@ -82,6 +82,13 @@ def winners():
     )
 
 
+@views.route('/tender/<tender_id>', methods=['GET'])
+def tender(tender_id):
+    tender = Tender.query.get(tender_id)
+
+    return render_template('tender.html', tender=tender)
+
+
 @views.route('/search', methods=['GET'])
 def search():
     query = request.args['query']

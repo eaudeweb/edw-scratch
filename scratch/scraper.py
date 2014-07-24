@@ -70,14 +70,14 @@ def parse_winner(html):
     details = soup.find_all('div', CSS_ROW_DETAIL_NAME)
     description = soup.find_all('div', CSS_DESCRIPTION)
     tender_fields = {
-        'title': details[0].span.string or None,
-        'organization': details[1].span.string or None,
-        'reference': details[2].span.string or None,
-        'description': str(description[0]) or None,
+        'title': to_unicode(details[0].span.string) or None,
+        'organization': to_unicode(details[1].span.string) or None,
+        'reference': to_unicode(details[2].span.string) or None,
+        'description': to_unicode(str(description[0])) or None,
     }
     winner_fields = {
         'award_date': string_to_date(details[3].span.string) or date.today(),
-        'vendor': details[4].span.string or None,
+        'vendor': to_unicode(details[4].span.string) or None,
         'value': float(details[5].span.string) or None
     }
 

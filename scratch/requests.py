@@ -15,11 +15,11 @@ def request_winners_list():
     return open_file_and_read(filename)
 
 
-def request_tender():
+def request_tender(url=None):
     filename = 'testing/example_html/tender_detail.html'
     return open_file_and_read(filename)
 
 
-def request_winner():
+def request_winner(url=None):
     filename = 'testing/example_html/winner_detail.html'
     return open_file_and_read(filename)

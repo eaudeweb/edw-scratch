@@ -89,7 +89,7 @@ def add_winner_from_html(html):
 
 @add_manager.command
 def add_winner():
-    data = request_tender()
+    data = request_winner()
     add_winner_from_html(data)
 
 

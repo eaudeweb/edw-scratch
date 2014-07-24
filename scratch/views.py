@@ -9,7 +9,7 @@ views = Blueprint(__name__, 'views')
 
 @views.route('/', methods=['GET', 'POST'])
 @views.route('/tenders', methods=['GET', 'POST'])
-def homepage():
+def tenders():
     """ Display a list of tenders from local database.
     """
     if request.method == 'GET':
@@ -32,14 +32,14 @@ def homepage():
             tenders = tenders.all()
 
     return render_template(
-        'homepage.html',
+        'tenders.html',
         tenders=tenders,
         filter_form=filter_form,
     )
 
 
-@views.route('/award_winners', methods=['GET', 'POST'])
-def award_winners():
+@views.route('/winners', methods=['GET', 'POST'])
+def winners():
     """ Display a list of contract awards from local database.
     """
 
@@ -76,7 +76,7 @@ def award_winners():
             winners = winners.all()
 
     return render_template(
-        'award_winners.html',
+        'winners.html',
         winners=winners,
         filter_form=filter_form,
     )

@@ -23,4 +23,3 @@ def request_tender():
 def request_winner():
     filename = 'testing/example_html/winner_detail.html'
     return open_file_and_read(filename)
-

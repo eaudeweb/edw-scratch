@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from datetime import date
 
-from utils import string_to_date, string_to_datetime
+from utils import string_to_date, string_to_datetime, to_unicode
 
 
 CSS_ROW_LIST_NAME = 'tableRow dataRow'
@@ -21,15 +21,15 @@ def parse_tender(html):
     documents = soup.find_all('div', 'docslist')[0].find_all('div', 'filterDiv')
     description = soup.find_all('div', CSS_DESCRIPTION)
     tender = {
-        'title': details[2].span.string or None,
-        'organization': details[3].span.string or None,
-        'reference': details[4].span.string or None,
+        'title': to_unicode(details[2].span.string) or None,
+        'organization': to_unicode(details[3].span.string) or None,
+        'reference': to_unicode(details[4].span.string) or None,
         'published': string_to_date(details[5].span.string) or date.today(),
         'deadline': string_to_datetime(details[6].span.string),
-        'description': str(description[0]),
+        'description': to_unicode(str(description[0])),
         'documents': [
             {
-                'name': document.span.string or None,
+                'name': to_unicode(document.span.string) or None,
                 'download_url': (
                     ENDPOINT_URI + DOWNLOAD_PATH + document['data-documentid']
                 )

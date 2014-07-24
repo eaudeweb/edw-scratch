@@ -4,8 +4,8 @@ from sqlalchemy import desc
 from flask.ext.script import Manager
 
 from models import db, db_manager, Tender, Winner, TenderDocument
-from scratch.requests import (request_tenders_list, request_winners_list,
-                              request_tender, request_winner)
+from scratch.server_requests import (request_tenders_list, request_winners_list,
+                                     request)
 from scratch.scraper import (parse_tenders_list, parse_winners_list,
                              parse_tender, parse_winner)
 from utils import string_to_date
@@ -29,13 +29,13 @@ def create_manager(app):
 
 @scrap_manager.command
 def parse_tender_html():
-    data = request_tender()
+    data = request()
     pp.pprint(parse_tender(data))
 
 
 @scrap_manager.command
 def parse_winner_html():
-    data = request_winner()
+    data = request()
     tender_fields, winner_fields = parse_winner(data)
     pp.pprint(tender_fields.update(winner_fields))
 
@@ -67,7 +67,7 @@ def add_tender_from_html(html):
 
 @add_manager.command
 def add_tender():
-    data = request_tender()
+    data = request('https://www.ungm.org/Public/Notice/27501.html')
     add_tender_from_html(data)
 
 
@@ -89,7 +89,7 @@ def add_winner_from_html(html):
 
 @add_manager.command
 def add_winner():
-    data = request_winner()
+    data = request()
     add_winner_from_html(data)
 
 

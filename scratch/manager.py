@@ -11,6 +11,10 @@ from scratch.scraper import (parse_tenders_list, parse_winners_list,
 from utils import string_to_date
 
 
+TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice/'
+WINNERS_ENDPOINT_URI = 'https://www.ungm.org/Public/ContractAward/'
+
+
 scrap_manager = Manager()
 add_manager = Manager()
 worker_manager = Manager()
@@ -28,14 +32,14 @@ def create_manager(app):
 
 
 @scrap_manager.command
-def parse_tender_html():
-    data = request()
+def parse_tender_html(filename):
+    data = request(TENDERS_ENDPOINT_URI + filename + '.html')
     pp.pprint(parse_tender(data))
 
 
 @scrap_manager.command
-def parse_winner_html():
-    data = request()
+def parse_winner_html(filename):
+    data = request(WINNERS_ENDPOINT_URI + filename + '.html')
     tender_fields, winner_fields = parse_winner(data)
     pp.pprint(tender_fields.update(winner_fields))
 
@@ -66,8 +70,8 @@ def add_tender_from_html(html):
 
 
 @add_manager.command
-def add_tender():
-    data = request('https://www.ungm.org/Public/Notice/27501.html')
+def add_tender(filename):
+    data = request(TENDERS_ENDPOINT_URI + filename + '.html')
     add_tender_from_html(data)
 
 
@@ -88,8 +92,8 @@ def add_winner_from_html(html):
 
 
 @add_manager.command
-def add_winner():
-    data = request()
+def add_winner(filename):
+    data = request(WINNERS_ENDPOINT_URI + filename + '.html')
     add_winner_from_html(data)
 
 

@@ -2,7 +2,9 @@ import requests
 
 
 LIVE_ENDPOINT_URI = 'https://www.ungm.org'
-TEST_ENDPOINT_URI = 'http://localhost:8080'
+ENDPOINT_URI = 'http://localhost:8080'
+TENDERS_RELATIVE_PATH = '/Public/Notice'
+WINNERS_RELATIVE_PATH = '/Public/ContractAward'
 
 
 def open_file_and_read(filename):
@@ -14,20 +16,23 @@ def open_file_and_read(filename):
 
 def request_tenders_list():
     response = requests.get(
-        TEST_ENDPOINT_URI+'/Public/Notice/tender_notices.html'
+        ENDPOINT_URI + TENDERS_RELATIVE_PATH + '/tender_notices.html'
     )
     if response.status_code == 200:
         return response.content
 
 
 def request_winners_list():
-    filename = 'testing/example_html/filtered_contract_winners.html'
-    return open_file_and_read(filename)
+    response = requests.get(
+        ENDPOINT_URI + WINNERS_RELATIVE_PATH + '/contract_winners.html'
+    )
+    if response.status_code == 200:
+        return response.content
 
 
 def replace_endpoint(func):
     def replacer(url):
-        url = url.replace(LIVE_ENDPOINT_URI, TEST_ENDPOINT_URI)
+        url = url.replace(LIVE_ENDPOINT_URI, ENDPOINT_URI)
         return func(url)
     return replacer
 

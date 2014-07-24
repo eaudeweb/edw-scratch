@@ -10,12 +10,11 @@
   <table class='table table-condensed table-hover'>
     <thead>
     <tr>
-      <th class='text-center col-sm-1'>Title</th>
-      <th class='text-center col-sm-1'>UN Organization</th>
+      <th class='text-center col-sm-3'>Title</th>
+      <th class='text-center col-sm-2'>UN Organization</th>
       <th class='text-center col-sm-1'>Reference</th>
       <th class='text-center col-sm-1'>Published</th>
       <th class='text-center col-sm-1'>Deadline</th>
-      <th class='text-center col-sm-5'>Description</th>
       <th class='text-center col-sm-4'>Documents</th>
     </tr>
     </thead>
@@ -34,7 +33,6 @@
           {% endif %}
           </a>
         </td>
-        <td>{{ tender.description|safe }}</td>
         <td><ol>
           {% for document in tender.documents %}
             <li>

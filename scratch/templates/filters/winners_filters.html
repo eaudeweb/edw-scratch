@@ -1,6 +1,12 @@
-<form id="filter" method="post">
-  {{ filter_form.organization.label }}{{ filter_form.organization }}
-  {{ filter_form.vendor.label }}{{ filter_form.vendor }}
-  {{ filter_form.value.label }}{{ filter_form.value }}
+<form class="form-inline" id="filter" method="post">
+  <div class="form-group">
+    {{ filter_form.organization.label }}{{ filter_form.organization }}
+  </div>
+  <div class="form-group">
+    {{ filter_form.vendor.label }}{{ filter_form.vendor }}
+  </div>
+  <div class="form-group">
+    {{ filter_form.value.label }}{{ filter_form.value }}
+  </div>
   <input type="submit" name='type' value="Filter">
 </form>

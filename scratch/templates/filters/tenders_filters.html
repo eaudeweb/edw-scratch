@@ -1,5 +1,9 @@
-<form id="filter" method="post">
-  {{ filter_form.organization.label }}{{ filter_form.organization }}
-  {{ filter_form.title.label }}{{ filter_form.title }}
+<form class="form-inline" role="form" id="filter" method="post">
+  <div class="form-group">
+    {{ filter_form.organization.label }}{{ filter_form.organization }}
+  </div>
+  <div class="form-group">
+    {{ filter_form.title.label }}{{ filter_form.title }}
+  </div>
   <input type="submit" name='type' value="Filter">
 </form>

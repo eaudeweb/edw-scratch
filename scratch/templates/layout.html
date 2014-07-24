@@ -23,9 +23,11 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li>
-                <form action="{{ url_for('.search') }}" method="get" name="search">
-                  <input type="search" name="query">
-                  <input type="submit" value="Search">
+                <form class="form-inline" role="form" action="{{ url_for('.search') }}" method="get" name="search">
+                  <div class="form-group">
+                    <input type="search" name="query">
+                    <input type="submit" value="Search">
+                  </div>
                 </form>
               </li>
             </ul>
@@ -37,10 +39,10 @@
 
 
     </br></br>
-
-    {% block content %}
-    {% endblock %}
-
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 </body>
 </html>

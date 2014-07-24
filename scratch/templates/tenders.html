@@ -28,9 +28,11 @@
         <td class='text-center'>{{ tender.published }}</td>
         <td class='text-center'>
           {{ tender.deadline }}
+          <a href="{{ url_for('.tender', tender_id=tender.id) }}">
           {% if tender.winner %}<p class="bg-danger">CLOSED</p>
           {% else %}<p class="bg-success">OPEN</p>
           {% endif %}
+          </a>
         </td>
         <td>{{ tender.description|safe }}</td>
         <td><ol>

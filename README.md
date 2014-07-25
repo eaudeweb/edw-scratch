@@ -36,45 +36,45 @@ Management commands
 -------------------
 
 db
-~~
+
 
 Initialize the database::
 
-  ./manage.py db init
+    ./manage.py db init
 
 scrap
-~~~~~
+
 
 Parse a tenders list html and display the output::
 
-  ./manage.py scrap parse_tenders_list_html
+    ./manage.py scrap parse_tenders_list_html
 
 Parse a winners list html and display the output::
 
-  ./manage.py scrap parse_winners_list_html
+    ./manage.py scrap parse_winners_list_html
 
 Parse a tender html and display the output::
 
-  ./manage.py scrap parse_tender_html 27501
+    ./manage.py scrap parse_tender_html 27501
 
 Parse a winner html and display the output::
 
-  ./manage.py scrap parse_winner_html 101104
+    ./manage.py scrap parse_winner_html 101104
 
 
 worker
-~~~~~~
+
 
 Check for new available tenders. Save them into the DB and send email
 notifications to all the addresses specified in settings['NOTIFY_EMAILS']
 
-  ./manage.py worker update
+    ./manage.py worker update
 
 ...
 
 Run a local server::
 
- ./manage.py runserver
+    ./manage.py runserver
 
 
 Tests

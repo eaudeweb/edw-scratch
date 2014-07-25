@@ -56,10 +56,8 @@ def parse_winners_list_html():
     pp.pprint(parse_winners_list(data))
 
 
-def add_tender_from_html(html):
-    from scratch.scraper import parse_tender
+def save_tender(tender):
 
-    tender = parse_tender(html)
     documents = tender.pop('documents')
     tender_entry = Tender(**tender)
     for document in documents:
@@ -68,17 +66,19 @@ def add_tender_from_html(html):
     db.session.add(tender_entry)
     db.session.commit()
 
+    return tender_entry.id
+
 
 @add_manager.command
 def add_tender(filename):
-    data = request(TENDERS_ENDPOINT_URI + filename + '.html')
-    add_tender_from_html(data)
+    html_data = request(TENDERS_ENDPOINT_URI + filename + '.html')
+    tender = parse_tender(html_data)
+
+    save_tender(tender)
 
 
-def add_winner_from_html(html):
-    from scratch.scraper import parse_winner
+def save_winner(tender_fields, winner_fields):
 
-    tender_fields, winner_fields = parse_winner(html)
     tender = Tender.query.filter_by(**tender_fields).first()
     if not tender:
         tender_entry = Tender(**tender_fields)
@@ -93,33 +93,56 @@ def add_winner_from_html(html):
 
 @add_manager.command
 def add_winner(filename):
-    data = request(WINNERS_ENDPOINT_URI + filename + '.html')
-    add_winner_from_html(data)
+    html_data = request(WINNERS_ENDPOINT_URI + filename + '.html')
+    tender_fields, winner_fields = parse_winner(html_data)
+
+    save_winner(tender_fields, winner_fields)
+
+
+def _get_tender_mail_fields(tender):
+    return {
+        'tender_id': tender['id'],
+        'title': tender['title'],
+        'organization': tender['organization'],
+        'published': tender['published'],
+        'deadline': tender['deadline'],
+    }
 
 
 @worker_manager.command
 def update():
-    tenders = (
+    saved_tenders = (
         Tender.query
         .with_entities(Tender.reference, Tender.published)
         .order_by(desc(Tender.published))
     )
 
-    newest_published_date = tenders.first().published
+    newest_published_date = saved_tenders.first().published
 
     newest_references = (
-        tenders.filter_by(published=newest_published_date)
+        saved_tenders.filter_by(published=newest_published_date)
         .with_entities(Tender.reference)
         .all()
     )
 
-    html_tenders = request_tenders_list()
-    tenders = parse_tenders_list(html_tenders)
+    all_html_tenders = request_tenders_list()
+    all_tenders = parse_tenders_list(all_html_tenders)
     new_tenders = filter(
         lambda x: (
             string_to_date(x['published']) >= newest_published_date and
             (x['reference'], ) not in newest_references
         ),
-        tenders
+        all_tenders
     )
-    pp.pprint(new_tenders)
+
+    if not new_tenders:
+        return
+
+    tenders = []
+    for new_tender in new_tenders:
+        html_data = request(new_tender['url'])
+        tender = parse_tender(html_data)
+        tender['id'] = save_tender(tender)
+        tenders.append(_get_tender_mail_fields(tender))
+
+    pp.pprint(tenders)

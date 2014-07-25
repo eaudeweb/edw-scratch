@@ -2,6 +2,7 @@ import pprint
 
 from sqlalchemy import desc
 from flask.ext.script import Manager
+from flask import render_template
 
 from models import db, db_manager, Tender, Winner, TenderDocument
 from scratch.server_requests import (request_tenders_list, request_winners_list,
@@ -145,4 +146,10 @@ def update():
         tender['id'] = save_tender(tender)
         tenders.append(_get_tender_mail_fields(tender))
 
-    pp.pprint(tenders)
+    from scratch.mails import send_email
+    from instance.settings import NOTIFY_EMAILS
+
+    send_email(subject='%s new tenders available' % len(new_tenders),
+               sender='Eau De Web',
+               recipients=NOTIFY_EMAILS,
+               html_body=render_template('email.html', tenders=tenders))

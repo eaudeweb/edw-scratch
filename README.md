@@ -35,13 +35,44 @@ settings.example for an settings example file::
 Management commands
 -------------------
 
-Parse a tender html and display the output:
+db
+~~
 
- ./manage.py parse_tender_html download/test.html
+Initialize the database::
+
+  ./manage.py db init
+
+scrap
+~~~~~
+
+Parse a tenders list html and display the output::
+
+  ./manage.py scrap parse_tenders_list_html
+
+Parse a winners list html and display the output::
+
+  ./manage.py scrap parse_winners_list_html
+
+Parse a tender html and display the output::
+
+  ./manage.py scrap parse_tender_html 27501
+
+Parse a winner html and display the output::
+
+  ./manage.py scrap parse_winner_html 101104
+
+
+worker
+~~~~~~
+
+Check for new available tenders. Save them into the DB and send email
+notifications to all the addresses specified in settings['NOTIFY_EMAILS']
+
+  ./manage.py worker update
 
 ...
 
-Run a local server:
+Run a local server::
 
  ./manage.py runserver
 
@@ -50,19 +81,19 @@ Tests
 -----
 
 1. Run a simple HTTP Server with python to make local requests in the testing
-directory:
+directory::
 
     cd testing/server/
     python -m SimpleHTTPServer 8080
 
 2. Add some tenders in the database using management commands and passing the
-filename argument:
+filename argument::
 
     ./manager.py add add_tender 27501
     ./manager.py add add_tender 27954
 
 3. Add some tenders in the database using management commands and passing the
-filename argument:
+filename argument::
 
     ./manager.py add add_winner 101104
     ./manager.py add add_winner 101119

@@ -4,3 +4,14 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'scraper.db')
 WHOOSH_BASE = os.path.join(basedir, 'search_index')
 DEBUG = True
+
+# email server
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_PORT = 465
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'your-gmail-username'
+MAIL_PASSWORD = 'your-gmail-password'
+
+# administrator list
+NOTIFY_EMAILS = ['your-edw-username@eaudeweb.ro']

@@ -42,7 +42,8 @@ def parse_tender_html(filename):
 def parse_winner_html(filename):
     data = request(WINNERS_ENDPOINT_URI + filename + '.html')
     tender_fields, winner_fields = parse_winner(data)
-    pp.pprint(tender_fields.update(winner_fields))
+    tender_fields.update(winner_fields)
+    pp.pprint(tender_fields)
 
 
 @scrap_manager.command

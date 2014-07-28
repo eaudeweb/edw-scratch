@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 
 def string_to_date(string_date):
@@ -18,3 +18,7 @@ def to_unicode(string):
         return string
     else:
         return unicode(string, 'utf8')
+
+
+def days_ago(days):
+    return date.today()-timedelta(days=days)

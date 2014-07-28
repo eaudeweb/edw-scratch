@@ -12,7 +12,7 @@ from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
 from scratch.mails import send_email
-from utils import string_to_date
+from utils import string_to_date, days_ago
 from instance.settings import NOTIFY_EMAILS
 
 
@@ -117,21 +117,26 @@ def _get_tender_mail_fields(tender):
     }
 
 
-@worker_manager.command
-def update(public=False):
+@worker_manager.option('-d', '--days', dest='days', default=30)
+@worker_manager.option('-p', '--public', dest='public', default=False)
+def update(days, public):
     saved_tenders = (
         Tender.query
         .with_entities(Tender.reference, Tender.published)
         .order_by(desc(Tender.published))
     )
 
-    newest_published_date = saved_tenders.first().published
+    if saved_tenders.count() != 0:
+        newest_published_date = saved_tenders.first().published
 
-    newest_references = (
-        saved_tenders.filter_by(published=newest_published_date)
-        .with_entities(Tender.reference)
-        .all()
-    )
+        newest_references = (
+            saved_tenders.filter_by(published=newest_published_date)
+            .with_entities(Tender.reference)
+            .all()
+        )
+    else:
+        newest_published_date = days_ago(int(days))
+        newest_references = []
 
     all_html_tenders = request_tenders_list(public)
     all_tenders = parse_tenders_list(all_html_tenders)

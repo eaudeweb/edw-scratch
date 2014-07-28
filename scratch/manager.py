@@ -5,11 +5,15 @@ from flask.ext.script import Manager
 from flask import render_template
 
 from models import db, db_manager, Tender, Winner, TenderDocument
-from scratch.server_requests import (request_tenders_list, request_winners_list,
-                                     request)
-from scratch.scraper import (parse_tenders_list, parse_winners_list,
-                             parse_tender, parse_winner)
+from scratch.server_requests import (
+    request_tenders_list, request_winners_list, request,
+)
+from scratch.scraper import (
+    parse_tenders_list, parse_winners_list, parse_tender, parse_winner
+)
+from scratch.mails import send_email
 from utils import string_to_date
+from instance.settings import NOTIFY_EMAILS
 
 
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice/'
@@ -33,28 +37,28 @@ def create_manager(app):
 
 
 @scrap_manager.command
-def parse_tender_html(filename):
-    data = request(TENDERS_ENDPOINT_URI + filename + '.html')
+def parse_tender_html(filename, public=False):
+    data = request(TENDERS_ENDPOINT_URI + filename + '.html', public)
     pp.pprint(parse_tender(data))
 
 
 @scrap_manager.command
-def parse_winner_html(filename):
-    data = request(WINNERS_ENDPOINT_URI + filename + '.html')
+def parse_winner_html(filename, public=False):
+    data = request(WINNERS_ENDPOINT_URI + filename + '.html', public)
     tender_fields, winner_fields = parse_winner(data)
     tender_fields.update(winner_fields)
     pp.pprint(tender_fields)
 
 
 @scrap_manager.command
-def parse_tenders_list_html():
-    data = request_tenders_list()
+def parse_tenders_list_html(public=False):
+    data = request_tenders_list(public)
     pp.pprint(parse_tenders_list(data))
 
 
 @scrap_manager.command
-def parse_winners_list_html():
-    data = request_winners_list()
+def parse_winners_list_html(public=False):
+    data = request_winners_list(public)
     pp.pprint(parse_winners_list(data))
 
 
@@ -73,8 +77,8 @@ def save_tender(tender):
 
 
 @add_manager.command
-def add_tender(filename):
-    html_data = request(TENDERS_ENDPOINT_URI + filename + '.html')
+def add_tender(filename, public=False):
+    html_data = request(TENDERS_ENDPOINT_URI + filename + '.html', public)
     tender = parse_tender(html_data)
 
     save_tender(tender)
@@ -95,8 +99,8 @@ def save_winner(tender_fields, winner_fields):
 
 
 @add_manager.command
-def add_winner(filename):
-    html_data = request(WINNERS_ENDPOINT_URI + filename + '.html')
+def add_winner(filename, public=False):
+    html_data = request(WINNERS_ENDPOINT_URI + filename + '.html', public)
     tender_fields, winner_fields = parse_winner(html_data)
 
     save_winner(tender_fields, winner_fields)
@@ -114,7 +118,7 @@ def _get_tender_mail_fields(tender):
 
 
 @worker_manager.command
-def update():
+def update(public=False):
     saved_tenders = (
         Tender.query
         .with_entities(Tender.reference, Tender.published)
@@ -129,7 +133,7 @@ def update():
         .all()
     )
 
-    all_html_tenders = request_tenders_list()
+    all_html_tenders = request_tenders_list(public)
     all_tenders = parse_tenders_list(all_html_tenders)
     new_tenders = filter(
         lambda x: (
@@ -144,13 +148,10 @@ def update():
 
     tenders = []
     for new_tender in new_tenders:
-        html_data = request(new_tender['url'])
+        html_data = request(new_tender['url'], public)
         tender = parse_tender(html_data)
         tender['id'] = save_tender(tender)
         tenders.append(_get_tender_mail_fields(tender))
-
-    from scratch.mails import send_email
-    from instance.settings import NOTIFY_EMAILS
 
     send_email(
         subject='%s new tenders available' % len(new_tenders),
@@ -161,5 +162,6 @@ def update():
             tenders=enumerate(tenders),
             tenders_size=len(tenders)
         ),
-        tenders=enumerate(tenders)
+        tenders=enumerate(tenders),
+        public=public
     )

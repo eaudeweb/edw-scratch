@@ -3,7 +3,7 @@ from flask.ext.mail import Mail, Message
 from server_requests import request_document
 
 
-def send_email(subject, sender, recipients, html_body, tenders):
+def send_email(subject, sender, recipients, html_body, tenders, public):
     from flask import current_app as app
 
     mail = Mail(app)
@@ -11,7 +11,7 @@ def send_email(subject, sender, recipients, html_body, tenders):
     msg.html = html_body
     for (index, tender) in tenders:
         for document in tender['documents']:
-            attachement = request_document(document['download_url'])
+            attachement = request_document(document['download_url'], public)
             if attachement:
                 msg.attach(
                     '%s.%s' % (index, document['name'].replace(' ', '_')),

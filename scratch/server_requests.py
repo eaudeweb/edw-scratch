@@ -3,59 +3,56 @@ import urllib2
 
 
 LIVE_ENDPOINT_URI = 'https://www.ungm.org'
-ENDPOINT_URI = 'http://localhost:8080'
-TENDERS_RELATIVE_PATH = '/Public/Notice'
-WINNERS_RELATIVE_PATH = '/Public/ContractAward'
+LOCAL_ENDPOINT_URI = 'http://localhost:8080'
+TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice'
+WINNERS_ENDPOINT_URI = 'https://www.ungm.org/Public/ContractAward'
 
 
-def open_file_and_read(filename):
-    with open(filename, 'r') as fin:
-        data = fin.read()
-
-    return data
+def replace_endpoint(url):
+    return url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
 
 
-def request_tenders_list():
-    response = requests.get(
-        ENDPOINT_URI + TENDERS_RELATIVE_PATH + '/tender_notices.html'
-    )
-    if response.status_code == 200:
-        return response.content
-
-
-def request_winners_list():
-    response = requests.get(
-        ENDPOINT_URI + WINNERS_RELATIVE_PATH + '/contract_winners.html'
-    )
-    if response.status_code == 200:
-        return response.content
-
-
-def replace_get_param(func):
-    def replacer(url):
-        splitted_url = url.split('?docId=')
-        url = splitted_url[0] + '/' + splitted_url[1]
-        return func(url)
-    return replacer
-
-
-def replace_endpoint(func):
-    def replacer(url):
-        url = url.replace(LIVE_ENDPOINT_URI, ENDPOINT_URI)
-        return func(url)
-    return replacer
-
-
-@replace_endpoint
-def request(url):
+def get_response(url):
     response = requests.get(url)
     if response.status_code == 200:
         return response.content
 
 
-@replace_get_param
-@replace_endpoint
-def request_document(url):
+def request_tenders_list(public):
+    url = TENDERS_ENDPOINT_URI
+    if not public:
+        url = replace_endpoint(url)
+        url += '/tender_notices.html'
+    else:
+        pass
+
+    return get_response(url)
+
+
+def request_winners_list(public):
+    url = WINNERS_ENDPOINT_URI
+    if not public:
+        url = replace_endpoint(url)
+        url += '/contract_winners.html'
+    else:
+        pass
+
+    return get_response(url)
+
+
+def request(url, public):
+    if not public:
+        url = replace_endpoint(url)
+
+    return get_response(url)
+
+
+def request_document(url, public):
+    if not public:
+        url = replace_endpoint(url)
+        splitted_url = url.split('?docId=')
+        url = splitted_url[0] + '/' + splitted_url[1]
+
     try:
         response = urllib2.urlopen(url)
         return response.read()

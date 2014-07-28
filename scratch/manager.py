@@ -67,6 +67,7 @@ def save_tender(tender):
         db.session.add(document_entry)
     db.session.add(tender_entry)
     db.session.commit()
+    tender['documents'] = documents
 
     return tender_entry.id
 
@@ -108,6 +109,7 @@ def _get_tender_mail_fields(tender):
         'organization': tender['organization'],
         'published': tender['published'],
         'deadline': tender['deadline'],
+        'documents': tender['documents'],
     }
 
 
@@ -150,7 +152,14 @@ def update():
     from scratch.mails import send_email
     from instance.settings import NOTIFY_EMAILS
 
-    send_email(subject='%s new tenders available' % len(new_tenders),
-               sender='Eau De Web',
-               recipients=NOTIFY_EMAILS,
-               html_body=render_template('email.html', tenders=tenders))
+    send_email(
+        subject='%s new tenders available' % len(new_tenders),
+        sender='Eau De Web',
+        recipients=NOTIFY_EMAILS,
+        html_body=render_template(
+            'email.html',
+            tenders=enumerate(tenders),
+            tenders_size=len(tenders)
+        ),
+        tenders=enumerate(tenders)
+    )

@@ -4,23 +4,26 @@
 <body>
 
 <h2>
-  There are <strong>{{ tenders|length }}</strong> new tenders available
+  There are <strong>{{ tenders_size }}</strong> new tenders available
   <a href="{{ url_for('.tenders', _external=True) }}">See the in-site list of all tenders</a>
 </h2>
 
-<ol>
-{% for tender in tenders %}
-  <li>
-  <ul>
-    <li><b>Title</b>: {{ tender.title }}</li>
-    <li><b>Organization</b>: {{ tender.organization }}</li>
-    <li><b>Published</b>: {{ tender.published }}</li>
-    <li><b>Deadline</b>: {{ tender.deadline }}</li>
-    <li><a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See this tender in-site</a></li>
-  </ul>
-  </li>
+<table>
+<tbody>
+{% for index, tender in tenders %}
+  <tr>
+    <td valign="top"><b>{{ index }}</b></td>
+    <td valign="top"><ul>
+      <li><b>Title</b>: {{ tender.title }}</li>
+      <li><b>Organization</b>: {{ tender.organization }}</li>
+      <li><b>Published</b>: {{ tender.published }}</li>
+      <li><b>Deadline</b>: {{ tender.deadline }}</li>
+      <li><a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See this tender in-site</a></li>
+    </ul></td>
+  </tr>
 {% endfor %}
-</ol>
+</tbody>
+</table>
 
 </body>
 </html>

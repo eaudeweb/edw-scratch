@@ -1,4 +1,5 @@
 import requests
+import urllib2
 
 
 LIVE_ENDPOINT_URI = 'https://www.ungm.org'
@@ -30,6 +31,14 @@ def request_winners_list():
         return response.content
 
 
+def replace_get_param(func):
+    def replacer(url):
+        splitted_url = url.split('?docId=')
+        url = splitted_url[0] + '/' + splitted_url[1]
+        return func(url)
+    return replacer
+
+
 def replace_endpoint(func):
     def replacer(url):
         url = url.replace(LIVE_ENDPOINT_URI, ENDPOINT_URI)
@@ -38,7 +47,17 @@ def replace_endpoint(func):
 
 
 @replace_endpoint
-def request(url=None):
+def request(url):
     response = requests.get(url)
     if response.status_code == 200:
         return response.content
+
+
+@replace_get_param
+@replace_endpoint
+def request_document(url):
+    try:
+        response = urllib2.urlopen(url)
+        return response.read()
+    except urllib2.HTTPError:
+        return None

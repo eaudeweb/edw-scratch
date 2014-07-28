@@ -7,6 +7,7 @@ from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 views = Blueprint(__name__, 'views')
 
 
+@views.route('/', methods=['GET', 'POST'])
 @views.route('/tenders', methods=['GET', 'POST'])
 def tenders():
     """ Display a list of tenders from local database.

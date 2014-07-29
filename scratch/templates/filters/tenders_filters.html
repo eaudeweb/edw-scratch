@@ -1,9 +1,22 @@
-<form class="form-inline" role="form" id="filter" method="post">
+<form class="form-horizontal" role="form" id="filter" method="post">
   <div class="form-group">
-    {{ filter_form.organization.label }}{{ filter_form.organization }}
+    <div class="col-sm-1">{{ filter_form.organization.label }}</div>
+    <div class="col-sm-10">{{ filter_form.organization }}</div>
   </div>
   <div class="form-group">
-    {{ filter_form.title.label }}{{ filter_form.title }}
+    <div class="col-sm-1">{{ filter_form.title.label }}</div>
+    <div class="col-sm-10">{{ filter_form.title }}</div>
   </div>
-  <input type="submit" name='type' value="Filter">
+  <div class="form-group">
+    <div class="col-sm-1">{{ filter_form.status.label }}</div>
+    <div class="col-sm-10">{{ filter_form.status }}</div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-1 col-sm-1">
+      <button type="submit" class="btn btn-default btn-success" name='filter'>Filter</button>
+    </div>
+    <div class="col-sm-offset-1">
+      <button type="submit" class="btn btn-default btn-success" name='reset'>Reset filters</button>
+    </div>
+  </div>
 </form>

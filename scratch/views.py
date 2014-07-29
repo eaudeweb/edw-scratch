@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 
 from scratch.models import Tender, Winner
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
@@ -17,6 +17,8 @@ def tenders():
         tenders = Tender.query.all()
 
     if request.method == 'POST':
+        if 'reset' in request.form:
+            return redirect(url_for('.tenders'))
         organization = request.form['organization']
         title = request.form['title']
         status = request.form['status']
@@ -53,6 +55,8 @@ def winners():
         winners = Winner.query.all()
 
     if request.method == 'POST':
+        if 'reset' in request.form:
+            return redirect(url_for('.winners'))
         organization = request.form['organization']
         vendor = request.form['vendor']
         value = request.form['value']

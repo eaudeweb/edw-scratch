@@ -52,8 +52,8 @@
       <td>{% if tender.winner %}{{ tender.winner.0.vendor }}{% endif %}</td>
     </tr>
     <tr>
-      <th>Value</th>
-      <td>{% if tender.winner %}{{ tender.winner.0.value }} ${% endif %}</td>
+      <th>Contract value ($)</th>
+      <td>{% if tender.winner %}{{ tender.winner.0.value }}{% endif %}</td>
     </tr>
   </table>
 

@@ -97,6 +97,8 @@ def save_winner(tender_fields, winner_fields):
     db.session.add(winner_entry)
     db.session.commit()
 
+    return tender_entry.id
+
 
 @add_manager.command
 def add_winner(filename, public=False):
@@ -117,9 +119,16 @@ def _get_tender_mail_fields(tender):
     }
 
 
-@worker_manager.option('-d', '--days', dest='days', default=30)
-@worker_manager.option('-p', '--public', dest='public', default=False)
-def update(days, public):
+def _get_winner_mail_fields(tender, winner):
+    return {
+        'tender_id': tender['id'],
+        'title': tender['title'],
+        'organization': tender['organization'],
+        'value': winner['value'],
+    }
+
+
+def _get_new_tenders(days, public):
     saved_tenders = (
         Tender.query
         .with_entities(Tender.reference, Tender.published)
@@ -138,25 +147,58 @@ def update(days, public):
         newest_published_date = days_ago(int(days))
         newest_references = []
 
-    all_html_tenders = request_tenders_list(public)
-    all_tenders = parse_tenders_list(all_html_tenders)
-    new_tenders = filter(
+    requested_html_tenders = request_tenders_list(public)
+    requested_tenders = parse_tenders_list(requested_html_tenders)
+
+    return filter(
         lambda x: (
             string_to_date(x['published']) >= newest_published_date and
             (x['reference'], ) not in newest_references
         ),
-        all_tenders
+        requested_tenders
     )
 
-    if not new_tenders:
+
+def _get_new_winners(public):
+    saved_winners = (
+        Winner.query
+        .with_entities(Winner.tender)
+        .with_entities(Tender.reference)
+        .all()
+    )
+
+    requested_html_winners = request_winners_list(public)
+    requested_winners = parse_winners_list(requested_html_winners)
+
+    return filter(
+        lambda x: (x['reference'], ) not in saved_winners,
+        requested_winners
+    )
+
+
+@worker_manager.option('-d', '--days', dest='days', default=30)
+@worker_manager.option('-p', '--public', dest='public', default=False)
+def update(days, public):
+
+    new_tenders = _get_new_tenders(days, public)
+    new_winners = _get_new_winners(public)
+
+    if not new_tenders and not new_winners:
         return
 
     tenders = []
     for new_tender in new_tenders:
         html_data = request(new_tender['url'], public)
-        tender = parse_tender(html_data)
-        tender['id'] = save_tender(tender)
-        tenders.append(_get_tender_mail_fields(tender))
+        tender_fields = parse_tender(html_data)
+        tender_fields['id'] = save_tender(tender_fields)
+        tenders.append(_get_tender_mail_fields(tender_fields))
+
+    winners = []
+    for new_winner in new_winners:
+        html_data = request(new_winner['url'], public)
+        tender_fields, winner_fields = parse_winner(html_data)
+        tender_fields['id'] = save_winner(tender_fields, winner_fields)
+        winners.append(_get_winner_mail_fields(tender_fields, winner_fields))
 
     send_email(
         subject='%s new tenders available' % len(new_tenders),

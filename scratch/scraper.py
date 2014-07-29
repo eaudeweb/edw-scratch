@@ -78,7 +78,7 @@ def parse_winner(html):
     winner_fields = {
         'award_date': string_to_date(details[3].span.string) or date.today(),
         'vendor': to_unicode(details[4].span.string) or None,
-        'value': float(details[5].span.string) or None
+        'value': float(details[5].span.string) if details[5].span.string else None
     }
 
     return tender_fields, winner_fields
@@ -96,7 +96,6 @@ def parse_winners_list(html):
         {
             'reference': winner.contents[7].span.string or None,
             'url': ENDPOINT_URI + winner.contents[1].a['href'] + '.html'
-
         }
         for winner in winners
     ]

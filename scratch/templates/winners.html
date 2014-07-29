@@ -19,7 +19,9 @@
     <tbody>
     {% for winner in winners %}
       <tr>
-        <td class='text-center'>{{ winner.tender.title }}</td>
+        <td class='text-center'>
+          <a href="{{ url_for('.tender', tender_id=winner.tender.id) }}">{{ winner.tender.title }}</a>
+        </td>
         <td class='text-center'>{{ winner.tender.organization }}</td>
         <td class='text-center'>{{ winner.tender.reference }}</td>
         <td class='text-center'>{{ winner.vendor }}</td>

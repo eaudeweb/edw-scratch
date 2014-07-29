@@ -10,6 +10,11 @@ class TendersFilter(Form):
 
     organization = SelectField(u'Organization')
     title = SelectField(u'Title')
+    status = SelectField(u'Status', choices=[
+        ('', 'All Values'),
+        ('open', 'OPEN'),
+        ('closed', 'CLOSED'),
+    ])
 
     def __init__(self, **kwargs):
         super(TendersFilter, self).__init__(**kwargs)

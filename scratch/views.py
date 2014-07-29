@@ -19,9 +19,11 @@ def tenders():
     if request.method == 'POST':
         organization = request.form['organization']
         title = request.form['title']
+        status = request.form['status']
         filter_form = TendersFilter(
             organization=organization,
             title=title,
+            status=status,
         )
         if filter_form.validate():
             tenders = Tender.query
@@ -29,7 +31,10 @@ def tenders():
                 tenders = tenders.filter_by(organization=organization)
             if title:
                 tenders = tenders.filter_by(title=title)
-            tenders = tenders.all()
+            if status == 'closed':
+                tenders = tenders.filter(Tender.winner != None)
+            elif status == 'open':
+                tenders = tenders.filter(Tender.winner == None)
 
     return render_template(
         'tenders.html',

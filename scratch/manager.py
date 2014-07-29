@@ -108,24 +108,32 @@ def add_winner(filename, public=False):
     save_winner(tender_fields, winner_fields)
 
 
-def _get_tender_mail_fields(tender):
+def _get_common_mail_fields(tender):
     return {
         'tender_id': tender['id'],
         'title': tender['title'],
         'organization': tender['organization'],
+    }
+
+
+def _get_tender_mail_fields(tender):
+    fields = {
         'published': tender['published'],
         'deadline': tender['deadline'],
         'documents': tender['documents'],
     }
+    fields.update(_get_common_mail_fields(tender))
+
+    return fields
 
 
 def _get_winner_mail_fields(tender, winner):
-    return {
-        'tender_id': tender['id'],
-        'title': tender['title'],
-        'organization': tender['organization'],
+    fields = {
         'value': winner['value'],
     }
+    fields.update(_get_common_mail_fields(tender))
+
+    return fields
 
 
 def _get_new_tenders(days, public):

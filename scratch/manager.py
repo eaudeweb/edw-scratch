@@ -209,12 +209,13 @@ def update(days, public):
         winners.append(_get_winner_mail_fields(tender_fields, winner_fields))
 
     send_email(
-        subject='%s new tenders available' % len(new_tenders),
+        subject='New UNGM tenders available',
         sender='Eau De Web',
         recipients=NOTIFY_EMAILS,
         html_body=render_template(
             'email.html',
             tenders=enumerate(tenders),
+            winners=winners,
             tenders_size=len(tenders)
         ),
         tenders=enumerate(tenders),

@@ -39,49 +39,40 @@ def tenders():
     )
 
 
-@views.route('/winners', methods=['GET', 'POST'])
+@views.route('/winners', methods=['GET'])
 def winners():
-    """ Display a list of contract awards from local database.
-    """
 
-    if request.method == 'GET':
-        filter_form = WinnerFilter()
-        winners = Winner.query.all()
+    if 'reset' in request.args:
+        return redirect(url_for('.winners'))
 
-    if request.method == 'POST':
-        if 'reset' in request.form:
-            return redirect(url_for('.winners'))
-        organization = request.form['organization']
-        vendor = request.form['vendor']
-        value = request.form['value']
+    organization = request.args.get('organization')
+    vendor = request.args.get('vendor')
+    value = request.args.get('value')
 
-        filter_form = WinnerFilter(
-            organization=organization,
-            vendor=vendor,
-            value=value,
+    winners = Winner.query
+    if organization:
+        winners = winners.filter(
+            Winner.tender.has(organization=organization)
         )
-        if filter_form.validate():
-            winners = Winner.query
-            if organization:
-                winners = winners.filter(
-                    Winner.tender.has(organization=organization)
-                )
-            if vendor:
-                winners = winners.filter_by(vendor=vendor)
-            if value:
-                if value == 'max':
-                    winners = winners.filter(Winner.value >= MAX)
-                else:
-                    winners = winners.filter(
-                        Winner.value >= int(value),
-                        Winner.value <= int(value) + STEP
-                    )
-            winners = winners.all()
+    if vendor:
+        winners = winners.filter_by(vendor=vendor)
+    if value:
+        if value == 'max':
+            winners = winners.filter(Winner.value >= MAX)
+        else:
+            winners = winners.filter(
+                Winner.value >= int(value),
+                Winner.value <= int(value) + STEP
+            )
 
     return render_template(
         'winners.html',
-        winners=winners,
-        filter_form=filter_form,
+        winners=winners.all(),
+        filter_form=WinnerFilter(
+            organization=organization,
+            vendor=vendor,
+            value=value,
+        ),
     )
 
 

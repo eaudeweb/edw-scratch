@@ -7,41 +7,35 @@ from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 views = Blueprint(__name__, 'views')
 
 
-@views.route('/', methods=['GET', 'POST'])
-@views.route('/tenders', methods=['GET', 'POST'])
+@views.route('/', methods=['GET'])
+@views.route('/tenders', methods=['GET'])
 def tenders():
-    """ Display a list of tenders from local database.
-    """
-    if request.method == 'GET':
-        filter_form = TendersFilter()
-        tenders = Tender.query.all()
 
-    if request.method == 'POST':
-        if 'reset' in request.form:
-            return redirect(url_for('.tenders'))
-        organization = request.form['organization']
-        title = request.form['title']
-        status = request.form['status']
-        filter_form = TendersFilter(
-            organization=organization,
-            title=title,
-            status=status,
-        )
-        if filter_form.validate():
-            tenders = Tender.query
-            if organization:
-                tenders = tenders.filter_by(organization=organization)
-            if title:
-                tenders = tenders.filter_by(title=title)
-            if status == 'closed':
-                tenders = tenders.filter(Tender.winner != None)
-            elif status == 'open':
-                tenders = tenders.filter(Tender.winner == None)
+    if 'reset' in request.args:
+        return redirect(url_for('.tenders'))
+
+    organization = request.args.get('organization')
+    title = request.args.get('title')
+    status = request.args.get('status')
+
+    tenders = Tender.query
+    if organization:
+        tenders = tenders.filter_by(organization=organization)
+    if title:
+        tenders = tenders.filter_by(title=title)
+    if status == 'closed':
+        tenders = tenders.filter(Tender.winner != None)
+    elif status == 'open':
+        tenders = tenders.filter(Tender.winner == None)
 
     return render_template(
         'tenders.html',
-        tenders=tenders,
-        filter_form=filter_form,
+        tenders=tenders.all(),
+        filter_form=TendersFilter(
+            organization=organization,
+            title=title,
+            status=status,
+        ),
     )
 
 

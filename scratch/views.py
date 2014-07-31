@@ -86,17 +86,18 @@ def tender(tender_id):
 @views.route('/search', methods=['GET'])
 def search():
     query = request.args['query']
-    results = []
 
-    def _model_search(m):
+    def _get_results(m):
         return m.query.whoosh_search(query).all()
 
-    if query:
-        for model in [Tender, TenderDocument, Winner]:
-            results += _model_search(model)
+    ids = set(
+        [x.id for x in _get_results(Tender)] +
+        [x.tender_id for x in _get_results(TenderDocument)] +
+        [x.tender_id for x in _get_results(Winner)]
+    )
 
     return render_template(
         'search.html',
         query=query,
-        results=results,
+        results=Tender.query.filter(Tender.id.in_(ids)).all(),
     )

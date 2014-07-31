@@ -1,8 +1,9 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
+whoosh_index_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'scraper.db')
-WHOOSH_BASE = os.path.join(basedir, 'search_index')
+WHOOSH_BASE = os.path.join(whoosh_index_dir, 'whoosh_index')
 DEBUG = True
 
 # email server

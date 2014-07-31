@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 
-from scratch.models import Tender, Winner
+from scratch.models import Tender, Winner, TenderDocument
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
@@ -86,11 +86,14 @@ def tender(tender_id):
 @views.route('/search', methods=['GET'])
 def search():
     query = request.args['query']
+    results = []
+
+    def _model_search(m):
+        return m.query.whoosh_search(query).all()
+
     if query:
-        results = Tender.query.whoosh_search(query, 20).all()
-    else:
-        results = {}
-        query = ''
+        for model in [Tender, TenderDocument, Winner]:
+            results += _model_search(model)
 
     return render_template(
         'search.html',

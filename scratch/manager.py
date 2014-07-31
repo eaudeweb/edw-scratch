@@ -66,10 +66,11 @@ def save_tender(tender):
 
     documents = tender.pop('documents')
     tender_entry = Tender(**tender)
+    db.session.add(tender_entry)
+    db.session.commit()
     for document in documents:
         document_entry = TenderDocument(tender=tender_entry, **document)
         db.session.add(document_entry)
-    db.session.add(tender_entry)
     db.session.commit()
     tender['documents'] = documents
 

@@ -14,7 +14,7 @@
     <table class='table table-condensed table-hover table-bordered'>
       <tr>
         <th class="col-sm-2">Title</th>
-        <td>{{ tender.title }}</td>
+        <td><a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a></td>
       </tr>
       <tr>
         <th class="col-sm-2">UN Organization</th>
@@ -41,6 +41,14 @@
       <tr>
         <th>Vendor</th>
         <td>{% if tender.winner %}{{ tender.winner.0.vendor }}{% endif %}</td>
+      </tr>
+      <tr>
+        <th>Status</th>
+        <td>
+          {% if tender.winner %}<p class="bg-danger">CLOSED</p>
+          {% else %}<p class="bg-success">OPEN</p>
+          {% endif %}
+        </td>
       </tr>
     </table>
     </br>

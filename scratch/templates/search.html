@@ -3,9 +3,47 @@
 {% block title %}Scraper - search results{% endblock %}
 
 {% block content %}
-
-  Search query: {{ query }}
-  <br/>
-  {{ results }}
+  <div style="overflow:auto">
+    <div class="col-sm-12">
+      <div class="col-sm-3">Searched for '<b>{{ query }}</b>'</div>
+      <div class="col-sm-2 col-sm-offset-7">{{ results|length }} results found</div>
+    </div>
+  </div>
+  <hr></br>
+  {% for tender in results %}
+    <table class='table table-condensed table-hover table-bordered'>
+      <tr>
+        <th class="col-sm-2">Title</th>
+        <td>{{ tender.title }}</td>
+      </tr>
+      <tr>
+        <th class="col-sm-2">UN Organization</th>
+        <td>{{ tender.organization }}</td>
+      </tr>
+      <tr>
+        <th class="col-sm-2">Reference</th>
+        <td>{{ tender.reference }}</td>
+      </tr>
+      <tr>
+        <th class="col-sm-2">Description</th>
+        <td>{{ tender.description|safe }}</td>
+      </tr>
+      <tr>
+        <th class="col-sm-2">Documents</th>
+        <td><ol>
+          {% for document in tender.documents %}
+            <li>
+              <a href='{{ document.download_url }}'>{{ document.name }}</a>
+            </li>
+          {% endfor %}
+        </ol></td>
+      </tr>
+      <tr>
+        <th>Vendor</th>
+        <td>{% if tender.winner %}{{ tender.winner.0.vendor }}{% endif %}</td>
+      </tr>
+    </table>
+    </br>
+  {% endfor %}
 
 {% endblock %}

@@ -16,6 +16,7 @@ class Tender(db.Model):
 
     id = Column(Integer, primary_key=True)
     reference = Column(String(255), unique=True)
+    notice_type = Column(String(255))
     title = Column(String(255), nullable=True)
     organization = Column(String(255), nullable=True)
     published = Column(Date)

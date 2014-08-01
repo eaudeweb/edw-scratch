@@ -11,7 +11,7 @@
   </div>
   <hr></br>
   {% for tender in results %}
-    <table {% if tender.winner %}class='table table-condensed table-bordered bg-danger'{% else %}class='table table-condensed table-bordered'{% endif %}>
+    <table class="{{ tender|color('table table-condensed table-bordered ') }}">
       <tr>
         <th class="col-sm-2">Title</th>
         <td><a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a></td>
@@ -29,7 +29,7 @@
         <td>{{ tender.description|safe }}</td>
       </tr>
       <tr>
-        <th>Vendor</th>
+        <th class="col-sm-2">Vendor</th>
         <td>{% if tender.winner %}{{ tender.winner.0.vendor }}{% endif %}</td>
       </tr>
     </table>

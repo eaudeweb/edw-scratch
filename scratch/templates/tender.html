@@ -4,7 +4,7 @@
 
 {% block content %}
 
-  <table {% if tender.winner %}class='table table-condensed table-hover bg-danger'{% else %}class='table table-condensed table-hover'{% endif %}>
+  <table class="{{ tender|color('table table-condensed table-hover ') }}">
     <tr>
       <th>Type of notice</th>
       <td>{{ tender.notice_type }}</td>

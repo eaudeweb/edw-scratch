@@ -18,7 +18,7 @@
     </thead>
     <tbody>
     {% for tender in tenders %}
-      <tr {% if tender.winner %}class="bg-danger"{% endif %}>
+      <tr class={{ tender|color }}>
         <td class='text-center'>
           <a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a>
         </td>

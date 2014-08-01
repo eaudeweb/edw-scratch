@@ -11,7 +11,7 @@
   </div>
   <hr></br>
   {% for tender in results %}
-    <table class='table table-condensed table-hover table-bordered'>
+    <table {% if tender.winner %}class='table table-condensed table-bordered bg-danger'{% else %}class='table table-condensed table-bordered'{% endif %}>
       <tr>
         <th class="col-sm-2">Title</th>
         <td><a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a></td>
@@ -29,26 +29,8 @@
         <td>{{ tender.description|safe }}</td>
       </tr>
       <tr>
-        <th class="col-sm-2">Documents</th>
-        <td><ol>
-          {% for document in tender.documents %}
-            <li>
-              <a href='{{ document.download_url }}'>{{ document.name }}</a>
-            </li>
-          {% endfor %}
-        </ol></td>
-      </tr>
-      <tr>
         <th>Vendor</th>
         <td>{% if tender.winner %}{{ tender.winner.0.vendor }}{% endif %}</td>
-      </tr>
-      <tr>
-        <th>Status</th>
-        <td>
-          {% if tender.winner %}<p class="bg-danger">CLOSED</p>
-          {% else %}<p class="bg-success">OPEN</p>
-          {% endif %}
-        </td>
       </tr>
     </table>
     </br>

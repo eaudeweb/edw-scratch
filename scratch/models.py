@@ -32,7 +32,6 @@ class Tender(db.Model):
 
 class TenderDocument(db.Model):
     __tablename__ = 'tender_document'
-    __searchable__ = ['name']
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=True)

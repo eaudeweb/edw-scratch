@@ -11,10 +11,8 @@
     <tr>
       <th class='text-center col-sm-3'>Title</th>
       <th class='text-center col-sm-2'>UN Organization</th>
-      <th class='text-center col-sm-1'>Reference</th>
       <th class='text-center col-sm-1'>Published</th>
       <th class='text-center col-sm-1'>Deadline</th>
-      <th class='text-center col-sm-4'>Documents</th>
     </tr>
     </thead>
     <tbody>
@@ -24,7 +22,6 @@
           <a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a>
         </td>
         <td class='text-center'>{{ tender.organization }}</td>
-        <td class='text-center'>{{ tender.reference }}</td>
         <td class='text-center'>{{ tender.published }}</td>
         <td class='text-center'>
           {{ tender.deadline }}
@@ -32,13 +29,6 @@
           {% else %}<p class="bg-success">OPEN</p>
           {% endif %}
         </td>
-        <td><ol>
-          {% for document in tender.documents %}
-            <li>
-              <a href='{{ document.download_url }}'>{{ document.name }}</a>
-            </li>
-          {% endfor %}
-        </ol></td>
       </tr>
     {% endfor %}
     </tbody>

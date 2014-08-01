@@ -18,17 +18,12 @@
     </thead>
     <tbody>
     {% for tender in tenders %}
-      <tr>
+      <tr {% if tender.winner %}class="bg-danger"{% endif %}>
         <td class='text-center'>
           <a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a>
         </td>
         <td class='text-center'>{{ tender.organization }}</td>
-        <td class='text-center'>
-          {{ tender.deadline }}
-          {% if tender.winner %}<p class="bg-danger">CLOSED</p>
-          {% else %}<p class="bg-success">OPEN</p>
-          {% endif %}
-        </td>
+        <td class='text-center'>{{ tender.deadline }}</td>
         <td class='text-center'>{{ tender.published }}</td>
         <td class='text-center'>{{ tender.notice_type }}</td>
       </tr>

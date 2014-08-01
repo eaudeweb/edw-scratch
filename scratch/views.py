@@ -95,7 +95,6 @@ def search():
 
     ids = set(
         [x.id for x in _get_results(Tender)] +
-        [x.tender_id for x in _get_results(TenderDocument)] +
         [x.tender_id for x in _get_results(Winner)]
     )
 

@@ -1,7 +1,7 @@
 import pprint
 from exceptions import AttributeError
 
-from sqlalchemy import desc, func
+from sqlalchemy import desc
 from flask.ext.script import Manager
 from flask import render_template
 
@@ -209,16 +209,16 @@ def update(days, public):
         tender_fields['id'] = save_winner(tender_fields, winner_fields)
         winners.append(_get_winner_mail_fields(tender_fields, winner_fields))
 
-    # send_email(
-    #     subject='New UNGM tenders available',
-    #     sender='Eau De Web',
-    #     recipients=NOTIFY_EMAILS,
-    #     html_body=render_template(
-    #         'email.html',
-    #         tenders=enumerate(tenders),
-    #         winners=winners,
-    #         tenders_size=len(tenders)
-    #     ),
-    #     tenders=enumerate(tenders),
-    #     public=public
-    # )
+    send_email(
+        subject='New UNGM tenders available',
+        sender='Eau De Web',
+        recipients=NOTIFY_EMAILS,
+        html_body=render_template(
+            'email.html',
+            tenders=enumerate(tenders),
+            winners=winners,
+            tenders_size=len(tenders)
+        ),
+        tenders=enumerate(tenders),
+        public=public
+    )

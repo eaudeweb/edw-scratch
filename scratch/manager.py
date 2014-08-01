@@ -1,6 +1,7 @@
 import pprint
+from exceptions import AttributeError
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from flask.ext.script import Manager
 from flask import render_template
 
@@ -137,34 +138,23 @@ def _get_winner_mail_fields(tender, winner):
     return fields
 
 
-def _get_new_tenders(days, public):
-    saved_tenders = (
+def _get_new_tenders(last_date, public):
+    last_references = (
         Tender.query
-        .with_entities(Tender.reference, Tender.published)
-        .order_by(desc(Tender.published))
+        .filter(Tender.published >= last_date)
+        .with_entities(Tender.reference)
+        .all()
     )
 
-    if saved_tenders.count() != 0:
-        newest_published_date = saved_tenders.first().published
-
-        newest_references = (
-            saved_tenders.filter_by(published=newest_published_date)
-            .with_entities(Tender.reference)
-            .all()
-        )
-    else:
-        newest_published_date = days_ago(int(days))
-        newest_references = []
-
     requested_html_tenders = request_tenders_list(public)
-    requested_tenders = parse_tenders_list(requested_html_tenders)
+    extracted_tenders = parse_tenders_list(requested_html_tenders)
 
     return filter(
         lambda x: (
-            string_to_date(x['published']) >= newest_published_date and
-            (x['reference'], ) not in newest_references
+            string_to_date(x['published']) >= last_date and
+            (x['reference'], ) not in last_references
         ),
-        requested_tenders
+        extracted_tenders
     )
 
 
@@ -189,7 +179,17 @@ def _get_new_winners(public):
 @worker_manager.option('-p', '--public', dest='public', default=False)
 def update(days, public):
 
-    new_tenders = _get_new_tenders(days, public)
+    try:
+        last_date = (
+            Tender.query
+            .order_by(desc(Tender.published))
+            .first()
+            .published
+        )
+    except AttributeError:
+        last_date = days_ago(int(days))
+
+    new_tenders = _get_new_tenders(last_date, public)
     new_winners = _get_new_winners(public)
 
     if not new_tenders and not new_winners:
@@ -209,16 +209,16 @@ def update(days, public):
         tender_fields['id'] = save_winner(tender_fields, winner_fields)
         winners.append(_get_winner_mail_fields(tender_fields, winner_fields))
 
-    send_email(
-        subject='New UNGM tenders available',
-        sender='Eau De Web',
-        recipients=NOTIFY_EMAILS,
-        html_body=render_template(
-            'email.html',
-            tenders=enumerate(tenders),
-            winners=winners,
-            tenders_size=len(tenders)
-        ),
-        tenders=enumerate(tenders),
-        public=public
-    )
+    # send_email(
+    #     subject='New UNGM tenders available',
+    #     sender='Eau De Web',
+    #     recipients=NOTIFY_EMAILS,
+    #     html_body=render_template(
+    #         'email.html',
+    #         tenders=enumerate(tenders),
+    #         winners=winners,
+    #         tenders_size=len(tenders)
+    #     ),
+    #     tenders=enumerate(tenders),
+    #     public=public
+    # )

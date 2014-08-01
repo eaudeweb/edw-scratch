@@ -36,6 +36,7 @@ def tenders():
             title=title,
             status=status,
         ),
+        reset=organization or title or status
     )
 
 
@@ -73,6 +74,7 @@ def winners():
             vendor=vendor,
             value=value,
         ),
+        reset=organization or vendor or value
     )
 
 

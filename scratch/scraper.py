@@ -21,6 +21,7 @@ def parse_tender(html):
     documents = soup.find_all('div', 'docslist')[0].find_all('div', 'filterDiv')
     description = soup.find_all('div', CSS_DESCRIPTION)
     tender = {
+        'notice_type': to_unicode(details[0].span.string) or None,
         'title': to_unicode(details[2].span.string) or None,
         'organization': to_unicode(details[3].span.string) or None,
         'reference': to_unicode(details[4].span.string) or None,

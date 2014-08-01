@@ -23,11 +23,11 @@
     </tr>
     <tr>
       <th>Published</th>
-      <td>{{ tender.published }}</td>
+      <td>{{ tender.published|datetime }}</td>
     </tr>
     <tr>
       <th>Deadline</th>
-      <td>{{ tender.deadline }}</td>
+      <td>{{ tender.deadline|datetime|safe }}</td>
     </tr>
     <tr>
       <th>Description</th>
@@ -53,7 +53,7 @@
     </tr>
     <tr>
       <th>Award date</th>
-      <td>{% if tender.winner %}{{ tender.winner.0.award_date }}{% endif %}</td>
+      <td>{% if tender.winner %}{{ tender.winner.0.award_date|datetime }}{% endif %}</td>
     </tr>
   </table>
 

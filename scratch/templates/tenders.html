@@ -23,8 +23,8 @@
           <a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a>
         </td>
         <td class='text-center'>{{ tender.organization }}</td>
-        <td class='text-center'>{{ tender.deadline }}</td>
-        <td class='text-center'>{{ tender.published }}</td>
+        <td class='text-center'>{{ tender.deadline|datetime|safe }}</td>
+        <td class='text-center'>{{ tender.published|datetime }}</td>
         <td class='text-center'>{{ tender.notice_type }}</td>
       </tr>
     {% endfor %}

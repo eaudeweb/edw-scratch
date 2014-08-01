@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+from sqlalchemy import desc
 
 from scratch.models import Tender, Winner, TenderDocument
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
@@ -30,7 +31,7 @@ def tenders():
 
     return render_template(
         'tenders.html',
-        tenders=tenders.all(),
+        tenders=tenders.order_by(desc(Tender.published)).all(),
         filter_form=TendersFilter(
             organization=organization,
             title=title,
@@ -68,7 +69,7 @@ def winners():
 
     return render_template(
         'winners.html',
-        winners=winners.all(),
+        winners=winners.order_by(desc(Winner.award_date)).all(),
         filter_form=WinnerFilter(
             organization=organization,
             vendor=vendor,

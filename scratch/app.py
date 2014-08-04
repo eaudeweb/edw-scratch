@@ -2,7 +2,9 @@ from flask import Flask
 from scratch.models import Tender, Winner
 import flask.ext.whooshalchemy as whooshalchemy
 
-from scratch.custom_filters import datetime_filter, get_color_class
+from scratch.custom_filters import (
+    datetime_filter, get_color_class, get_favorite_class
+)
 
 
 def create_app():
@@ -15,6 +17,7 @@ def create_app():
     app.config.from_pyfile('settings.py')
     app.jinja_env.filters['datetime'] = datetime_filter
     app.jinja_env.filters['color'] = get_color_class
+    app.jinja_env.filters['favourite'] = get_favorite_class
     models.db.init_app(app)
     app.register_blueprint(views)
     return app

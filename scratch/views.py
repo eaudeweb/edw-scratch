@@ -16,28 +16,28 @@ def tenders():
         return redirect(url_for('.tenders'))
 
     organization = request.args.get('organization')
-    title = request.args.get('title')
     status = request.args.get('status')
+    favourite = request.args.get('favourite')
 
     tenders = Tender.query
     if organization:
         tenders = tenders.filter_by(organization=organization)
-    if title:
-        tenders = tenders.filter_by(title=title)
     if status == 'closed':
-        tenders = tenders.filter(Tender.winner != None)
+        tenders = tenders.filter_by(Tender.winner != None)
     elif status == 'open':
         tenders = tenders.filter(Tender.winner == None)
+    if favourite in ('True', 'False'):
+        tenders = tenders.filter_by(favourite=eval(favourite))
 
     return render_template(
         'tenders.html',
         tenders=tenders.order_by(desc(Tender.published)).all(),
         filter_form=TendersFilter(
             organization=organization,
-            title=title,
             status=status,
+            favourite=favourite,
         ),
-        reset=organization or title or status
+        reset=organization or status or favourite
     )
 
 

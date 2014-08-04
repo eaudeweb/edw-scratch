@@ -9,11 +9,15 @@ STEP = 20000
 class TendersFilter(Form):
 
     organization = SelectField(u'Organization')
-    title = SelectField(u'Title')
     status = SelectField(u'Status', choices=[
-        ('', 'All Values'),
+        ('', 'All tenders'),
         ('open', 'OPEN'),
         ('closed', 'CLOSED'),
+    ])
+    favourite = SelectField(u'Favourites', choices=[
+        ('', 'All tenders'),
+        ('True', 'Yes'),
+        ('False', 'No'),
     ])
 
     def __init__(self, **kwargs):
@@ -23,13 +27,6 @@ class TendersFilter(Form):
             (o.organization, o.organization)
             for o in Tender.query
             .with_entities(Tender.organization)
-            .distinct()
-        ]
-
-        self.title.choices = [('', 'All Titles')] + [
-            (o.title, o.title)
-            for o in Tender.query
-            .with_entities(Tender.title)
             .distinct()
         ]
 

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy import desc
 
-from scratch.models import Tender, Winner, TenderDocument
+from scratch.models import Tender, Winner
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 

@@ -49,8 +49,8 @@
       {% endblock %}
     </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script>
 
+<script>
 $(function() {
   $('.tenders-list, .single-tender').on('click', function(evt) {
     evt.preventDefault();
@@ -76,8 +76,8 @@ $(function() {
 $(function() {
   $('.tenders-list').on('click', function (evt) {
     evt.preventDefault();
-    var row = $(this).parent().parent()
-    var row_class = row.attr('class')
+    var row = $(this).parent().parent();
+    var row_class = row.attr('class');
     if (row_class == "bg-info") {
       row.attr('class', 'bg-warning');
     }
@@ -97,13 +97,13 @@ $(function() {
     else {
       $(this).find('small').text('Mark as favourite')
     }
-    var row = $(this).parent().parent().parent()
-    var row_class = row.attr('class')
-    if (row_class == "bg-info") {
-      row.attr('class', 'bg-warning');
+    var div = $('table').parent();
+    var div_class = div.attr('class');
+    if (div_class == 'bg-info') {
+      div.attr('class', 'bg-warning');
     }
     else {
-      row.attr('class', 'bg-info');
+      div.attr('class', 'bg-info');
     }
   });
 });

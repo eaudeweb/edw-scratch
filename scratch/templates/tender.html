@@ -3,8 +3,8 @@
 {% block title %}Tender {{ tender.id }}{% endblock %}
 
 {% block content %}
-
-  <table class="{{ tender|color('table table-condensed table-hover ') }}">
+  <div class="{{ tender|color }}">
+  <table class="table table-condensed table-hover">
     <tr>
       <th>Favourite</th>
       <td><a class="single-tender" href="{{ url_for('.toggle_favourite', tender_id=tender.id) }}">
@@ -64,5 +64,5 @@
       <td>{% if tender.winner %}{{ tender.winner.0.award_date|datetime }}{% endif %}</td>
     </tr>
   </table>
-
+  </div>
 {% endblock %}

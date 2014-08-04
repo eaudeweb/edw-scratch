@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy import desc
 
-from scratch.models import Tender, Winner
+from scratch.models import Tender, Winner, db
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
@@ -103,3 +103,11 @@ def search():
         query=query,
         results=Tender.query.filter(Tender.id.in_(ids)).all(),
     )
+
+
+@views.route('/toggle_favourite/<tender_id>', methods=['GET'])
+def toggle_favourite(tender_id):
+    tender = Tender.query.get_or_404(tender_id)
+    tender.favourite = not tender.favourite
+    db.session.commit()
+    return ''

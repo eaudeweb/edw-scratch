@@ -25,7 +25,12 @@
         <td class='text-center'>{{ tender.organization }}</td>
         <td class='text-center'>{{ tender.deadline|datetime|safe }}</td>
         <td class='text-center'>{{ tender.published|datetime }}</td>
-        <td class='text-center'>{{ tender.notice_type }}</td>
+        <td class='text-center'>
+          {{ tender.notice_type }}<br/>
+          {% if not tender.winner %}
+            <a href=""><i style="color: orange" class="{{ tender|favourite }}"></i></a>
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
     </tbody>

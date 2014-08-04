@@ -6,6 +6,14 @@
 
   <table class="{{ tender|color('table table-condensed table-hover ') }}">
     <tr>
+      <th>Favourite</th>
+      <td>
+        <a href=''><i style="color: orange" class="{{ tender|favourite }}">
+          <small>{% if tender.favourite %}Stop following{% else %}Mark as favourite{% endif %}</small>
+        </i></a>
+      </td>
+    </tr>
+    <tr>
       <th>Type of notice</th>
       <td>{{ tender.notice_type }}</td>
     </tr>

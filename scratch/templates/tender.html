@@ -51,6 +51,7 @@
         {% endfor %}
       </ol></td>
     </tr>
+    {% if tender.winner %}
     <tr>
       <th>Vendor</th>
       <td>{% if tender.winner %}{{ tender.winner.0.vendor }}{% endif %}</td>
@@ -63,6 +64,7 @@
       <th>Award date</th>
       <td>{% if tender.winner %}{{ tender.winner.0.award_date|datetime }}{% endif %}</td>
     </tr>
+    {% endif %}
   </table>
   </div>
 {% endblock %}

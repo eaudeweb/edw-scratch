@@ -1,11 +1,61 @@
 import requests
 import urllib2
+from datetime import datetime
+import json
+
+from scratch import UNSPSCs
 
 
 LIVE_ENDPOINT_URI = 'https://www.ungm.org'
 LOCAL_ENDPOINT_URI = 'http://localhost:8080'
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice'
 WINNERS_ENDPOINT_URI = 'https://www.ungm.org/Public/ContractAward'
+
+HEADERS = {
+    'Accept': '*/*',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Content-Length': '320',
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Host': 'www.ungm.org',
+    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:31.0)'
+    ' Gecko/20100101 Firefox/31.0',
+    'X-Requested-With': 'XMLHttpRequest',
+}
+PAYLOAD_TENDERS = {
+    'NoticeTASStatus': [],
+    'PageIndex': 0,
+    'Description': '',
+    'PageSize': 15,
+    'Title': '',
+    'DeadlineFrom': '',
+    'SortField': 'DatePublished',
+    'UNSPSCs': [],
+    'Countries': [],
+    'Agencies': [],
+    'PublishedTo': '',
+    'SortAscending': False,
+    'isPicker': False,
+    'PublishedFrom': '',
+    'NoticeTypes': [],
+    'Reference': '',
+    'DeadlineTo': '',
+}
+PAYLOAD_WINNERS = {
+    'PageIndex': 0,
+    'PageSize': 15,
+    'Title': '',
+    'Description': '',
+    'Reference': '',
+    'Supplier': '',
+    'AwardFrom': '',
+    'AwardTo': '',
+    'Countries': [],
+    'Agencies': [],
+    'UNSPSCs': [],
+    'SortField': 'AwardDate',
+    'SortAscending': False,
+}
 
 
 def replace_endpoint(url):
@@ -16,16 +66,44 @@ def request_tenders_list(public):
     url = TENDERS_ENDPOINT_URI
     if not public:
         url += '/tender_notices.html'
+        return request(url, public)
 
-    return request(url, public)
+    payload = PAYLOAD_TENDERS
+    today = datetime.now().strftime('%d-%b-%Y')
+    payload['DeadlineFrom'] = payload['PublishedTo'] = today
+    payload['UNSPSCs'] = UNSPSCs['tenders']
+    return post_request(url, payload)
 
 
 def request_winners_list(public):
     url = WINNERS_ENDPOINT_URI
     if not public:
         url += '/contract_winners.html'
+        return request(url, public)
 
-    return request(url, public)
+    payload = PAYLOAD_WINNERS
+    payload['UNSPSCs'] = UNSPSCs['winners']
+    return post_request(url, payload)
+
+
+def post_request(get_url, payload, headers=HEADERS):
+    resp = requests.get(get_url)
+    cookies = dict(resp.cookies)
+    cookies.update({'UNGM.UserPreferredLanguage': 'en'})
+
+    headers.update({
+        'Cookie': ';'.join(
+            ['{0}={1}'.format(k, v) for k, v in cookies.iteritems()]),
+        'Referer': get_url,
+    })
+
+    post_url = get_url + '/Search'
+    resp = requests.post(post_url, data=json.dumps(payload), cookies=cookies,
+                         headers=headers)
+    if resp.status_code == 200:
+        return resp.content
+
+    return None
 
 
 def request(url, public):

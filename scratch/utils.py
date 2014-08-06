@@ -14,11 +14,11 @@ def string_to_datetime(string_date):
 
 
 def to_unicode(string):
-    if isinstance(string, unicode):
+    if not string or isinstance(string, unicode):
         return string
     else:
         return unicode(string, 'utf8')
 
 
 def days_ago(days):
-    return date.today()-timedelta(days=days)
+    return date.today() - timedelta(days=days)

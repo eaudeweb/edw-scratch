@@ -57,7 +57,7 @@ def parse_tenders_list(html):
         {
             'published': tender.contents[7].span.string or date.today(),
             'reference': tender.contents[13].span.string or None,
-            'url': ENDPOINT_URI + tender.contents[3].a['href'] + '.html'
+            'url': ENDPOINT_URI + tender.contents[3].a['href']
         }
         for tender in tenders
     ]
@@ -99,7 +99,7 @@ def parse_winners_list(html):
     winners_list = [
         {
             'reference': winner.contents[7].span.string or None,
-            'url': ENDPOINT_URI + winner.contents[1].a['href'] + '.html'
+            'url': ENDPOINT_URI + winner.contents[1].a['href']
         }
         for winner in winners
     ]

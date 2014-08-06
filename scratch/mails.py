@@ -1,4 +1,5 @@
 from flask.ext.mail import Mail, Message
+import smtplib
 
 from server_requests import request_document
 
@@ -18,4 +19,8 @@ def send_email(subject, sender, recipients, html_body, tenders, public):
                     'application/unknown',
                     attachement
                 )
-    mail.send(msg)
+    try:
+        mail.send(msg)
+    except smtplib.SMTPAuthenticationError:
+        print 'Wrong username/password. ' + \
+            'Please review their values in settings.py'

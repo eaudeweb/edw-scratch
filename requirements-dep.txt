@@ -1,0 +1,2 @@
+-r requirements.txt
+raven==2.0.12.2

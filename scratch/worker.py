@@ -15,35 +15,6 @@ from scratch.utils import string_to_date, days_ago
 from scratch.mails import send_mail
 
 
-def _get_common_mail_fields(tender):
-    return {
-        'tender_id': tender['id'],
-        'title': tender['title'],
-        'organization': tender['organization'],
-    }
-
-
-def _get_tender_mail_fields(tender):
-    fields = {
-        'published': tender['published'],
-        'deadline': tender['deadline'],
-        'description': tender['description'],
-        'documents': tender['documents'],
-    }
-    fields.update(_get_common_mail_fields(tender))
-
-    return fields
-
-
-def _get_winner_mail_fields(tender, winner):
-    fields = {
-        'value': winner['value'],
-    }
-    fields.update(_get_common_mail_fields(tender))
-
-    return fields
-
-
 def get_new_winners(public):
     saved_winners = (
         Winner.query
@@ -100,7 +71,7 @@ def send_tenders_mail(new_tenders, public):
         html_data = get_request(new_tender['url'], public)
         tender_fields = parse_tender(html_data)
         tender_fields['id'] = save_tender(tender_fields)
-        tenders.append(_get_tender_mail_fields(tender_fields))
+        tenders.append(tender_fields)
 
     if len(tenders) == 1:
         subject = 'UNGM - 1 new tender available'
@@ -128,7 +99,8 @@ def send_winners_mail(new_winners, public):
         html_data = get_request(new_winner['url'], public)
         tender_fields, winner_fields = parse_winner(html_data)
         tender_fields['id'] = save_winner(tender_fields, winner_fields)
-        winners.append(_get_winner_mail_fields(tender_fields, winner_fields))
+        tender_fields.update(winner_fields)
+        winners.append(tender_fields)
 
     if len(winners) == 1:
         subject = 'UNGM - 1 new Contract Award'

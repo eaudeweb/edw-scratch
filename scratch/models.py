@@ -59,3 +59,32 @@ class Winner(db.Model):
 @db_manager.command
 def init():
     db.create_all()
+
+
+def save_tender(tender):
+    documents = tender.pop('documents')
+    tender_entry = Tender(**tender)
+    db.session.add(tender_entry)
+    db.session.commit()
+    for document in documents:
+        document_entry = TenderDocument(tender=tender_entry, **document)
+        db.session.add(document_entry)
+    db.session.commit()
+    tender['documents'] = documents
+
+    return tender_entry.id
+
+
+def save_winner(tender_fields, winner_fields):
+    tender = Tender.query.filter_by(**tender_fields).first()
+    if not tender:
+        tender_entry = Tender(**tender_fields)
+        db.session.add(tender_entry)
+        db.session.commit()
+    else:
+        tender_entry = tender
+    winner_entry = Winner(tender=tender_entry, **winner_fields)
+    db.session.add(winner_entry)
+    db.session.commit()
+
+    return tender_entry.id

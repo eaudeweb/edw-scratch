@@ -62,31 +62,22 @@ def replace_endpoint(url):
     return url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
 
 
-def request_tenders_list(public):
-    url = TENDERS_ENDPOINT_URI
+def get_request(url, public):
     if not public:
-        url += '/tender_notices.html'
-        return request(url, public)
+        url = replace_endpoint(url)
 
-    payload = PAYLOAD_TENDERS
-    today = datetime.now().strftime('%d-%b-%Y')
-    payload['DeadlineFrom'] = payload['PublishedTo'] = today
-    payload['UNSPSCs'] = UNSPSCs['tenders']
-    return post_request(url, payload)
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.content
 
-
-def request_winners_list(public):
-    url = WINNERS_ENDPOINT_URI
-    if not public:
-        url += '/contract_winners.html'
-        return request(url, public)
-
-    payload = PAYLOAD_WINNERS
-    payload['UNSPSCs'] = UNSPSCs['winners']
-    return post_request(url, payload)
+    return None
 
 
 def post_request(get_url, payload, headers=HEADERS):
+    """
+    AJAX-like POST request. Does a GET initially to receive cookies that
+    are used to the subsequent POST request.
+    """
     resp = requests.get(get_url)
     cookies = dict(resp.cookies)
     cookies.update({'UNGM.UserPreferredLanguage': 'en'})
@@ -106,15 +97,28 @@ def post_request(get_url, payload, headers=HEADERS):
     return None
 
 
-def request(url, public):
+def request_tenders_list(public):
+    url = TENDERS_ENDPOINT_URI
     if not public:
-        url = replace_endpoint(url)
+        url += '/tender_notices.html'
+        return get_request(url, public)
 
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.content
+    payload = PAYLOAD_TENDERS
+    today = datetime.now().strftime('%d-%b-%Y')
+    payload['DeadlineFrom'] = payload['PublishedTo'] = today
+    payload['UNSPSCs'] = UNSPSCs['tenders']
+    return post_request(url, payload)
 
-    return None
+
+def request_winners_list(public):
+    url = WINNERS_ENDPOINT_URI
+    if not public:
+        url += '/contract_winners.html'
+        return get_request(url, public)
+
+    payload = PAYLOAD_WINNERS
+    payload['UNSPSCs'] = UNSPSCs['winners']
+    return post_request(url, payload)
 
 
 def request_document(url, public):

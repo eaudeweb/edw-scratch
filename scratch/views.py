@@ -8,10 +8,9 @@ from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 views = Blueprint(__name__, 'views')
 
 
-@views.route('/', methods=['GET'])
-@views.route('/tenders', methods=['GET'])
+@views.route('/')
+@views.route('/tenders')
 def tenders():
-
     if 'reset' in request.args:
         return redirect(url_for('.tenders'))
 
@@ -41,7 +40,7 @@ def tenders():
     )
 
 
-@views.route('/winners', methods=['GET'])
+@views.route('/winners')
 def winners():
 
     if 'reset' in request.args:
@@ -79,16 +78,16 @@ def winners():
     )
 
 
-@views.route('/tender/<tender_id>', methods=['GET'])
+@views.route('/tender/<tender_id>')
 def tender(tender_id):
     tender = Tender.query.get(tender_id)
 
     return render_template('tender.html', tender=tender)
 
 
-@views.route('/search', methods=['GET'])
+@views.route('/search')
 def search():
-    query = request.args['query']
+    query = request.args.get('query')
 
     def _get_results(m):
         return m.query.whoosh_search(query).all()
@@ -105,9 +104,9 @@ def search():
     )
 
 
-@views.route('/toggle_favourite/<tender_id>', methods=['GET'])
+@views.route('/toggle_favourite/<tender_id>')
 def toggle_favourite(tender_id):
     tender = Tender.query.get_or_404(tender_id)
     tender.favourite = not tender.favourite
     db.session.commit()
-    return ''
+    return '%s' % tender.favourite

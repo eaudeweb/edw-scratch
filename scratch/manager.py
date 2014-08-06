@@ -3,18 +3,16 @@ from exceptions import AttributeError
 
 from sqlalchemy import desc
 from flask.ext.script import Manager
-from flask import render_template
-
-from models import db, db_manager, Tender, Winner, TenderDocument
+from flask import render_template, current_app
+from scratch.models import db_manager, Tender, Winner, save_tender, save_winner
 from scratch.server_requests import (
-    request_tenders_list, request_winners_list, request,
+    request_tenders_list, request_winners_list, get_request,
 )
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
 from scratch.mails import send_email
-from utils import string_to_date, days_ago
-from instance.settings import NOTIFY_EMAILS
+from scratch.utils import string_to_date, days_ago
 
 
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice/'
@@ -39,13 +37,13 @@ def create_manager(app):
 
 @scrap_manager.command
 def parse_tender_html(filename, public=False):
-    data = request(TENDERS_ENDPOINT_URI + filename + '.html', public)
+    data = get_request(TENDERS_ENDPOINT_URI + filename + '.html', public)
     pp.pprint(parse_tender(data))
 
 
 @scrap_manager.command
 def parse_winner_html(filename, public=False):
-    data = request(WINNERS_ENDPOINT_URI + filename + '.html', public)
+    data = get_request(WINNERS_ENDPOINT_URI + filename + '.html', public)
     tender_fields, winner_fields = parse_winner(data)
     tender_fields.update(winner_fields)
     pp.pprint(tender_fields)
@@ -63,48 +61,17 @@ def parse_winners_list_html(public=False):
     pp.pprint(parse_winners_list(data))
 
 
-def save_tender(tender):
-
-    documents = tender.pop('documents')
-    tender_entry = Tender(**tender)
-    db.session.add(tender_entry)
-    db.session.commit()
-    for document in documents:
-        document_entry = TenderDocument(tender=tender_entry, **document)
-        db.session.add(document_entry)
-    db.session.commit()
-    tender['documents'] = documents
-
-    return tender_entry.id
-
-
 @add_manager.command
 def add_tender(filename, public=False):
-    html_data = request(TENDERS_ENDPOINT_URI + filename + '.html', public)
+    html_data = get_request(TENDERS_ENDPOINT_URI + filename + '.html', public)
     tender = parse_tender(html_data)
 
     save_tender(tender)
 
 
-def save_winner(tender_fields, winner_fields):
-
-    tender = Tender.query.filter_by(**tender_fields).first()
-    if not tender:
-        tender_entry = Tender(**tender_fields)
-        db.session.add(tender_entry)
-        db.session.commit()
-    else:
-        tender_entry = tender
-    winner_entry = Winner(tender=tender_entry, **winner_fields)
-    db.session.add(winner_entry)
-    db.session.commit()
-
-    return tender_entry.id
-
-
 @add_manager.command
 def add_winner(filename, public=False):
-    html_data = request(WINNERS_ENDPOINT_URI + filename + '.html', public)
+    html_data = get_request(WINNERS_ENDPOINT_URI + filename + '.html', public)
     tender_fields, winner_fields = parse_winner(html_data)
 
     save_winner(tender_fields, winner_fields)
@@ -197,22 +164,23 @@ def update(days, public):
 
     tenders = []
     for new_tender in new_tenders:
-        html_data = request(new_tender['url'], public)
+        html_data = get_request(new_tender['url'], public)
         tender_fields = parse_tender(html_data)
         tender_fields['id'] = save_tender(tender_fields)
         tenders.append(_get_tender_mail_fields(tender_fields))
 
     winners = []
     for new_winner in new_winners:
-        html_data = request(new_winner['url'], public)
+        html_data = get_request(new_winner['url'], public)
         tender_fields, winner_fields = parse_winner(html_data)
         tender_fields['id'] = save_winner(tender_fields, winner_fields)
         winners.append(_get_winner_mail_fields(tender_fields, winner_fields))
 
+    recipients = current_app.config.get('NOTIFY_EMAILS', [])
     send_email(
         subject='New UNGM tenders available',
         sender='Eau De Web',
-        recipients=NOTIFY_EMAILS,
+        recipients=recipients,
         html_body=render_template(
             'email.html',
             tenders=enumerate(tenders),

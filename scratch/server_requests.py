@@ -64,7 +64,7 @@ def replace_endpoint(url):
 def get_request(url, public):
     if not public:
         url = replace_endpoint(url)
-
+        url += '.html'
     response = requests.get(url)
     if response.status_code == 200:
         return response.content
@@ -102,7 +102,7 @@ def post_request(get_url, payload, UNSPSC_category, headers=HEADERS):
 def request_tenders_list(public):
     url = TENDERS_ENDPOINT_URI
     if not public:
-        url += '/tender_notices.html'
+        url += '/tender_notices'
         return get_request(url, public)
 
     payload = PAYLOAD_TENDERS
@@ -114,7 +114,7 @@ def request_tenders_list(public):
 def request_winners_list(public):
     url = WINNERS_ENDPOINT_URI
     if not public:
-        url += '/contract_winners.html'
+        url += '/contract_winners'
         return get_request(url, public)
 
     return post_request(url, PAYLOAD_WINNERS, 'winners')

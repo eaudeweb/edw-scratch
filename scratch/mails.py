@@ -18,9 +18,8 @@ def attach(msg, documents, public, index=None):
             )
 
 
-def send_mail(subject, html_body, public, tenders=None, sender='Eau De Web',
-              recipients=app.config.get('NOTIFY_EMAILS', [])):
-
+def send_mail(subject, html_body, public, recipients, tenders=None,
+              sender='Eau De Web'):
     msg = Message(
         subject=subject,
         recipients=recipients,

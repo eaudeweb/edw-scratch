@@ -23,7 +23,7 @@ def tenders():
     if organization:
         tenders = tenders.filter_by(organization=organization)
     if status == 'closed':
-        tenders = tenders.filter_by(Tender.winner != None)
+        tenders = tenders.filter(Tender.winner != None)
     elif status == 'open':
         tenders = tenders.filter(Tender.winner == None)
     if favourite in ('True', 'False'):

@@ -3,7 +3,7 @@ from exceptions import AttributeError
 
 from sqlalchemy import desc
 from flask.ext.script import Manager
-from flask import render_template, current_app
+from flask import render_template
 from scratch.models import db_manager, Tender, Winner, save_tender, save_winner
 from scratch.server_requests import (
     request_tenders_list, request_winners_list, get_request,
@@ -11,8 +11,8 @@ from scratch.server_requests import (
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
-from scratch.mails import send_email
 from scratch.utils import string_to_date, days_ago
+from scratch.mails import send_mail
 
 
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice/'
@@ -89,6 +89,7 @@ def _get_tender_mail_fields(tender):
     fields = {
         'published': tender['published'],
         'deadline': tender['deadline'],
+        'description': tender['description'],
         'documents': tender['documents'],
     }
     fields.update(_get_common_mail_fields(tender))
@@ -169,6 +170,22 @@ def update(days, public):
         tender_fields['id'] = save_tender(tender_fields)
         tenders.append(_get_tender_mail_fields(tender_fields))
 
+    if len(tenders) == 1:
+        subject = 'UNGM - 1 new tender available'
+        html_body = render_template(
+            'mails/single_tender.html',
+            tender=tenders[0],
+        )
+        send_mail(subject, html_body, public, tenders)
+    elif len(tenders) > 1:
+        subject = 'UNGM - %s new tenders available' % len(tenders)
+        html_body = render_template(
+            'mails/more_tenders.html',
+            tenders=enumerate(tenders),
+            tenders_size=len(tenders)
+        )
+        send_mail(subject, html_body, public, tenders)
+
     winners = []
     for new_winner in new_winners:
         html_data = get_request(new_winner['url'], public)
@@ -176,17 +193,17 @@ def update(days, public):
         tender_fields['id'] = save_winner(tender_fields, winner_fields)
         winners.append(_get_winner_mail_fields(tender_fields, winner_fields))
 
-    recipients = current_app.config.get('NOTIFY_EMAILS', [])
-    send_email(
-        subject='New UNGM tenders available',
-        sender='Eau De Web',
-        recipients=recipients,
-        html_body=render_template(
-            'email.html',
-            tenders=enumerate(tenders),
+    if len(winners) == 1:
+        subject = 'UNGM - 1 new Contract Award'
+        html_body = render_template(
+            'mails/single_winner.html',
+            winner=winners[0],
+        )
+        send_mail(subject, html_body, public)
+    elif len(winners) > 1:
+        subject = 'UNGM - %s new Contract Award' % len(winners)
+        html_body = render_template(
+            'mails/more_winners.html',
             winners=winners,
-            tenders_size=len(tenders)
-        ),
-        tenders=enumerate(tenders),
-        public=public
-    )
+        )
+        send_mail(subject, html_body, public)

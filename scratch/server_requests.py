@@ -23,10 +23,10 @@ HEADERS = {
     'X-Requested-With': 'XMLHttpRequest',
 }
 PAYLOAD_TENDERS = {
-    'NoticeTASStatus': [],
     'PageIndex': 0,
-    'Description': '',
     'PageSize': 15,
+    'NoticeTASStatus': [],
+    'Description': '',
     'Title': '',
     'DeadlineFrom': '',
     'SortField': 'DatePublished',

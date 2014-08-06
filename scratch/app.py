@@ -4,7 +4,7 @@ import flask.ext.whooshalchemy as whooshalchemy
 from flask.ext.assets import Environment, Bundle
 
 from scratch.custom_filters import (
-    datetime_filter, get_color_class, get_favorite_class
+    datetime_filter, get_color_class, get_favorite_class, time_to_deadline
 )
 
 
@@ -22,6 +22,7 @@ def create_app():
     app.jinja_env.filters['datetime'] = datetime_filter
     app.jinja_env.filters['color'] = get_color_class
     app.jinja_env.filters['favourite'] = get_favorite_class
+    app.jinja_env.filters['deadline'] = time_to_deadline
     models.db.init_app(app)
     app.register_blueprint(views)
     return app

@@ -3,7 +3,7 @@ from datetime import datetime, date
 from utils import days_ago
 
 
-def time_to_deadline(d):
+def time_to_deadline(d, breakline=False):
     if d is None:
         return 'Unknown'
     now = datetime.now()
@@ -12,9 +12,10 @@ def time_to_deadline(d):
     td = d - now
     hours = td.seconds/3600
     minutes = (td.seconds/60) % 60
-    return '{days} days, {h} hours,</br>{m} minutes'.format(
+    deadline = '{days} days, {h} hours </br>{m} minutes'.format(
         days=td.days, h=hours, m=minutes
     )
+    return deadline.replace(' </br>', ', ') if not breakline else deadline
 
 
 def datetime_filter(d):

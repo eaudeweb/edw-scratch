@@ -35,7 +35,7 @@
     </tr>
     <tr>
       <th>Deadline</th>
-      <td>{{ tender.deadline|datetime|safe }}</td>
+      <td>{{ tender.deadline|datetime|safe }}.&nbsp;&nbsp; <strong>Deadline in: {{ tender.deadline|deadline }}</strong></td>
     </tr>
     <tr>
       <th>Description</th>

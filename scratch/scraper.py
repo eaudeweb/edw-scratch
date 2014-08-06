@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from datetime import date
+from datetime import date, timedelta
 
 from utils import string_to_date, string_to_datetime, to_unicode
 
@@ -38,6 +38,9 @@ def parse_tender(html):
             for document in documents
         ]
     }
+    gmt = details[7].span.string.split('GMT')[1].split(')')[0]
+    if gmt:
+        tender['deadline'] += timedelta(hours=float(gmt[1:]))
 
     return tender
 

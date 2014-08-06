@@ -4,7 +4,6 @@ from flask.ext.mail import Mail, Message
 from flask import current_app as app
 
 from server_requests import request_document
-from instance.settings import NOTIFY_EMAILS
 
 
 def attach(msg, documents, public, index=None):
@@ -20,7 +19,7 @@ def attach(msg, documents, public, index=None):
 
 
 def send_mail(subject, html_body, public, tenders=None, sender='Eau De Web',
-              recipients=NOTIFY_EMAILS):
+              recipients=app.config.get('NOTIFY_EMAILS', [])):
 
     msg = Message(
         subject=subject,

@@ -1,0 +1,15 @@
+{% extends 'mails/layout.html' %}
+
+{% block content %}
+<h2>There is <strong>1</strong> New Tender available.</h2>
+<h4><a href="{{ url_for('.tenders', _external=True) }}">See the in-site list of all tenders</a></h4>
+
+<ul>
+  <li><b>Title</b>: {{ tender.title }}</li>
+  <li><b>Organization</b>: {{ tender.organization }}</li>
+  <li><b>Published</b>: {{ tender.published }}</li>
+  <li><b>Deadline</b>: {{ tender.deadline }}</li>
+  <li><b>Description</b>: {{ tender.description|safe }}</li>
+  <li><a href="{{ url_for('.tender', tender_id=tender.tender_id, _external=True) }}">See this tender in-site</a></li>
+</ul>
+{% endblock %}

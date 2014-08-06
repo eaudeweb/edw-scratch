@@ -2,8 +2,7 @@ import requests
 import urllib2
 from datetime import datetime
 import json
-
-from scratch import UNSPSCs
+from flask import current_app
 
 
 LIVE_ENDPOINT_URI = 'https://www.ungm.org'
@@ -73,7 +72,7 @@ def get_request(url, public):
     return None
 
 
-def post_request(get_url, payload, headers=HEADERS):
+def post_request(get_url, payload, UNSPSC_category, headers=HEADERS):
     """
     AJAX-like POST request. Does a GET initially to receive cookies that
     are used to the subsequent POST request.
@@ -87,6 +86,9 @@ def post_request(get_url, payload, headers=HEADERS):
             ['{0}={1}'.format(k, v) for k, v in cookies.iteritems()]),
         'Referer': get_url,
     })
+
+    UNSPSCs = current_app.config.get('UNSPSCs', {})
+    payload['UNSPSCs'] = UNSPSCs.get(UNSPSC_category, [])
 
     post_url = get_url + '/Search'
     resp = requests.post(post_url, data=json.dumps(payload), cookies=cookies,
@@ -106,8 +108,7 @@ def request_tenders_list(public):
     payload = PAYLOAD_TENDERS
     today = datetime.now().strftime('%d-%b-%Y')
     payload['DeadlineFrom'] = payload['PublishedTo'] = today
-    payload['UNSPSCs'] = UNSPSCs['tenders']
-    return post_request(url, payload)
+    return post_request(url, payload, 'tenders')
 
 
 def request_winners_list(public):
@@ -116,9 +117,7 @@ def request_winners_list(public):
         url += '/contract_winners.html'
         return get_request(url, public)
 
-    payload = PAYLOAD_WINNERS
-    payload['UNSPSCs'] = UNSPSCs['winners']
-    return post_request(url, payload)
+    return post_request(url, PAYLOAD_WINNERS, 'winners')
 
 
 def request_document(url, public):

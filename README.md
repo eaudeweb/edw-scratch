@@ -25,7 +25,7 @@ be run as an unprivileged user in the product directory::
 4. Create a configuration file::
 
 To set up a configuration file run the following commands and look in
-settings.example for an settings example file::
+settings.example for an settings example file:
 
     mkdir -p instance
     echo '*' >> instance/.gitignore

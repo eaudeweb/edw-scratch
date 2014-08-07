@@ -1,13 +1,14 @@
 {% extends 'mails/layout.html' %}
 
 {% block content %}
-<h2>There is <strong>1</strong> New Contract Award.</h2>
-<h4><a href="{{ url_for('.winners', _external=True) }}">See the in-site list of all contract awards</a></h4>
+<h2><strong>1</strong> New Contract Award.</h2>
 
 <ul>
   <li><b>Title</b>: {{ winner.title }}</li>
   <li><b>Organization</b>: {{ winner.organization }}</li>
-  <li><b>Contract value ($)</b>: {{ winner.value }}</li>
+  <li><b>Contract value ($)</b>: {% if not winner.value %}Unknown{% else %}{{ winner.value }}{% endif %}</li>
   <li><a href="{{ url_for('.tender', tender_id=winner.tender_id, _external=True) }}">See this contract award in-site</a></li>
 </ul>
+</br></br>
+<h4><a href="{{ url_for('.winners', _external=True) }}">See the in-site list of all contract awards</a></h4>
 {% endblock %}

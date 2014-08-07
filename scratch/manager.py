@@ -2,17 +2,18 @@ import pprint
 import urllib
 
 from flask.ext.script import Manager
-from scratch.models import db_manager, last_update, save_tender, save_winner, db
 from scratch.server_requests import (
     get_request_class, PAYLOAD, TENDERS_ENDPOINT_URI, SEARCH_UNSPSCS_URI,
 )
+from scratch.models import (db_manager, last_update, save_tender, save_winner,
+                            db)
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
     parse_UNSPSCs_list,
 )
+from scratch.worker import (get_new_tenders, get_new_winners, send_tenders_mail,
+                            send_winners_mail, add_worker_log)
 from scratch.utils import days_ago
-from scratch.worker import (get_new_tenders, get_new_winners,
-                            send_tenders_mail, send_winners_mail)
 
 
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice/'
@@ -101,6 +102,8 @@ def update(days, public):
 
     send_tenders_mail(new_tenders, request_cls)
     send_winners_mail(new_winners)
+
+    add_worker_log()
 
 
 @utils_manager.option('-t', '--text', dest='text',

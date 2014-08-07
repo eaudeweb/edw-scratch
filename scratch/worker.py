@@ -1,6 +1,8 @@
 from flask import current_app as app
+from datetime import date
 
-from scratch.models import Tender, Winner, save_tender, save_winner, db
+from scratch.models import (Tender, Winner, WorkerLog, save_tender, save_winner,
+                            db)
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
@@ -96,4 +98,10 @@ def send_winners_mail(winners):
 
 def set_notified(tender_or_winner):
     tender_or_winner.notified = True
+    db.session.commit()
+
+
+def add_worker_log():
+    log = WorkerLog(update=date.today())
+    db.session.add(log)
     db.session.commit()

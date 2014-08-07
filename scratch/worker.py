@@ -2,7 +2,6 @@ from exceptions import AttributeError
 
 from sqlalchemy import desc
 from flask import current_app as app
-from flask import render_template
 
 from scratch.models import Tender, Winner, save_tender, save_winner
 from scratch.server_requests import (
@@ -12,7 +11,7 @@ from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
 from scratch.utils import string_to_date, days_ago
-from scratch.mails import send_mail
+from scratch.mails import send_tender_mail, send_winner_mail
 
 
 def get_new_winners(public):
@@ -73,21 +72,11 @@ def send_tenders_mail(new_tenders, public):
         tender_fields['id'] = save_tender(tender_fields)
         tenders.append(tender_fields)
 
-    if len(tenders) == 1:
-        subject = 'UNGM - 1 new tender available'
-        html_body = render_template(
-            'mails/single_tender.html',
-            tender=tenders[0],
-        )
-        send_mail(subject, html_body, public, app.config.get('NOTIFY_EMAILS', []), tenders)
-    elif len(tenders) > 1:
-        subject = 'UNGM - %s new tenders available' % len(tenders)
-        html_body = render_template(
-            'mails/more_tenders.html',
-            tenders=enumerate(tenders),
-            tenders_size=len(tenders)
-        )
-        send_mail(subject, html_body, public, app.config.get('NOTIFY_EMAILS', []),  tenders)
+    for tender in tenders:
+        subject = 'UNGM - New tender available'
+        recipients = app.config.get('NOTIFY_EMAILS', [])
+        sender = 'Eau De Web'
+        send_tender_mail(tender, subject, recipients, sender, public)
 
 
 def send_winners_mail(new_winners, public):
@@ -102,17 +91,8 @@ def send_winners_mail(new_winners, public):
         tender_fields.update(winner_fields)
         winners.append(tender_fields)
 
-    if len(winners) == 1:
-        subject = 'UNGM - 1 new Contract Award'
-        html_body = render_template(
-            'mails/single_winner.html',
-            winner=winners[0],
-        )
-        send_mail(subject, html_body, public, app.config.get('NOTIFY_EMAILS', []))
-    elif len(winners) > 1:
-        subject = 'UNGM - %s new Contract Award' % len(winners)
-        html_body = render_template(
-            'mails/more_winners.html',
-            winners=winners,
-        )
-        send_mail(subject, html_body, public, app.config.get('NOTIFY_EMAILS', []))
+    for winner in winners:
+        subject = 'UNGM - New Contract Award'
+        recipients = app.config.get('NOTIFY_EMAILS', [])
+        sender = 'Eau De Web'
+        send_winner_mail(winner, subject, recipients, sender)

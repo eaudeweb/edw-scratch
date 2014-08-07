@@ -1,40 +1,50 @@
 import smtplib
 
 from flask.ext.mail import Mail, Message
-from flask import current_app as app
+from flask import current_app as app, render_template
 
 from server_requests import request_document
 
 
-def attach(msg, documents, public, index=None):
-    index = '' if index is None else '%s.' % index
+def attach(msg, documents, public):
     for document in documents:
         attachement = request_document(document['download_url'], public)
         if attachement:
             msg.attach(
-                index + '%s' % document['name'].replace(' ', '_'),
+                document['name'].replace(' ', '_'),
                 'application/unknown',
                 attachement
             )
 
 
-def send_mail(subject, html_body, public, recipients, tenders=None,
-              sender='Eau De Web'):
+def send_tender_mail(tender, subject, recipients, sender,  public):
     msg = Message(
         subject=subject,
         recipients=recipients,
-        html=html_body,
+        html=render_template(
+            'mails/single_tender.html',
+            tender=tender,
+        ),
         sender=sender,
     )
-    if not tenders:
-        pass
-    elif len(tenders) == 1:
-        tender = tenders.pop()
-        attach(msg, tender['documents'], public)
-    elif len(tenders) > 1:
-        for (index, tender) in enumerate(tenders):
-            attach(msg, tender['documents'], public, index)
+    attach(msg, tender['documents'], public)
+    send_mail(msg)
 
+
+def send_winner_mail(winner, subject, recipients, sender):
+    msg = Message(
+        subject=subject,
+        recipients=recipients,
+        html=render_template(
+            'mails/single_winner.html',
+            winner=winner,
+        ),
+        sender=sender,
+    )
+    send_mail(msg)
+
+
+def send_mail(msg):
     mail = Mail(app)
     try:
         mail.send(msg)

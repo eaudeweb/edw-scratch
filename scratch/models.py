@@ -86,7 +86,7 @@ def save_tender(tender):
     db.session.commit()
     tender['documents'] = documents
 
-    return tender_entry.id
+    return tender_entry
 
 
 def save_winner(tender_fields, winner_fields):
@@ -101,4 +101,4 @@ def save_winner(tender_fields, winner_fields):
     db.session.add(winner_entry)
     db.session.commit()
 
-    return tender_entry.id
+    return tender_entry

@@ -6,10 +6,10 @@
 <ul>
   <li><b>Title</b>: {{ tender.title }}</li>
   <li><b>Organization</b>: {{ tender.organization }}</li>
-  <li><b>Published</b>: {{ tender.published }}</li>
-  <li><b>Deadline</b>: {{ tender.deadline }}</li>
+  <li><b>Published</b>: {{ tender.published|datetime }}</li>
+  <li><b>Deadline</b>: {{ tender.deadline|datetime|safe }}.&nbsp;&nbsp; <strong>Deadline in: {{ tender.deadline|deadline }}</strong></li>
   <li><b>Description</b>: {{ tender.description|safe }}</li>
-  <li><a href="{{ url_for('.tender', tender_id=tender.tender_id, _external=True) }}">See this tender in-site</a></li>
+  <li><a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See this tender in-site</a></li>
 </ul>
 </br></br>
 <h4><a href="{{ url_for('.tenders', _external=True) }}">See the in-site list of all tenders</a></h4>

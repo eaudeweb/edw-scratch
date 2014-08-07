@@ -7,7 +7,7 @@
   <li><b>Title</b>: {{ winner.title }}</li>
   <li><b>Organization</b>: {{ winner.organization }}</li>
   <li><b>Contract value ($)</b>: {% if not winner.value %}Unknown{% else %}{{ winner.value }}{% endif %}</li>
-  <li><a href="{{ url_for('.tender', tender_id=winner.tender_id, _external=True) }}">See this contract award in-site</a></li>
+  <li><a href="{{ url_for('.tender', tender_id=winner.id, _external=True) }}">See this contract award in-site</a></li>
 </ul>
 </br></br>
 <h4><a href="{{ url_for('.winners', _external=True) }}">See the in-site list of all contract awards</a></h4>

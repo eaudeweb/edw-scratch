@@ -1,9 +1,12 @@
 from sqlalchemy import (
-    Column, Integer, String, Float, Date, DateTime, ForeignKey, Text, Boolean
+    Column, Integer, String, Float, Date, DateTime, ForeignKey, Text, Boolean,
+    desc,
 )
 from flask.ext.script import Manager
 from sqlalchemy.orm import relationship
 from flask.ext.sqlalchemy import SQLAlchemy
+
+from scratch.custom_filters import datetime_filter
 
 
 db_manager = Manager()
@@ -56,9 +59,18 @@ class Winner(db.Model):
         return '%s WON BY %s' % (self.title, self.vendor)
 
 
-@db_manager.command
-def init():
-    db.create_all()
+class WorkerLog(db.Model):
+    __tablename__ = 'worker_log'
+
+    id = Column(Integer, primary_key=True)
+    update = Column(Date)
+
+    def __unicode__(self):
+        return 'Last update on ' % datetime_filter(self.update)
+
+
+def last_update():
+    WorkerLog.query.order_by(desc(WorkerLog.update)).first()
 
 
 def save_tender(tender):

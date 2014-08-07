@@ -63,8 +63,10 @@ def get_new_tenders(last_date, request_cls):
 
     tenders = []
     for new_tender in new_tenders:
-        html_data = request_cls.get_request(new_tender['url'])
+        url = new_tender['url']
+        html_data = request_cls.get_request(url)
         tender_fields = parse_tender(html_data)
+        tender_fields.update({'url': url})
         tender = save_tender(tender_fields)
         tenders.append(tender)
 

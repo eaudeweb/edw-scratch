@@ -18,19 +18,19 @@ def tenders():
     status = request.args.get('status')
     favourite = request.args.get('favourite')
 
-    tenders = Tender.query
+    tenders_qs = Tender.query
     if organization:
-        tenders = tenders.filter_by(organization=organization)
+        tenders_qs = tenders_qs.filter_by(organization=organization)
     if status == 'closed':
-        tenders = tenders.filter(Tender.winner != None)
+        tenders_qs = tenders_qs.filter(Tender.winner != None)
     elif status == 'open':
-        tenders = tenders.filter(Tender.winner == None)
+        tenders_qs = tenders_qs.filter(Tender.winner == None)
     if favourite in ('True', 'False'):
-        tenders = tenders.filter_by(favourite=eval(favourite))
+        tenders_qs = tenders_qs.filter_by(favourite=eval(favourite))
 
     return render_template(
         'tenders.html',
-        tenders=tenders.order_by(desc(Tender.published)).all(),
+        tenders=tenders_qs.order_by(desc(Tender.published)).all(),
         filter_form=TendersFilter(
             organization=organization,
             status=status,
@@ -50,25 +50,25 @@ def winners():
     vendor = request.args.get('vendor')
     value = request.args.get('value')
 
-    winners = Winner.query
+    winners_qs = Winner.query
     if organization:
-        winners = winners.filter(
+        winners_qs = winners_qs.filter(
             Winner.tender.has(organization=organization)
         )
     if vendor:
-        winners = winners.filter_by(vendor=vendor)
+        winners_qs = winners_qs.filter_by(vendor=vendor)
     if value:
         if value == 'max':
-            winners = winners.filter(Winner.value >= MAX)
+            winners_qs = winners_qs.filter(Winner.value >= MAX)
         else:
-            winners = winners.filter(
+            winners_qs = winners_qs.filter(
                 Winner.value >= int(value),
                 Winner.value <= int(value) + STEP
             )
 
     return render_template(
         'winners.html',
-        winners=winners.order_by(desc(Winner.award_date)).all(),
+        winners=winners_qs.order_by(desc(Winner.award_date)).all(),
         filter_form=WinnerFilter(
             organization=organization,
             vendor=vendor,
@@ -80,9 +80,9 @@ def winners():
 
 @views.route('/tender/<tender_id>')
 def tender(tender_id):
-    tender = Tender.query.get(tender_id)
+    tender_object = Tender.query.get(tender_id)
 
-    return render_template('tender.html', tender=tender)
+    return render_template('tender.html', tender=tender_object)
 
 
 @views.route('/search')
@@ -106,7 +106,7 @@ def search():
 
 @views.route('/toggle_favourite/<tender_id>')
 def toggle_favourite(tender_id):
-    tender = Tender.query.get_or_404(tender_id)
-    tender.favourite = not tender.favourite
+    tender_object = Tender.query.get_or_404(tender_id)
+    tender.favourite = not tender_object.favourite
     db.session.commit()
-    return '%s' % tender.favourite
+    return '%s' % tender_object.favourite

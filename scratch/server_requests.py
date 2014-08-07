@@ -128,6 +128,7 @@ class UNGMrequester(Requester):
                              headers=headers)
         if resp.status_code == 200:
             return resp.content
+        return None
 
 
 class LOCALrequester(Requester):

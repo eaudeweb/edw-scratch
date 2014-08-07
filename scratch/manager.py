@@ -3,7 +3,9 @@ import urllib
 
 from flask.ext.script import Manager
 from scratch.models import db_manager, last_update, save_tender, save_winner, db
-from scratch.server_requests import get_request_class, PAYLOAD
+from scratch.server_requests import (
+    get_request_class, PAYLOAD, TENDERS_ENDPOINT_URI, SEARCH_UNSPSCS_URI,
+)
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
     parse_UNSPSCs_list,
@@ -109,9 +111,7 @@ def search_unspscs(text):
     data = urllib.urlencode(payload)
 
     resp = get_request_class().post_request(
-        'https://www.ungm.org/Public/Notice',
-        'https://www.ungm.org/UNSPSC/Search',
-        data,
+        TENDERS_ENDPOINT_URI, SEARCH_UNSPSCS_URI, data,
         content_type='application/x-www-form-urlencoded; charset=UTF-8')
 
     if resp:

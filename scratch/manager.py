@@ -112,6 +112,10 @@ def update(days, public):
 @utils_manager.option('-t', '--text', dest='text',
                       help='Text used to filter UNSPSCs.', required=True)
 def search_unspscs(text):
+    if len(text) < 3:
+        print 'The search text must be at least 3 characters long.'
+        return
+
     payload = PAYLOAD['unspsc']
     payload.update(filter=text)
     data = urllib.urlencode(payload)

@@ -17,10 +17,13 @@ def get_request_class(public=True):
 class Requester(object):
 
     def get_request(self, url):
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            return None
+
         if response.status_code == 200:
             return response.content
-
         return None
 
     def request_document(self, url):
@@ -58,10 +61,13 @@ class UNGMrequester(Requester):
         AJAX-like POST request. Does a GET initially to receive cookies that
         are used to the subsequent POST request.
         """
-        resp = requests.get(get_url)
+        try:
+            resp = requests.get(get_url)
+        except requests.exceptions.ConnectionError:
+            return None
+
         cookies = dict(resp.cookies)
         cookies.update({'UNGM.UserPreferredLanguage': 'en'})
-
         headers.update({
             'Cookie': '; '.join(
                 ['{0}={1}'.format(k, v) for k, v in cookies.iteritems()]),
@@ -71,8 +77,12 @@ class UNGMrequester(Requester):
         if content_type:
             headers.update({'Content-Type': content_type})
 
-        resp = requests.post(post_url, data=data, cookies=cookies,
-                             headers=headers)
+        try:
+            resp = requests.post(post_url, data=data, cookies=cookies,
+                                 headers=headers)
+        except requests.exceptions.ConnectionError:
+            return None
+
         if resp.status_code == 200:
             return resp.content
         return None

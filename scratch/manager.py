@@ -83,4 +83,4 @@ def update(days, public):
     new_winners = get_new_winners(public)
 
     send_tenders_mail(new_tenders, public)
-    send_winners_mail(new_winners, public)
+    send_winners_mail(new_winners)

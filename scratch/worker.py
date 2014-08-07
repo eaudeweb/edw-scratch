@@ -25,10 +25,25 @@ def get_new_winners(public):
     requested_html_winners = request_winners_list(public)
     requested_winners = parse_winners_list(requested_html_winners)
 
-    return filter(
+    new_winners = filter(
         lambda x: (x['reference'], ) not in saved_winners,
         requested_winners
     )
+
+    return [] if not new_winners else get_new_winners_details(new_winners, public)
+
+
+def get_new_winners_details(new_winners, public):
+
+    winners = []
+    for new_winner in new_winners:
+        html_data = get_request(new_winner['url'], public)
+        tender_fields, winner_fields = parse_winner(html_data)
+        tender_fields['id'] = save_winner(tender_fields, winner_fields)
+        tender_fields.update(winner_fields)
+        winners.append(tender_fields)
+
+    return winners
 
 
 def get_new_tenders(days, public):
@@ -52,7 +67,7 @@ def get_new_tenders(days, public):
     requested_html_tenders = request_tenders_list(public)
     extracted_tenders = parse_tenders_list(requested_html_tenders)
 
-    return filter(
+    new_tenders = filter(
         lambda x: (
             string_to_date(x['published']) >= last_date and
             (x['reference'], ) not in last_references
@@ -60,10 +75,12 @@ def get_new_tenders(days, public):
         extracted_tenders
     )
 
+    return [] if not new_tenders else get_new_tenders_details(new_tenders, public)
 
-def send_tenders_mail(new_tenders, public):
+
+def get_new_tenders_details(new_tenders, public):
     if not new_tenders:
-        return
+        return []
 
     tenders = []
     for new_tender in new_tenders:
@@ -72,6 +89,11 @@ def send_tenders_mail(new_tenders, public):
         tender_fields['id'] = save_tender(tender_fields)
         tenders.append(tender_fields)
 
+    return tenders
+
+
+def send_tenders_mail(tenders, public):
+
     for tender in tenders:
         subject = 'UNGM - New tender available'
         recipients = app.config.get('NOTIFY_EMAILS', [])
@@ -79,17 +101,7 @@ def send_tenders_mail(new_tenders, public):
         send_tender_mail(tender, subject, recipients, sender, public)
 
 
-def send_winners_mail(new_winners, public):
-    if not new_winners:
-        return
-
-    winners = []
-    for new_winner in new_winners:
-        html_data = get_request(new_winner['url'], public)
-        tender_fields, winner_fields = parse_winner(html_data)
-        tender_fields['id'] = save_winner(tender_fields, winner_fields)
-        tender_fields.update(winner_fields)
-        winners.append(tender_fields)
+def send_winners_mail(winners):
 
     for winner in winners:
         subject = 'UNGM - New Contract Award'

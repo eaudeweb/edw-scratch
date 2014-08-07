@@ -6,10 +6,10 @@ from flask import current_app as app, render_template
 
 def attach(msg, documents, request_cls):
     for document in documents:
-        attachement = request_cls.request_document(document['download_url'])
+        attachement = request_cls.request_document(document.download_url)
         if attachement:
             msg.attach(
-                document['name'].replace(' ', '_'),
+                document.name.replace(' ', '_'),
                 'application/unknown',
                 attachement
             )
@@ -25,7 +25,7 @@ def send_tender_mail(tender, subject, recipients, sender, request_cls):
         ),
         sender=sender,
     )
-    attach(msg, tender['documents'], request_cls)
+    attach(msg, tender.documents, request_cls)
     return send_mail(msg)
 
 

@@ -35,7 +35,7 @@ def get_new_winners(request_cls):
         tender_fields, winner_fields = parse_winner(html_data)
         tender_fields['id'] = save_winner(tender_fields, winner_fields)
         tender_fields.update(winner_fields)
-        winners.append(tender_fields)
+        winners.append(Tender.query.get(tender_fields['id']))
 
     return winners
 
@@ -68,7 +68,7 @@ def get_new_tenders(last_date, request_cls):
         html_data = request_cls.get_request(new_tender['url'])
         tender_fields = parse_tender(html_data)
         tender_fields['id'] = save_tender(tender_fields)
-        tenders.append(tender_fields)
+        tenders.append(Tender.query.get(tender_fields['id']))
 
     return tenders
 
@@ -82,7 +82,7 @@ def send_tenders_mail(tenders, request_cls):
         success = send_tender_mail(tender, subject, recipients, sender,
                                    request_cls)
         if success:
-            set_notified(Tender.query.get(tender['id']))
+            set_notified(tender)
 
 
 def send_winners_mail(winners):
@@ -93,7 +93,7 @@ def send_winners_mail(winners):
         sender = 'Eau De Web'
         success = send_winner_mail(winner, subject, recipients, sender)
         if success:
-            set_notified(Tender.query.get(winner['id']))
+            set_notified(winner)
 
 
 def set_notified(tender_or_winner):

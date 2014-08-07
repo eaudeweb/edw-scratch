@@ -33,9 +33,20 @@ class Requester(object):
         except urllib2.HTTPError:
             return None
 
+    def request_tenders_list(self):
+        return self.request(self.TENDERS_ENDPOINT_URI)
+
+    def request_winners_list(self):
+        return self.request(self.WINNERS_ENDPOINT_URI)
+
+
 
 class UNGMrequester(Requester):
-    def get_data(self, category):
+    TENDERS_ENDPOINT_URI = TENDERS_ENDPOINT_URI
+    WINNERS_ENDPOINT_URI = WINNERS_ENDPOINT_URI
+
+    def get_data(self, url):
+        category = 'tenders' if 'Notice' in url else 'winners'
         payload = PAYLOAD[category]
         if category == 'tenders':
             today = datetime.now().strftime('%d-%b-%Y')
@@ -43,17 +54,8 @@ class UNGMrequester(Requester):
         payload['UNSPSCs'] = app.config.get('UNSPSCs', {}).get(category, [])
         return json.dumps(payload)
 
-    def request_tenders_list(self):
-        get_url = TENDERS_ENDPOINT_URI
-        post_url = get_url + '/Search'
-        data = self.get_data('tenders')
-        return self.post_request(get_url, post_url, data)
-
-    def request_winners_list(self):
-        get_url = WINNERS_ENDPOINT_URI
-        post_url = get_url + '/Search'
-        data = self.get_data('winners')
-        return self.post_request(get_url, post_url, data)
+    def request(self, url):
+        return self.post_request(url, url + '/Search', self.get_data(url))
 
     def post_request(self, get_url, post_url, data, headers=HEADERS,
                      content_type=None):
@@ -90,24 +92,19 @@ class UNGMrequester(Requester):
 
 class LOCALrequester(Requester):
 
-    def replace_endpoint(self, url):
-        return url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
+    TENDERS_ENDPOINT_URI = TENDERS_ENDPOINT_URI + '/tender_notices'
+    WINNERS_ENDPOINT_URI = WINNERS_ENDPOINT_URI + '/contract_winners'
 
     def get_request(self, url):
-        url = self.replace_endpoint(url) + '.html'
+        url = url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
+        url = url + '.html'
         return super(LOCALrequester, self).get_request(url)
 
-    def request_tenders_list(self):
-        url = TENDERS_ENDPOINT_URI + '/tender_notices'
-        return self.get_request(url)
-
-    def request_winners_list(self):
-        url = WINNERS_ENDPOINT_URI
-        url += '/contract_winners'
+    def request(self, url):
         return self.get_request(url)
 
     def request_document(self, url):
-        url = self.replace_endpoint(url)
+        url = url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
         splitted_url = url.split('?docId=')
         url = splitted_url[0] + '/' + splitted_url[1]
         return super(LOCALrequester, self).request_document(url)

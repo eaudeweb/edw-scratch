@@ -4,14 +4,13 @@ import urllib
 from flask.ext.script import Manager
 from scratch.server_requests import get_request_class
 from scratch.models import (db_manager, last_update, save_tender, save_winner,
-                            db)
+                            db, add_worker_log)
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
     parse_UNSPSCs_list,
 )
 from scratch.worker import (
     get_new_tenders, get_new_winners, send_tenders_mail, send_winners_mail,
-    add_worker_log,
 )
 from scratch.utils import days_ago
 from scratch.common import (

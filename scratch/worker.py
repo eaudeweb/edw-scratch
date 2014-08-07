@@ -1,8 +1,8 @@
 from flask import current_app as app
-from datetime import date
 
-from scratch.models import (Tender, Winner, WorkerLog, save_tender, save_winner,
-                            db)
+from scratch.models import (Tender, Winner, save_tender, save_winner,
+                            set_notified)
+
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
@@ -40,7 +40,6 @@ def get_new_winners(request_cls):
 
 
 def get_new_tenders(last_date, request_cls):
-
     last_references = (
         Tender.query
         .filter(Tender.published >= last_date)
@@ -73,34 +72,20 @@ def get_new_tenders(last_date, request_cls):
 
 
 def send_tenders_mail(tenders, request_cls):
-
     for tender in tenders:
         subject = 'UNGM - New tender available'
         recipients = app.config.get('NOTIFY_EMAILS', [])
         sender = 'Eau De Web'
-        success = send_tender_mail(tender, subject, recipients, sender,
-                                   request_cls)
-        if success:
+        if send_tender_mail(tender, subject, recipients, sender,
+                            request_cls):
             set_notified(tender)
 
 
 def send_winners_mail(winners):
-
     for winner in winners:
         subject = 'UNGM - New Contract Award'
         recipients = app.config.get('NOTIFY_EMAILS', [])
         sender = 'Eau De Web'
-        success = send_winner_mail(winner, subject, recipients, sender)
-        if success:
+        if send_winner_mail(winner, subject, recipients, sender):
             set_notified(winner)
 
-
-def set_notified(tender_or_winner):
-    tender_or_winner.notified = True
-    db.session.commit()
-
-
-def add_worker_log():
-    log = WorkerLog(update=date.today())
-    db.session.add(log)
-    db.session.commit()

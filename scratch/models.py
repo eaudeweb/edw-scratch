@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy import (
     Column, Integer, String, Float, Date, DateTime, ForeignKey, Text, Boolean,
     desc,
@@ -72,7 +73,8 @@ class WorkerLog(db.Model):
 
 
 def last_update():
-    WorkerLog.query.order_by(desc(WorkerLog.update)).first()
+    wl = WorkerLog.query.order_by(desc(WorkerLog.update)).first()
+    return wl.update if wl else None
 
 
 def save_tender(tender):
@@ -102,3 +104,14 @@ def save_winner(tender_fields, winner_fields):
     db.session.commit()
 
     return tender_entry
+
+
+def set_notified(tender_or_winner):
+    tender_or_winner.notified = True
+    db.session.commit()
+
+
+def add_worker_log():
+    log = WorkerLog(update=date.today())
+    db.session.add(log)
+    db.session.commit()

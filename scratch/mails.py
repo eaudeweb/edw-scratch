@@ -26,7 +26,7 @@ def send_tender_mail(tender, subject, recipients, sender, request_cls):
         sender=sender,
     )
     attach(msg, tender['documents'], request_cls)
-    send_mail(msg)
+    return send_mail(msg)
 
 
 def send_winner_mail(winner, subject, recipients, sender):
@@ -39,13 +39,15 @@ def send_winner_mail(winner, subject, recipients, sender):
         ),
         sender=sender,
     )
-    send_mail(msg)
+    return send_mail(msg)
 
 
 def send_mail(msg):
     mail = Mail(app)
     try:
         mail.send(msg)
+        return True
     except smtplib.SMTPAuthenticationError:
         print 'Wrong username/password. ' + \
             'Please review their values in settings.py'
+        return False

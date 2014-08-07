@@ -1,6 +1,6 @@
 from flask import current_app as app
 
-from scratch.models import Tender, Winner, save_tender, save_winner
+from scratch.models import Tender, Winner, save_tender, save_winner, db
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
@@ -24,11 +24,8 @@ def get_new_winners(request_cls):
         requested_winners
     )
 
-    return [] if not new_winners \
-        else get_new_winners_details(new_winners, request_cls)
-
-
-def get_new_winners_details(new_winners, request_cls):
+    if not new_winners:
+        return []
 
     winners = []
     for new_winner in new_winners:
@@ -61,11 +58,8 @@ def get_new_tenders(last_date, request_cls):
         extracted_tenders
     )
 
-    return [] if not new_tenders \
-        else get_new_tenders_details(new_tenders, request_cls)
-
-
-def get_new_tenders_details(new_tenders, request_cls):
+    if not new_tenders:
+        return []
 
     tenders = []
     for new_tender in new_tenders:
@@ -83,7 +77,10 @@ def send_tenders_mail(tenders, request_cls):
         subject = 'UNGM - New tender available'
         recipients = app.config.get('NOTIFY_EMAILS', [])
         sender = 'Eau De Web'
-        send_tender_mail(tender, subject, recipients, sender, request_cls)
+        success = send_tender_mail(tender, subject, recipients, sender,
+                                   request_cls)
+        if success:
+            set_notified(Tender.query.get(tender['id']))
 
 
 def send_winners_mail(winners):
@@ -92,4 +89,11 @@ def send_winners_mail(winners):
         subject = 'UNGM - New Contract Award'
         recipients = app.config.get('NOTIFY_EMAILS', [])
         sender = 'Eau De Web'
-        send_winner_mail(winner, subject, recipients, sender)
+        success = send_winner_mail(winner, subject, recipients, sender)
+        if success:
+            set_notified(Tender.query.get(winner['id']))
+
+
+def set_notified(tender_or_winner):
+    tender_or_winner.notified = True
+    db.session.commit()

@@ -26,6 +26,7 @@ class Tender(db.Model):
     deadline = Column(DateTime, nullable=True)
     description = Column(Text(5095), nullable=True)
     favourite = Column(Boolean, default=False)
+    notified = Column(Boolean, default=False)
 
     documents = relationship("TenderDocument", backref="tender")
     winner = relationship("Winner", backref="tender")
@@ -52,6 +53,7 @@ class Winner(db.Model):
     vendor = Column(String(255), nullable=True)
     value = Column(Float, nullable=True)
     award_date = Column(Date)
+    notified = Column(Boolean, default=False)
 
     tender_id = Column(ForeignKey('tender.id'), nullable=True)
 

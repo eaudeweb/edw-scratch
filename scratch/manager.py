@@ -1,13 +1,14 @@
 import pprint
 
 from flask.ext.script import Manager
-from scratch.models import db_manager, save_tender, save_winner
+from scratch.models import db_manager, last_update, save_tender, save_winner, db
 from scratch.server_requests import get_request_class
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
 from scratch.worker import (get_new_tenders, get_new_winners, send_tenders_mail,
                             send_winners_mail)
+from scratch.utils import days_ago
 
 
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice/'
@@ -28,6 +29,11 @@ def create_manager(app):
     manager.add_command('worker', worker_manager)
 
     return manager
+
+
+@db_manager.command
+def init():
+    db.create_all()
 
 
 @scrap_manager.command
@@ -84,7 +90,9 @@ def add_winner(filename, public=False):
 def update(days, public):
 
     request_cls = get_request_class(public)
-    new_tenders = get_new_tenders(days, request_cls)
+    last_date = last_update() or days_ago(days)
+
+    new_tenders = get_new_tenders(last_date, request_cls)
     new_winners = get_new_winners(request_cls)
 
     send_tenders_mail(new_tenders, request_cls)

@@ -1,13 +1,10 @@
-from exceptions import AttributeError
-
-from sqlalchemy import desc
 from flask import current_app as app
 
 from scratch.models import Tender, Winner, save_tender, save_winner
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner
 )
-from scratch.utils import string_to_date, days_ago
+from scratch.utils import string_to_date
 from scratch.mails import send_tender_mail, send_winner_mail
 
 
@@ -44,16 +41,7 @@ def get_new_winners_details(new_winners, request_cls):
     return winners
 
 
-def get_new_tenders(days, request_cls):
-    try:
-        last_date = (
-            Tender.query
-            .order_by(desc(Tender.published))
-            .first()
-            .published
-        )
-    except AttributeError:
-        last_date = days_ago(int(days))
+def get_new_tenders(last_date, request_cls):
 
     last_references = (
         Tender.query

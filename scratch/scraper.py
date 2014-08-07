@@ -106,3 +106,19 @@ def parse_winners_list(html):
     ]
 
     return winners_list
+
+
+def parse_UNSPSCs_list(html):
+    """Parse html containing UNSPSCs and return a list of dictionaries
+    containing UNSPSC id and name.
+    """
+    soup = BeautifulSoup(html)
+    nodes = soup.find_all('span', 'nodeName')
+    UNSPSCs = []
+    for node in nodes:
+        if node.find_previous_sibling():
+            UNSPSCs.append({
+                'id': node.get('data-nodeid'),
+                'name': node.text,
+            })
+    return UNSPSCs

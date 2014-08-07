@@ -1,14 +1,16 @@
 import pprint
+import urllib
 
 from flask.ext.script import Manager
 from scratch.models import db_manager, last_update, save_tender, save_winner, db
-from scratch.server_requests import get_request_class
+from scratch.server_requests import get_request_class, PAYLOAD
 from scratch.scraper import (
-    parse_tenders_list, parse_winners_list, parse_tender, parse_winner
+    parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
+    parse_UNSPSCs_list,
 )
-from scratch.worker import (get_new_tenders, get_new_winners, send_tenders_mail,
-                            send_winners_mail)
 from scratch.utils import days_ago
+from scratch.worker import (get_new_tenders, get_new_winners,
+                            send_tenders_mail, send_winners_mail)
 
 
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice/'
@@ -18,6 +20,7 @@ WINNERS_ENDPOINT_URI = 'https://www.ungm.org/Public/ContractAward/'
 scrap_manager = Manager()
 add_manager = Manager()
 worker_manager = Manager()
+utils_manager = Manager()
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -27,6 +30,7 @@ def create_manager(app):
     manager.add_command('db', db_manager)
     manager.add_command('add', add_manager)
     manager.add_command('worker', worker_manager)
+    manager.add_command('utils', utils_manager)
 
     return manager
 
@@ -84,11 +88,9 @@ def add_winner(filename, public=False):
     save_winner(tender_fields, winner_fields)
 
 
-
 @worker_manager.option('-d', '--days', dest='days', default=30)
 @worker_manager.option('-p', '--public', dest='public', default=False)
 def update(days, public):
-
     request_cls = get_request_class(public)
     last_date = last_update() or days_ago(days)
 
@@ -97,3 +99,26 @@ def update(days, public):
 
     send_tenders_mail(new_tenders, request_cls)
     send_winners_mail(new_winners)
+
+
+@utils_manager.option('-t', '--text', dest='text',
+                      help='Text used to filter UNSPSCs.', required=True)
+def search_unspscs(text):
+    payload = PAYLOAD['unspsc']
+    payload.update(filter=text)
+    data = urllib.urlencode(payload)
+
+    resp = get_request_class().post_request(
+        'https://www.ungm.org/Public/Notice',
+        'https://www.ungm.org/UNSPSC/Search',
+        data,
+        content_type='application/x-www-form-urlencoded; charset=UTF-8')
+
+    if resp:
+        UNSPSCs = parse_UNSPSCs_list(resp)
+        if not UNSPSCs:
+            print 'Search returned no results.'
+        for UNSPSC in UNSPSCs:
+            print 'ID: {id}    NAME: {name}'.format(**UNSPSC)
+    else:
+        print 'POST request failed.'

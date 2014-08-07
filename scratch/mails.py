@@ -3,12 +3,10 @@ import smtplib
 from flask.ext.mail import Mail, Message
 from flask import current_app as app, render_template
 
-from server_requests import request_document
 
-
-def attach(msg, documents, public):
+def attach(msg, documents, request_cls):
     for document in documents:
-        attachement = request_document(document['download_url'], public)
+        attachement = request_cls.request_document(document['download_url'])
         if attachement:
             msg.attach(
                 document['name'].replace(' ', '_'),
@@ -17,7 +15,7 @@ def attach(msg, documents, public):
             )
 
 
-def send_tender_mail(tender, subject, recipients, sender,  public):
+def send_tender_mail(tender, subject, recipients, sender, request_cls):
     msg = Message(
         subject=subject,
         recipients=recipients,
@@ -27,7 +25,7 @@ def send_tender_mail(tender, subject, recipients, sender,  public):
         ),
         sender=sender,
     )
-    attach(msg, tender['documents'], public)
+    attach(msg, tender['documents'], request_cls)
     send_mail(msg)
 
 

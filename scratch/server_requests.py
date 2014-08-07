@@ -4,9 +4,8 @@ from datetime import datetime
 import json
 from flask import current_app
 
-
-LIVE_ENDPOINT_URI = 'https://www.ungm.org'
 LOCAL_ENDPOINT_URI = 'http://localhost:8080'
+LIVE_ENDPOINT_URI = 'https://www.ungm.org'
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice'
 WINNERS_ENDPOINT_URI = 'https://www.ungm.org/Public/ContractAward'
 
@@ -57,77 +56,87 @@ PAYLOAD_WINNERS = {
 }
 
 
-def replace_endpoint(url):
-    return url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
+def get_request_class(public):
+    return UNGMrequester() if public else LOCALrequester()
 
 
-def get_request(url, public):
-    if not public:
-        url = replace_endpoint(url)
-        url += '.html'
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.content
+class Requester(object):
 
-    return None
+    def get_request(self, url):
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.content
 
+        return None
 
-def post_request(get_url, payload, UNSPSC_category, headers=HEADERS):
-    """
-    AJAX-like POST request. Does a GET initially to receive cookies that
-    are used to the subsequent POST request.
-    """
-    resp = requests.get(get_url)
-    cookies = dict(resp.cookies)
-    cookies.update({'UNGM.UserPreferredLanguage': 'en'})
-
-    headers.update({
-        'Cookie': ';'.join(
-            ['{0}={1}'.format(k, v) for k, v in cookies.iteritems()]),
-        'Referer': get_url,
-    })
-
-    UNSPSCs = current_app.config.get('UNSPSCs', {})
-    payload['UNSPSCs'] = UNSPSCs.get(UNSPSC_category, [])
-
-    post_url = get_url + '/Search'
-    resp = requests.post(post_url, data=json.dumps(payload), cookies=cookies,
-                         headers=headers)
-    if resp.status_code == 200:
-        return resp.content
-
-    return None
+    def request_document(self, url):
+        try:
+            response = urllib2.urlopen(url)
+            return response.read()
+        except urllib2.HTTPError:
+            return None
 
 
-def request_tenders_list(public):
-    url = TENDERS_ENDPOINT_URI
-    if not public:
-        url += '/tender_notices'
-        return get_request(url, public)
+class UNGMrequester(Requester):
 
-    payload = PAYLOAD_TENDERS
-    today = datetime.now().strftime('%d-%b-%Y')
-    payload['DeadlineFrom'] = payload['PublishedTo'] = today
-    return post_request(url, payload, 'tenders')
+    def request_tenders_list(self):
+        url = TENDERS_ENDPOINT_URI
+        payload = PAYLOAD_TENDERS
+        today = datetime.now().strftime('%d-%b-%Y')
+        payload['DeadlineFrom'] = payload['PublishedTo'] = today
+        return self.post_request(url, payload, 'tenders')
+
+    def request_winners_list(self):
+        url = WINNERS_ENDPOINT_URI
+        return self.post_request(url, PAYLOAD_WINNERS, 'winners')
+
+    def post_request(self, get_url, payload, UNSPSC_category, headers=HEADERS):
+        """
+        AJAX-like POST request. Does a GET initially to receive cookies that
+        are used to the subsequent POST request.
+        """
+        resp = requests.get(get_url)
+        cookies = dict(resp.cookies)
+        cookies.update({'UNGM.UserPreferredLanguage': 'en'})
+
+        headers.update({
+            'Cookie': ';'.join(
+                ['{0}={1}'.format(k, v) for k, v in cookies.iteritems()]),
+            'Referer': get_url,
+        })
+
+        UNSPSCs = current_app.config.get('UNSPSCs', {})
+        payload['UNSPSCs'] = UNSPSCs.get(UNSPSC_category, [])
+
+        post_url = get_url + '/Search'
+        resp = requests.post(post_url, data=json.dumps(payload),
+                             cookies=cookies, headers=headers)
+        if resp.status_code == 200:
+            return resp.content
+
+        return None
 
 
-def request_winners_list(public):
-    url = WINNERS_ENDPOINT_URI
-    if not public:
+class LOCALrequester(Requester):
+
+    def replace_endpoint(self, url):
+        return url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
+
+    def get_request(self, url):
+        url = self.replace_endpoint(url) + '.html'
+        return super(LOCALrequester, self).get_request(url)
+
+    def request_tenders_list(self):
+        url = TENDERS_ENDPOINT_URI + '/tender_notices'
+        return self.get_request(url)
+
+    def request_winners_list(self):
+        url = WINNERS_ENDPOINT_URI
         url += '/contract_winners'
-        return get_request(url, public)
+        return self.get_request(url)
 
-    return post_request(url, PAYLOAD_WINNERS, 'winners')
-
-
-def request_document(url, public):
-    if not public:
-        url = replace_endpoint(url)
+    def request_document(self, url):
+        url = self.replace_endpoint(url)
         splitted_url = url.split('?docId=')
         url = splitted_url[0] + '/' + splitted_url[1]
-
-    try:
-        response = urllib2.urlopen(url)
-        return response.read()
-    except urllib2.HTTPError:
-        return None
+        return super(LOCALrequester, self).request_document(url)

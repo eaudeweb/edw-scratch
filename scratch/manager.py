@@ -45,14 +45,16 @@ def init():
 @scrap_manager.command
 def parse_tender_html(filename, public=False):
     request_cls = get_request_class(public)
-    data = request_cls.get_request(TENDERS_ENDPOINT_URI + filename)
+    url = '/'.join((TENDERS_ENDPOINT_URI, filename))
+    data = request_cls.get_request(url)
     pp.pprint(parse_tender(data))
 
 
 @scrap_manager.command
 def parse_winner_html(filename, public=False):
     request_cls = get_request_class(public)
-    data = request_cls.get_request(WINNERS_ENDPOINT_URI + filename)
+    url = '/'.join((WINNERS_ENDPOINT_URI, filename))
+    data = request_cls.get_request(url)
     tender_fields, winner_fields = parse_winner(data)
     tender_fields.update(winner_fields)
     pp.pprint(tender_fields)
@@ -75,7 +77,8 @@ def parse_winners_list_html(public=False):
 @add_manager.command
 def add_tender(filename, public=False):
     request_cls = get_request_class(public)
-    html_data = request_cls.get_request(TENDERS_ENDPOINT_URI + filename)
+    url = '/'.join((TENDERS_ENDPOINT_URI, filename))
+    html_data = request_cls.get_request(url)
     tender = parse_tender(html_data)
 
     save_tender(tender)
@@ -84,7 +87,8 @@ def add_tender(filename, public=False):
 @add_manager.command
 def add_winner(filename, public=False):
     request_cls = get_request_class(public)
-    html_data = request_cls.get_request(WINNERS_ENDPOINT_URI + filename)
+    url = '/'.join((WINNERS_ENDPOINT_URI, filename))
+    html_data = request_cls.get_request(url)
     tender_fields, winner_fields = parse_winner(html_data)
 
     save_winner(tender_fields, winner_fields)

@@ -98,6 +98,7 @@ def save_winner(tender_fields, winner_fields):
         tender_entry = Tender(**tender_fields)
         db.session.add(tender_entry)
         db.session.commit()
+        set_notified(tender_entry)
     else:
         tender_entry = tender
     winner_entry = Winner(tender=tender_entry, **winner_fields)

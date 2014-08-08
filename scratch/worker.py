@@ -36,7 +36,7 @@ def get_new_winners(request_cls):
         html_data = request_cls.get_request(new_winner['url'])
         tender_fields, winner_fields = parse_winner(html_data)
         tender = save_winner(tender_fields, winner_fields)
-        winners.append(tender)
+        winners.append(tender.winner[0])
 
     return winners
 
@@ -103,4 +103,3 @@ def send_winners_mail(winners):
         sender = 'Eau De Web'
         if send_winner_mail(winner, subject, recipients, sender):
             set_notified(winner)
-

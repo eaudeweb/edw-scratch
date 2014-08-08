@@ -1,21 +1,25 @@
 import smtplib
+import os
 
 from flask.ext.mail import Mail, Message
 from flask import current_app as app, render_template
 
 
-def attach(msg, documents, request_cls):
-    for document in documents:
-        attachement = request_cls.request_document(document.download_url)
-        if attachement:
-            msg.attach(
-                document.name.replace(' ', '_'),
-                'application/unknown',
-                attachement
-            )
+def attach(msg, tender_id):
+    path = os.path.join(app.config['FILES_DIR'], str(tender_id))
+    if not os.path.exists(path):
+        return
+    for file_name in os.listdir(path):
+        document = open(os.path.join(path, file_name), 'rb')
+        msg.attach(
+            file_name.replace(' ', '_'),
+            'application/unknown',
+            document.read()
+        )
+        document.close()
 
 
-def send_tender_mail(tender, subject, recipients, sender, request_cls):
+def send_tender_mail(tender, subject, recipients, sender):
     msg = Message(
         subject=subject,
         recipients=recipients,
@@ -25,7 +29,7 @@ def send_tender_mail(tender, subject, recipients, sender, request_cls):
         ),
         sender=sender,
     )
-    attach(msg, tender.documents, request_cls)
+    attach(msg, tender.id)
     return send_mail(msg)
 
 

@@ -87,13 +87,12 @@ def save_document(document, filename, dirname):
         doc_file.write(document)
 
 
-def send_tenders_mail(tenders, request_cls):
+def send_tenders_mail(tenders):
     for tender in tenders:
         subject = 'UNGM - New tender available'
         recipients = app.config.get('NOTIFY_EMAILS', [])
         sender = 'Eau De Web'
-        if send_tender_mail(tender, subject, recipients, sender,
-                            request_cls):
+        if send_tender_mail(tender, subject, recipients, sender):
             set_notified(tender)
 
 

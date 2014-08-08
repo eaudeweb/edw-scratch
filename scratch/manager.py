@@ -102,7 +102,7 @@ def update(days, public):
     new_tenders = get_new_tenders(last_date, request_cls)
     new_winners = get_new_winners(request_cls)
 
-    send_tenders_mail(new_tenders, request_cls)
+    send_tenders_mail(new_tenders)
     send_winners_mail(new_winners)
 
     add_worker_log()

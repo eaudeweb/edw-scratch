@@ -4,7 +4,7 @@ import urllib
 from flask.ext.script import Manager
 from scratch.server_requests import get_request_class
 from scratch.models import (db_manager, last_update, save_tender, save_winner,
-                            db, add_worker_log)
+                            db, add_worker_log, Tender, Winner)
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
     parse_UNSPSCs_list,
@@ -131,3 +131,11 @@ def search_unspscs(text):
             print 'ID: {id}    NAME: {name}'.format(**UNSPSC)
     else:
         print 'POST request failed.'
+
+
+@worker_manager.command
+def notify():
+    tenders = Tender.query.filter_by(notified=False)
+    winners = Winner.query.filter_by(notified=False)
+    send_tenders_mail(tenders)
+    send_winners_mail(winners)

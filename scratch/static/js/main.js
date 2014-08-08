@@ -54,3 +54,8 @@ $(function() {
     }
   });
 });
+
+$(function() {
+  $('.send-to-archive').on('click', function(evt) {
+  });
+});

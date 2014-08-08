@@ -29,6 +29,7 @@ class Tender(db.Model):
     favourite = Column(Boolean, default=False)
     notified = Column(Boolean, default=False)
     url = Column(String(255))
+    hidden = Column(Boolean, default=False)
 
     documents = relationship("TenderDocument", backref="tender")
     winner = relationship("Winner", backref="tender")

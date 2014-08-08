@@ -37,8 +37,9 @@
         <td class='text-center'>
           {{ tender.notice_type }}<br/>
           {% if not tender.winner %}
-            <a class="tenders-list" href="{{ url_for('.toggle_favourite', tender_id=tender.id) }}"><i style="color: orange" class="{{ tender|favourite }}"></i></a>
+            <a class="tenders-list" href="{{ url_for('.toggle', attribute='favourite', tender_id=tender.id) }}"><i style="color: orange" class="{{ tender|favourite }}"></i></a>
           {% endif %}
+          <a class="send-to-archive" href="{{ url_for('.toggle', attribute='hidden', tender_id=tender.id) }}"><i class="fa fa-lg fa-trash-o"></i></a>
         </td>
       </tr>
     {% endfor %}

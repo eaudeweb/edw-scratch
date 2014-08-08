@@ -18,7 +18,7 @@ def tenders():
     status = request.args.get('status')
     favourite = request.args.get('favourite')
 
-    tenders_qs = Tender.query
+    tenders_qs = Tender.query.filter_by(hidden=False)
     if organization:
         tenders_qs = tenders_qs.filter_by(organization=organization)
     if status == 'closed':
@@ -50,7 +50,9 @@ def winners():
     vendor = request.args.get('vendor')
     value = request.args.get('value')
 
-    winners_qs = Winner.query
+    winners_qs = Winner.query.filter(
+        Winner.tender.has(hidden=False)
+    )
     if organization:
         winners_qs = winners_qs.filter(
             Winner.tender.has(organization=organization)
@@ -104,9 +106,11 @@ def search():
     )
 
 
-@views.route('/toggle_favourite/<tender_id>')
-def toggle_favourite(tender_id):
+@views.route('/toggle/<attribute>/<tender_id>')
+def toggle(tender_id, attribute):
+    if not attribute in ('favourite', 'hidden'):
+        return ''
     tender_object = Tender.query.get_or_404(tender_id)
-    tender.favourite = not tender_object.favourite
+    setattr(tender_object, attribute, not getattr(tender_object, attribute))
     db.session.commit()
-    return '%s' % tender_object.favourite
+    return '{0}'.format(getattr(tender_object, attribute))

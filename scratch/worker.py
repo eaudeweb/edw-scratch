@@ -1,3 +1,5 @@
+import os
+
 from flask import current_app as app
 
 from scratch.models import (Tender, Winner, save_tender, save_winner,
@@ -68,9 +70,21 @@ def get_new_tenders(last_date, request_cls):
         tender_fields = parse_tender(html_data)
         tender_fields.update({'url': url})
         tender = save_tender(tender_fields)
+        for document in tender_fields['documents']:
+            doc = request_cls.request_document(document['download_url'])
+            if doc:
+                save_document(doc, document['name'], str(tender.id))
         tenders.append(tender)
 
     return tenders
+
+
+def save_document(document, filename, dirname):
+    path = os.path.join(app.config['FILES_DIR'], dirname)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(os.path.join(path, filename), "wb") as doc_file:
+        doc_file.write(document)
 
 
 def send_tenders_mail(tenders, request_cls):

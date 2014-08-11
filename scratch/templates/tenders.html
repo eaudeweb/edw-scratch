@@ -39,7 +39,7 @@
           {% if not tender.winner %}
             <a class="tenders-list" href="{{ url_for('.toggle', attribute='favourite', tender_id=tender.id) }}"><i style="color: orange" class="{{ tender|favourite }}"></i></a>
           {% endif %}
-          <a class="send-to-archive" href="{{ url_for('.toggle', attribute='hidden', tender_id=tender.id) }}"><i class="fa fa-lg fa-trash-o"></i></a>
+          <a class="archive-list" href="{{ url_for('.toggle', attribute='hidden', tender_id=tender.id) }}"><i class="fa fa-lg fa-trash-o"></i></a>
         </td>
       </tr>
     {% endfor %}

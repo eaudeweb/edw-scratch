@@ -13,7 +13,7 @@
           <small>{% if tender.favourite %}Remove from favourites{% else %}Mark as favourite{% endif %}</small>
           </i>
         </a>
-        <a class="send-to-archive" href="{{ url_for('.toggle', attribute='hidden', tender_id=tender.id) }}">
+        <a class="archive-single" href="{{ url_for('.toggle', attribute='hidden', tender_id=tender.id) }}">
           <i class="fa fa-lg fa-trash-o">
           <small>{% if tender.hidden %}Set tender as active{% else %}Delete this tender{% endif %}</small>
           </i>

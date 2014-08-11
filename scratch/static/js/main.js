@@ -56,6 +56,34 @@ $(function() {
 });
 
 $(function() {
-  $('.send-to-archive').on('click', function(evt) {
+  $('.archive-single, .archive-list').on('click', function(evt) {
+    evt.preventDefault();
+    var url = $(this).attr('href');
+    $.ajax({
+      type: "GET",
+      url: url,
+      dataType: "script",
+      success: function() {}
+    });
+  });
+});
+
+$(function() {
+  $('.archive-list').on('click', function (evt) {
+    evt.preventDefault();
+    $(this).parent().parent().remove();
+  });
+});
+
+$(function() {
+  $('.archive-single').on('click', function (evt) {
+    evt.preventDefault();
+    var text = $(this).find('small').text();
+    if(text == 'Delete this tender') {
+      $(this).find('small').text('Set tender as active')
+    }
+    else {
+      $(this).find('small').text('Delete this tender')
+    }
   });
 });

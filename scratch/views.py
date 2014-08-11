@@ -1,112 +1,143 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import render_template, request
+from flask.views import View
 from sqlalchemy import desc
 
 from scratch.models import Tender, Winner, db
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
-views = Blueprint(__name__, 'views')
+class GenericView(View):
+
+    def render_template(self, context):
+        return render_template(self.template_name, **context)
+
+    def dispatch_request(self, *args, **kwargs):
+        context = self.get_context(*args, **kwargs)
+        return self.render_template(context)
 
 
-@views.route('/')
-@views.route('/tenders')
-def tenders():
-    if 'reset' in request.args:
-        return redirect(url_for('.tenders'))
+class TendersFilterView(GenericView):
+    def get_context(self):
+        tenders = self.get_objects()
 
-    organization = request.args.get('organization')
-    status = request.args.get('status')
-    favourite = request.args.get('favourite')
+        if 'reset' in request.args:
+            return {
+                'tenders': tenders.all(),
+                'filter_form': TendersFilter(),
+                'reset': False,
+            }
 
-    tenders_qs = Tender.query.filter_by(hidden=False)
-    if organization:
-        tenders_qs = tenders_qs.filter_by(organization=organization)
-    if status == 'closed':
-        tenders_qs = tenders_qs.filter(Tender.winner != None)
-    elif status == 'open':
-        tenders_qs = tenders_qs.filter(Tender.winner == None)
-    if favourite in ('True', 'False'):
-        tenders_qs = tenders_qs.filter_by(favourite=eval(favourite))
+        organization = request.args.get('organization')
+        status = request.args.get('status')
+        favourite = request.args.get('favourite')
 
-    return render_template(
-        'tenders.html',
-        tenders=tenders_qs.order_by(desc(Tender.published)).all(),
-        filter_form=TendersFilter(
-            organization=organization,
-            status=status,
-            favourite=favourite,
-        ),
-        reset=organization or status or favourite
-    )
+        if organization:
+            tenders = tenders.filter_by(organization=organization)
+        if status == 'closed':
+            tenders = tenders.filter(Tender.winner != None)
+        elif status == 'open':
+            tenders = tenders.filter(Tender.winner == None)
+        if favourite in ('True', 'False'):
+            tenders = tenders.filter_by(favourite=eval(favourite))
+        return {
+            'tenders': tenders.all(),
+            'filter_form': TendersFilter(
+                organization=organization,
+                status=status,
+                favourite=favourite,
+            ),
+            'reset': organization or status or favourite,
+        }
 
 
-@views.route('/winners')
-def winners():
+class TendersView(TendersFilterView):
+    template_name = 'tenders.html'
 
-    if 'reset' in request.args:
-        return redirect(url_for('.winners'))
+    def get_objects(self):
+        return Tender.query.filter_by(hidden=False).order_by(desc(Tender.published))
 
-    organization = request.args.get('organization')
-    vendor = request.args.get('vendor')
-    value = request.args.get('value')
 
-    winners_qs = Winner.query.filter(
-        Winner.tender.has(hidden=False)
-    )
-    if organization:
-        winners_qs = winners_qs.filter(
-            Winner.tender.has(organization=organization)
-        )
-    if vendor:
-        winners_qs = winners_qs.filter_by(vendor=vendor)
-    if value:
-        if value == 'max':
-            winners_qs = winners_qs.filter(Winner.value >= MAX)
-        else:
-            winners_qs = winners_qs.filter(
-                Winner.value >= int(value),
-                Winner.value <= int(value) + STEP
+class WinnersView(GenericView):
+    template_name = 'winners.html'
+
+    def get_context(self):
+        winners = self.get_objects()
+        if 'reset' in request.args:
+            return {
+                'winners': winners.all(),
+                'filter_form': WinnerFilter(),
+                'reset': False,
+            }
+
+        organization = request.args.get('organization')
+        vendor = request.args.get('vendor')
+        value = request.args.get('value')
+
+        if organization:
+            winners = winners.filter(
+                Winner.tender.has(organization=organization)
             )
+        if vendor:
+            winners = winners.filter_by(vendor=vendor)
+        if value:
+            if value == 'max':
+                winners = winners.filter(Winner.value >= MAX)
+            else:
+                winners = winners.filter(
+                    Winner.value >= int(value),
+                    Winner.value <= int(value) + STEP
+                )
 
-    return render_template(
-        'winners.html',
-        winners=winners_qs.order_by(desc(Winner.award_date)).all(),
-        filter_form=WinnerFilter(
-            organization=organization,
-            vendor=vendor,
-            value=value,
-        ),
-        reset=organization or vendor or value
-    )
+        return {
+            'winners': winners.order_by(desc(Winner.award_date)).all(),
+            'filter_form': WinnerFilter(
+                organization=organization,
+                vendor=vendor,
+                value=value,
+            ),
+            'reset': organization or vendor or value
+        }
 
-
-@views.route('/tender/<tender_id>')
-def tender(tender_id):
-    tender_object = Tender.query.get(tender_id)
-
-    return render_template('tender.html', tender=tender_object)
-
-
-@views.route('/search')
-def search():
-    query = request.args.get('query')
-
-    def _get_results(m):
-        return m.query.whoosh_search(query).all()
-
-    ids = set(
-        [x.id for x in _get_results(Tender)] +
-        [x.tender_id for x in _get_results(Winner)]
-    )
-
-    return render_template(
-        'search.html',
-        query=query,
-        results=Tender.query.filter(Tender.id.in_(ids)).all(),
-    )
+    def get_objects(self):
+        return Winner.query.filter(
+            Winner.tender.has(hidden=False)
+        ).order_by(desc(Winner.award_date))
 
 
-@views.route('/toggle/<attribute>/<tender_id>')
+class SearchView(GenericView):
+    template_name = 'search.html'
+
+    def get_context(self):
+        query = request.args.get('query')
+        context = {
+            'query': query,
+            'results': self.get_objects(query),
+        }
+        return context
+
+    def get_objects(self, query):
+        def _get_results(m):
+            return m.query.whoosh_search(query).all()
+
+        ids = set(
+            [x.id for x in _get_results(Tender)] +
+            [x.tender_id for x in _get_results(Winner)]
+        )
+
+        return Tender.query.filter(Tender.id.in_(ids)).all()
+
+
+class TenderView(GenericView):
+    template_name = 'tender.html'
+
+    def get_context(self, **kwargs):
+        tender_id = kwargs['tender_id']
+        return {'tender': self.get_object(tender_id)}
+
+    def get_object(self, tender_id):
+        return Tender.query.get(tender_id)
+
+
 def toggle(tender_id, attribute):
     if not attribute in ('favourite', 'hidden'):
         return ''

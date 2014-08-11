@@ -7,8 +7,6 @@ from flask.ext.script import Manager
 from sqlalchemy.orm import relationship
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from scratch.custom_filters import datetime_filter
-
 
 db_manager = Manager()
 db = SQLAlchemy()

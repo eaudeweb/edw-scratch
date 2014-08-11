@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block title %}Archive{% endblock %}
+
+{% block content %}
+
+  {% include 'filters/tenders_filters.html' %}
+
+  <div class="row">
+    <div class="col-sm-1 bg-info" style="width: 20px; height: 20px; border: 1px solid black"></div>
+    <div class="col-sm-1">Recents</div>
+    <div class="col-sm-1 bg-warning" style="width: 20px; height: 20px; border: 1px solid black"></div>
+    <div class="col-sm-1">Favourites</div>
+    <div class="col-sm-1 bg-danger" style="width: 20px; height: 20px; border: 1px solid black"></div>
+    <div class="col-sm-1">Closed</div>
+  </div>
+
+  <table class='table table-condensed table-hover'>
+    <thead>
+    <tr>
+      <th class='text-center col-sm-3'>Title</th>
+      <th class='text-center col-sm-2'>UN Organization</th>
+      <th class='text-center col-sm-1'>Deadline in</th>
+      <th class='text-center col-sm-1'>Published</th>
+      <th class='text-center col-sm-1'>Type of notice</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for tender in tenders %}
+      <tr class={{ tender|color }}>
+        <td class='text-center'>
+          <a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a>
+        </td>
+        <td class='text-center'>{{ tender.organization }}</td>
+        <td class='text-center'>{{ tender.deadline|deadline(True)|safe }}</td>
+        <td class='text-center'>{{ tender.published|datetime }}</td>
+        <td class='text-center'>
+          {{ tender.notice_type }}<br/>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 $(function() {
-  $('.tenders-list, .single-tender').on('click', function(evt) {
+  $('.favourite-single, .favourite-list').on('click', function(evt) {
     evt.preventDefault();
     var star = $(this);
     var url = star.attr('href');
@@ -21,7 +21,7 @@ $(function() {
 });
 
 $(function() {
-  $('.tenders-list').on('click', function (evt) {
+  $('.favourite-list').on('click', function (evt) {
     evt.preventDefault();
     var row = $(this).parent().parent();
     var row_class = row.attr('class');
@@ -35,7 +35,7 @@ $(function() {
 });
 
 $(function() {
-  $('.single-tender').on('click', function(evt) {
+  $('.favourite-single').on('click', function(evt) {
     evt.preventDefault();
     var text = $(this).find('small').text();
     if(text == 'Mark as favourite') {

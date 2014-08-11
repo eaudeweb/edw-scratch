@@ -8,7 +8,7 @@
     <tr>
       <th>Favourite</th>
       <td>
-        <a class="single-tender" href="{{ url_for('.toggle', attribute='favourite', tender_id=tender.id) }}">
+        <a class="favourite-single" href="{{ url_for('.toggle', attribute='favourite', tender_id=tender.id) }}">
           <i style="color: orange" class="{{ tender|favourite }}">
           <small>{% if tender.favourite %}Remove from favourites{% else %}Mark as favourite{% endif %}</small>
           </i>

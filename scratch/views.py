@@ -54,7 +54,20 @@ class TendersView(TendersFilterView):
     template_name = 'tenders.html'
 
     def get_objects(self):
-        return Tender.query.filter_by(hidden=False).order_by(desc(Tender.published))
+        return (Tender.query
+                .filter_by(hidden=False)
+                .order_by(desc(Tender.published))
+        )
+
+
+class ArchiveView(TendersFilterView):
+    template_name = 'archive.html'
+
+    def get_objects(self):
+        return (Tender.query
+                .filter_by(hidden=True)
+                .order_by(desc(Tender.published))
+        )
 
 
 class WinnersView(GenericView):

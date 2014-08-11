@@ -70,9 +70,6 @@ class WorkerLog(db.Model):
     id = Column(Integer, primary_key=True)
     update = Column(Date)
 
-    def __unicode__(self):
-        return 'Last update on ' % datetime_filter(self.update)
-
 
 def last_update():
     wl = WorkerLog.query.order_by(desc(WorkerLog.update)).first()

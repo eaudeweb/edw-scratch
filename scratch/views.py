@@ -2,7 +2,7 @@ from flask import render_template, request
 from flask.views import View
 from sqlalchemy import desc
 
-from scratch.models import Tender, Winner, db
+from scratch.models import Tender, Winner, WorkerLog, db
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
@@ -149,6 +149,23 @@ class TenderView(GenericView):
 
     def get_object(self, tender_id):
         return Tender.query.get(tender_id)
+
+
+class OverviewView(GenericView):
+    template_name = 'overview.html'
+
+    def get_context(self):
+        from flask import current_app as app
+        return {
+            'last_updates': [d[0] for d in (
+                WorkerLog.query
+                .order_by(desc(WorkerLog.update))
+                .with_entities(WorkerLog.update)
+                .limit(15)
+                .all()
+            )],
+            'emails': app.config['NOTIFY_EMAILS'],
+        }
 
 
 def toggle(tender_id, attribute):

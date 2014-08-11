@@ -7,7 +7,7 @@ from scratch.custom_filters import (
 )
 from scratch.models import Tender, Winner, db
 from scratch.views import (TenderView, TendersView, WinnersView, SearchView,
-                           ArchiveView, toggle)
+                           ArchiveView, OverviewView, toggle)
 
 
 def create_app():
@@ -29,5 +29,6 @@ def create_app():
     app.add_url_rule('/search/', view_func=SearchView.as_view('search'))
     app.add_url_rule('/tender/<tender_id>',
                      view_func=TenderView.as_view('tender'))
+    app.add_url_rule('/overview/', view_func=OverviewView.as_view('overview'))
     app.add_url_rule('/toggle/<attribute>/<tender_id>', view_func=toggle)
     return app

@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block title %}Settings overview{% endblock %}
+
+{% block content %}
+  <h4>List of mails to be notified about the news:</h4>
+  <ol>
+  {% for email in emails %}
+    <li>{{ email }}</li>
+  {% endfor %}
+  </ol>
+
+  <br/>
+
+  <h4>Last timestamps when UNGM was scraped:</h4>
+  <ul>
+  {% for update in last_updates %}
+    <li>{{ update|datetime }}</li>
+  {% endfor %}
+  </ul>
+
+{% endblock %}

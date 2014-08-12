@@ -97,7 +97,7 @@ def add_winner(filename, public=False):
 @worker_manager.option('-p', '--public', dest='public', default=False)
 def update(days, public):
     request_cls = get_request_class(public)
-    last_date = last_update() or days_ago(days)
+    last_date = last_update() or days_ago(int(days))
 
     new_tenders = get_new_tenders(last_date, request_cls)
     new_winners = get_new_winners(request_cls)

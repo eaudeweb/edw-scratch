@@ -40,7 +40,6 @@ class Requester(object):
         return self.request(self.WINNERS_ENDPOINT_URI)
 
 
-
 class UNGMrequester(Requester):
     TENDERS_ENDPOINT_URI = TENDERS_ENDPOINT_URI
     WINNERS_ENDPOINT_URI = WINNERS_ENDPOINT_URI
@@ -97,7 +96,7 @@ class LOCALrequester(Requester):
 
     def get_request(self, url):
         url = url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
-        url = url + '.html'
+        url += '.html'
         return super(LOCALrequester, self).get_request(url)
 
     def request(self, url):

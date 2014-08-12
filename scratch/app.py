@@ -2,11 +2,13 @@ from flask import Flask
 import flask.ext.whooshalchemy as whooshalchemy
 from flask.ext.assets import Environment, Bundle
 from scratch.custom_filters import (
-    datetime_filter, get_color_class, get_favorite_class, time_to_deadline
+    datetime_filter, get_color_class, get_favorite_class, time_to_deadline,
 )
 from scratch.models import Tender, Winner, db
-from scratch.views import (TenderView, TendersView, WinnersView, SearchView,
-                           ArchiveView, OverviewView, toggle)
+from scratch.views import (
+    TenderView, TendersView, WinnersView, SearchView, ArchiveView, OverviewView,
+    toggle, homepage,
+)
 from scratch.authentication import login_manager, login, logout, auth
 
 _BUNDLE_CSS = (
@@ -35,6 +37,7 @@ def create_app():
     app.jinja_env.filters['favourite'] = get_favorite_class
     app.jinja_env.filters['deadline'] = time_to_deadline
     db.init_app(app)
+    app.add_url_rule('/', view_func=homepage)
     app.add_url_rule('/tenders/', view_func=TendersView.as_view('tenders'))
     app.add_url_rule('/archive/', view_func=ArchiveView.as_view('archive'))
     app.add_url_rule('/winners/', view_func=WinnersView.as_view('winners'))

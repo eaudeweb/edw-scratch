@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from flask.views import View
 from sqlalchemy import desc
 
@@ -175,3 +175,7 @@ def toggle(tender_id, attribute):
     setattr(tender_object, attribute, not getattr(tender_object, attribute))
     db.session.commit()
     return '{0}'.format(getattr(tender_object, attribute))
+
+
+def homepage():
+    return redirect(url_for('.tenders'))

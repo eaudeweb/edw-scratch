@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+  {% assets "css" %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}">
+  {% endassets %}
+</head>
+
+<body>
+  <div class="container">
+
+    <form class="form-signin" role="form" method="POST">
+      <h2 class="form-signin-heading">Please sign in</h2>
+      <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+      <input type="password" name="password" class="form-control" placeholder="Password" required>
+      <button class="btn btn-lg btn-primary btn-block" type="submit" name="login">Log in</button>
+    </form>
+
+    {% if error %}
+      </br>
+      <div role="alert" class="alert alert-danger">
+        <span class="glyphicon glyphicon-warning-sign">Wrong username or password.</span>
+      </div>
+    {% endif %}
+
+  </div>
+</body>
+</html>

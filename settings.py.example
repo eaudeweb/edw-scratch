@@ -27,3 +27,8 @@ UNSPSCs = {
     'tenders': [],
     'winners': [],
 }
+
+USERNAME = 'edw'
+PASSWORD = 'edw'
+
+SECRET_KEY = 'knsdkf309120dskfllkl312kj'

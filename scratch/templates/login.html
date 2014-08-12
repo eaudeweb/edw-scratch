@@ -1,14 +1,6 @@
-<!doctype html>
-<html>
-<head>
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-  {% assets "css" %}
-    <link rel="stylesheet" href="{{ ASSET_URL }}">
-  {% endassets %}
-</head>
-
-<body>
+{% extends 'layout.html' %}
+{% block header %}{% endblock %}
+{% block content %}
   <div class="container">
 
     <form class="form-signin" role="form" method="POST">
@@ -26,5 +18,4 @@
     {% endif %}
 
   </div>
-</body>
-</html>
+{% endblock %}

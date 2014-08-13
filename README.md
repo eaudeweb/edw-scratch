@@ -1,13 +1,48 @@
 ungm-scraper
 ============
 
+System prerequisites
+--------------------
+
+These packages should be installed as superuser (root).
+
+
+###Debian based systems###
+
+Install these before setting up an environment:
+
+apt-get install python-setuptools python-dev python-virtualenv git
+
+###RHEL based systems###
+
+Install Python2.7: [https://gist.github.com/androane/8f0f7eb77824f63dd2f8](https://gist.github.com/androane/8f0f7eb77824f63dd2f8)
+
+yum install git
+
+
+Product directory
+-----------------
+
+Create the product directory:
+
+    mkdir -p /var/local/scratch
+    mkdir /var/local/scratch/logs
+
+Create a new user:
+
+    adduser edw
+
+Change the product directory's owner:
+
+    chown edw:edw /var/local/scratch -R
+
 
 Install dependencies
 --------------------
 We should use Virtualenv for isolated environments. The following commands will
 be run as an unprivileged user in the product directory:
 
-Clone the repository::
+Clone the repository:
 
     git clone git@bitbucket.org:edw_pure/ungm-scraper.git
 
@@ -19,8 +54,7 @@ Create & activate a virtual environment:
 
 Install dependencies:
 
-    pip install -r requirements-dev.txt
-
+    pip install -r requirements-dep.txt
 
 Create a configuration file:
 
@@ -30,6 +64,10 @@ for an settings example file:
     mkdir -p instance
     echo '*' >> instance/.gitignore
     touch instance/settings.py
+    
+Initialize the database:
+
+    ./manage.py db init
 
 
 Management commands

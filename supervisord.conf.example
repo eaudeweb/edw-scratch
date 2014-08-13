@@ -12,8 +12,8 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 serverurl=unix:///tmp/supervisor.sock
 
 [program:flask]
-directory=%(here)s/flask/
-command=%(here)s/sandbox/bin/waitress-serve --port 5000 --call scratch.app:create_app
+directory=%(here)s/
+command=%(here)s/sandbox/bin/waitress-serve --call scratch.app:create_app
 environment=PYTHONPATH=%(here)s/sandbox/
 redirect_stderr = true
 stdout_logfile = %(here)s/logs/%(program_name)s.log

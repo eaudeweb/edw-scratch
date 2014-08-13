@@ -11,13 +11,13 @@ These packages should be installed as superuser (root).
 
 Install these before setting up an environment:
 
-apt-get install python-setuptools python-dev python-virtualenv git
+    apt-get install python-setuptools python-dev python-virtualenv git
 
 ###RHEL based systems###
 
 Install Python2.7: [https://gist.github.com/androane/8f0f7eb77824f63dd2f8](https://gist.github.com/androane/8f0f7eb77824f63dd2f8)
 
-yum install git
+    yum install git
 
 
 Product directory

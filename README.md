@@ -108,8 +108,6 @@ notifications to all the addresses specified in settings['NOTIFY_EMAILS']
 
     ./manage.py worker update
 
-...
-
 Run a local server:
 
     ./manage.py runserver

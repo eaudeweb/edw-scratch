@@ -3,14 +3,17 @@ import urllib
 
 from flask.ext.script import Manager
 from scratch.server_requests import get_request_class
-from scratch.models import (db_manager, last_update, save_tender, save_winner,
-                            db, add_worker_log, Tender, Winner)
+from scratch.models import (
+    db_manager, last_update, save_tender, save_winner, db, add_worker_log,
+    Tender, Winner,
+)
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
     parse_UNSPSCs_list,
 )
 from scratch.worker import (
     get_new_tenders, get_new_winners, send_tenders_mail, send_winners_mail,
+    scrap_favorites, send_updates_mail,
 )
 from scratch.utils import days_ago
 from scratch.common import (
@@ -139,3 +142,10 @@ def notify():
     winners = Winner.query.filter_by(notified=False)
     send_tenders_mail(tenders)
     send_winners_mail(winners)
+
+
+@worker_manager.option('-p', '--public', dest='public', default=False)
+def update_favorites(public=False):
+    request_cls = get_request_class(public)
+    changed_tenders = scrap_favorites(request_cls)
+    send_updates_mail(changed_tenders)

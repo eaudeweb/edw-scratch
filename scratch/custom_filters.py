@@ -33,7 +33,7 @@ def get_color_class(tender, class_value=''):
         return class_value + 'bg-danger'
     if tender.favourite:
         return class_value + 'bg-warning'
-    if tender.published > days_ago(21):
+    if tender.published > days_ago(7):
         return class_value + 'bg-info'
     return class_value
 

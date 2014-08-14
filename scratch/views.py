@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for
 from flask.views import View
 from sqlalchemy import desc
 
-from scratch.models import Tender, Winner, WorkerLog, db
+from scratch.models import Tender, Winner, WorkerLog, db, update_tender
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
@@ -172,9 +172,9 @@ def toggle(tender_id, attribute):
     if not attribute in ('favourite', 'hidden'):
         return ''
     tender_object = Tender.query.get_or_404(tender_id)
-    setattr(tender_object, attribute, not getattr(tender_object, attribute))
-    db.session.commit()
-    return '{0}'.format(getattr(tender_object, attribute))
+    value = getattr(tender_object, attribute)
+    update_tender(tender_object, attribute, not value)
+    return '{0}'.format(value)
 
 
 def homepage():

@@ -113,3 +113,8 @@ def add_worker_log():
     log = WorkerLog(update=date.today())
     db.session.add(log)
     db.session.commit()
+
+
+def update_tender(tender, attribute, value):
+    setattr(tender, attribute, value)
+    db.session.commit()

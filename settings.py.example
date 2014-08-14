@@ -32,3 +32,6 @@ USERNAME = 'edw'
 PASSWORD = 'edw'
 
 SECRET_KEY = 'knsdkf309120dskfllkl312kj'
+
+#ROMANIA GMT
+GMT = +2

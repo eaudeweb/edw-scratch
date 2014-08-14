@@ -5,12 +5,13 @@ from flask.ext.mail import Mail, Message
 from flask import current_app as app, render_template
 
 
-def attach(msg, tender_id):
+def attach(msg, tender_id, new_docs=None):
     path = os.path.join(app.config['FILES_DIR'], str(tender_id))
     if not os.path.exists(path):
         return
     for file_name in os.listdir(path):
-        document = open(os.path.join(path, file_name), 'rb')
+        if new_docs is None or file_name in new_docs:
+            document = open(os.path.join(path, file_name), 'rb')
         msg.attach(
             file_name.replace(' ', '_'),
             'application/unknown',
@@ -43,6 +44,23 @@ def send_winner_mail(winner, subject, recipients, sender):
         ),
         sender=sender,
     )
+    return send_mail(msg)
+
+
+def send_update_mail(tender, changes, documents, subject, recipients, sender):
+    msg = Message(
+        subject=subject,
+        recipients=recipients,
+        html=render_template(
+            'mails/tender_update.html',
+            tender=tender,
+            changes=changes,
+            documents=True if documents else False
+        ),
+        sender=sender
+    )
+    attach(msg, tender.id, documents)
+
     return send_mail(msg)
 
 

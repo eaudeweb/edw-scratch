@@ -1,0 +1,18 @@
+{% extends 'mails/layout.html' %}
+
+{% block content %}
+<h2>A tender has been updated.</h2>
+
+There are new changes in:
+<ul>
+  {% for attribute, values in changes.iteritems() %}
+		<li>
+		  <strong>{{ attribute }}</strong>
+		</li>
+	{% endfor %}
+  {% if documents %}New documents available. See attachments{% endif %}
+</ul>
+<h4><a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See this tender in-site</a></h4>
+<br/>
+<h4><a href="{{ url_for('.tenders', _external=True) }}">See the in-site list of all tenders</a></h4>
+{% endblock %}

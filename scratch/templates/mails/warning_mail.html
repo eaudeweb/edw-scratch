@@ -1,0 +1,14 @@
+{% extends 'mails/layout.html' %}
+
+{% block content %}
+  Error in <strong>{{ func_name }}</strong>:
+	<ul>
+		<li>
+			Type: <strong>{{ exception_type }}</strong>
+	  </li>
+		<li>
+			Message: <strong>{{ exception_message }}</strong>
+	  </li>
+	</ul>
+	{% if url %}The url from which was raised the error is <strong>{{ url }}</strong>{% endif %}
+{% endblock %}

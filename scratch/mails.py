@@ -64,6 +64,23 @@ def send_update_mail(tender, changes, documents, subject, recipients, sender):
     return send_mail(msg)
 
 
+def send_warning_mail(e, func_name, url=None):
+    msg = Message(
+        subject='Error while parsing',
+        recipients=app.config['DEVELOPERS_EMAILS'],
+        html=render_template(
+            'mails/warning_mail.html',
+            url=url,
+            func_name=func_name,
+            exception_type=type(e),
+            exception_message=e.message,
+        ),
+        sender='Eau De Web'
+    )
+
+    return send_mail(msg)
+
+
 def send_mail(msg):
     mail = Mail(app)
     try:

@@ -26,22 +26,43 @@ _BUNDLE_JS = (
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
+    app.secret_key = app.config['SECRET_KEY']
+    app.config.from_pyfile('settings.py')
 
+    _configure_assets(app)
+    _configure_whoosh(app)
+    _configure_filters(app)
+    _configure_routes(app)
+    _configure_uploads(app)
+
+    app.register_blueprint(auth)
+    login_manager.init_app(app)
+    db.init_app(app)
+    return app
+
+
+def _configure_assets(app):
     assets = Environment(app)
     css = Bundle(*_BUNDLE_CSS, output='gen/static.css')
     js = Bundle(*_BUNDLE_JS, output='gen/static.js')
     assets.register('all_js', js)
     assets.register('all_css', css)
 
+
+def _configure_whoosh(app):
     whooshalchemy.whoosh_index(app, Tender)
     whooshalchemy.whoosh_index(app, Winner)
-    app.config.from_pyfile('settings.py')
+
+
+def _configure_filters(app):
     app.jinja_env.filters['datetime'] = datetime_filter
     app.jinja_env.filters['color'] = get_color_class
     app.jinja_env.filters['favourite'] = get_favorite_class
     app.jinja_env.filters['deadline'] = time_to_deadline
     app.jinja_env.filters['filename'] = get_filename
-    db.init_app(app)
+
+
+def _configure_routes(app):
     app.add_url_rule('/', view_func=homepage)
     app.add_url_rule('/tenders/', view_func=TendersView.as_view('tenders'))
     app.add_url_rule('/archive/', view_func=ArchiveView.as_view('archive'))
@@ -53,12 +74,6 @@ def create_app():
     app.add_url_rule('/toggle/<attribute>/<tender_id>', view_func=toggle)
     app.add_url_rule('/login/', methods=["GET", "POST"], view_func=login)
     app.add_url_rule('/logout/', view_func=logout)
-
-    app.register_blueprint(auth)
-    app.secret_key = app.config['SECRET_KEY']
-    login_manager.init_app(app)
-    _configure_uploads(app)
-    return app
 
 
 def _configure_uploads(app):

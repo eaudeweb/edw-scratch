@@ -26,8 +26,8 @@ def create_app():
     assets = Environment(app)
     css = Bundle(*_BUNDLE_CSS, output='gen/static.css')
     js = Bundle(*_BUNDLE_JS, output='gen/static.js')
-    assets.register('main_js', js)
-    assets.register('css', css)
+    assets.register('all_js', js)
+    assets.register('all_css', css)
 
     whooshalchemy.whoosh_index(app, Tender)
     whooshalchemy.whoosh_index(app, Winner)

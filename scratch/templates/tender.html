@@ -57,7 +57,7 @@
       <td><ol>
         {% for document in tender.documents %}
           <li>
-            <a href='{{ document.download_url }}'>{{ document.name }}</a>
+          	<a href="{{ tender.id|filename(document.name) }}">{{ document.name }}</a>
           </li>
         {% endfor %}
       </ol></td>

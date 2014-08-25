@@ -1,8 +1,12 @@
+import os
+
+from werkzeug import SharedDataMiddleware
 from flask import Flask
 import flask.ext.whooshalchemy as whooshalchemy
 from flask.ext.assets import Environment, Bundle
 from scratch.custom_filters import (
     datetime_filter, get_color_class, get_favorite_class, time_to_deadline,
+    get_filename,
 )
 from scratch.models import Tender, Winner, db
 from scratch.views import (
@@ -36,6 +40,7 @@ def create_app():
     app.jinja_env.filters['color'] = get_color_class
     app.jinja_env.filters['favourite'] = get_favorite_class
     app.jinja_env.filters['deadline'] = time_to_deadline
+    app.jinja_env.filters['filename'] = get_filename
     db.init_app(app)
     app.add_url_rule('/', view_func=homepage)
     app.add_url_rule('/tenders/', view_func=TendersView.as_view('tenders'))
@@ -52,4 +57,13 @@ def create_app():
     app.register_blueprint(auth)
     app.secret_key = app.config['SECRET_KEY']
     login_manager.init_app(app)
+    _configure_uploads(app)
     return app
+
+
+def _configure_uploads(app):
+    files_path = os.path.join(app.instance_path, 'files')
+    app.add_url_rule('/static/files/<filename>', 'files', build_only=True)
+    app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+        '/static/files': files_path
+    })

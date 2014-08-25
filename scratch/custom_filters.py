@@ -2,6 +2,8 @@ from datetime import datetime, date
 
 from utils import days_ago
 
+from flask import url_for
+
 
 def time_to_deadline(d, breakline=False):
     if d is None:
@@ -40,3 +42,13 @@ def get_color_class(tender, class_value=''):
 
 def get_favorite_class(tender):
     return "fa fa-lg fa-star" if tender.favourite else "fa fa-lg fa-star-o"
+
+
+def get_filename(tender_id, name):
+    return url_for(
+        'files',
+        filename='{folder}/{doc_name}'.format(
+            folder=tender_id,
+            doc_name=name
+        )
+    )

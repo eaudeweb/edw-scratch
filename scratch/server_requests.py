@@ -1,3 +1,5 @@
+from random import randint
+from time import sleep
 import requests
 import urllib2
 from datetime import datetime
@@ -14,8 +16,16 @@ def get_request_class(public=True):
     return UNGMrequester() if public else LOCALrequester()
 
 
+def random_sleeper(func):
+    def inner(self, *args, **kwargs):
+        sleep(randint(2, 5))
+        return func(self, *args, **kwargs)
+    return inner
+
+
 class Requester(object):
 
+    @random_sleeper
     def get_request(self, url):
         try:
             response = requests.get(url)
@@ -26,6 +36,7 @@ class Requester(object):
             return response.content
         return None
 
+    @random_sleeper
     def request_document(self, url):
         try:
             response = urllib2.urlopen(url)
@@ -50,12 +61,13 @@ class UNGMrequester(Requester):
         if category == 'tenders':
             today = datetime.now().strftime('%d-%b-%Y')
             payload['DeadlineFrom'] = payload['PublishedTo'] = today
-        payload['UNSPSCs'] = app.config.get('UNSPSCs', {}).get(category, [])
+        payload['UNSPSCs'] = app.config.get('UNSPSC', {}).get(category, [])
         return json.dumps(payload)
 
     def request(self, url):
         return self.post_request(url, url + '/Search', self.get_data(url))
 
+    @random_sleeper
     def post_request(self, get_url, post_url, data, headers=HEADERS,
                      content_type=None):
         """
@@ -79,6 +91,7 @@ class UNGMrequester(Requester):
             headers.update({'Content-Type': content_type})
 
         try:
+            sleep(randint(2, 5))
             resp = requests.post(post_url, data=data, cookies=cookies,
                                  headers=headers)
         except requests.exceptions.ConnectionError:

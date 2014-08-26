@@ -61,7 +61,8 @@ class UNGMrequester(Requester):
         if category == 'tenders':
             today = datetime.now().strftime('%d-%b-%Y')
             payload['DeadlineFrom'] = payload['PublishedTo'] = today
-        payload['UNSPSCs'] = app.config.get('UNSPSC', {}).get(category, [])
+        payload['UNSPSCs'] = app.config.get('UNSPSC_CODES', {})\
+            .get(category, [])
         return json.dumps(payload)
 
     def request(self, url):

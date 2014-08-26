@@ -3,20 +3,51 @@
 {% block title %}Settings overview{% endblock %}
 
 {% block content %}
-  <h4>List of mails to be notified about the news:</h4>
+  <h4>List of mails to be notified about the tender news:</h4>
   <ol>
-  {% for email in emails %}
+  {% for email in notify_emails %}
+    <li>{{ email }}</li>
+  {% endfor %}
+  </ol>
+
+	<br/>
+
+	<h4>List of developer mails to be notified when scraping crushes/fails:</h4>
+	<ol>
+  {% for email in developers_emails %}
     <li>{{ email }}</li>
   {% endfor %}
   </ol>
 
   <br/>
 
-  <h4>Last timestamps when UNGM was scraped:</h4>
-  <ul>
+	<h4>Last timestamps when UNGM was scraped:</h4>
+	<ul>
   {% for update in last_updates %}
     <li>{{ update|datetime }}</li>
   {% endfor %}
   </ul>
+
+	<br/>
+
+	<h4>Tender categories scraped, expressed as codes:</h4>
+	<ol>
+    {% for code in UNSPSC_CODES.tenders %}
+      <li>{{ code }}</li>
+    {% endfor %}
+	</ol>
+
+	<br/>
+
+	<h4>Winner categories scraped, expressed as codes:</h4>
+	<ol>
+    {% for code in UNSPSC_CODES.winners%}
+      <li>{{ code }}</li>
+    {% endfor %}
+	</ol>
+
+	<br/>
+
+	<h4>All deadlines are expressed relative to <b>GMT {{ gmt }}</b></h4>
 
 {% endblock %}

@@ -1,5 +1,3 @@
-import os
-
 from flask import current_app as app
 
 from scratch.models import (
@@ -9,7 +7,7 @@ from scratch.models import (
 from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
 )
-from scratch.utils import string_to_date
+from scratch.utils import string_to_date, save_file
 from scratch.mails import (
     send_tender_mail, send_winner_mail, send_update_mail, send_warning_mail,
 )
@@ -100,11 +98,7 @@ def save_document(document, dirname, request_cls):
     doc = request_cls.request_document(document['download_url'])
     if doc:
         filename = document['name']
-        path = os.path.join(app.config['FILES_DIR'], dirname)
-        if not os.path.exists(path):
-            os.makedirs(path)
-        with open(os.path.join(path, filename), "wb") as doc_file:
-            doc_file.write(doc)
+        save_file(dirname, filename, doc)
 
 
 def send_tenders_mail(tenders):

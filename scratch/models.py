@@ -1,7 +1,7 @@
 from datetime import date
 from sqlalchemy import (
     Column, Integer, String, Float, Date, DateTime, ForeignKey, Text, Boolean,
-    desc,
+    Enum, desc,
 )
 from flask.ext.script import Manager
 from sqlalchemy.orm import relationship
@@ -28,6 +28,7 @@ class Tender(db.Model):
     notified = Column(Boolean, default=False)
     url = Column(String(255))
     hidden = Column(Boolean, default=False)
+    source = Column(Enum('UNGM', 'TED'))
 
     documents = relationship("TenderDocument", backref="tender")
     winner = relationship("Winner", backref="tender")
@@ -67,15 +68,21 @@ class WorkerLog(db.Model):
 
     id = Column(Integer, primary_key=True)
     update = Column(Date)
+    source = Column(Enum('UNGM', 'TED'))
 
 
-def last_update():
-    wl = WorkerLog.query.order_by(desc(WorkerLog.update)).first()
-    return wl.update if wl else None
+def last_update(source):
+    worker_log = (
+        WorkerLog.query
+        .filter_by(source=source)
+        .order_by(desc(WorkerLog.update))
+        .first()
+    )
+    return worker_log.update if worker_log else None
 
 
 def save_tender(tender):
-    documents = tender.pop('documents')
+    documents = tender.pop('documents', [])
     tender_entry = Tender(**tender)
     db.session.add(tender_entry)
     db.session.commit()
@@ -109,8 +116,8 @@ def set_notified(tender_or_winner):
     db.session.commit()
 
 
-def add_worker_log():
-    log = WorkerLog(update=date.today())
+def add_worker_log(source, new_date=None):
+    log = WorkerLog(source=source, update=new_date or date.today())
     db.session.add(log)
     db.session.commit()
 

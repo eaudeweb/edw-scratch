@@ -38,3 +38,8 @@ SECRET_KEY = 'knsdkf309120dskfllkl312kj'
 
 #ROMANIA GMT
 GMT = +2
+
+TED_USERNAME = ''
+TED_PASSWORD = ''
+
+CPV_CODES = []

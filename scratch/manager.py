@@ -19,6 +19,7 @@ from scratch.utils import days_ago
 from scratch.common import (
     TENDERS_ENDPOINT_URI, WINNERS_ENDPOINT_URI, SEARCH_UNSPSCS_URI, PAYLOAD,
 )
+from scratch.ted_worker import TEDWorker, TEDParser
 
 
 scrap_manager = Manager()
@@ -100,7 +101,7 @@ def add_winner(filename, public=False):
 @worker_manager.option('-p', '--public', dest='public', default=False)
 def update(days, public):
     request_cls = get_request_class(public)
-    last_date = last_update() or days_ago(int(days))
+    last_date = last_update('UNGM') or days_ago(int(days))
 
     new_tenders = get_new_tenders(last_date, request_cls)
     new_winners = get_new_winners(request_cls)
@@ -108,7 +109,17 @@ def update(days, public):
     send_tenders_mail(new_tenders)
     send_winners_mail(new_winners)
 
-    add_worker_log()
+    add_worker_log('UNGM')
+
+
+@worker_manager.command
+def update_ted():
+    w = TEDWorker()
+    w.download_latest()
+    w.extract_archives()
+
+    p = TEDParser(w.path, w.folder_names)
+    p.parce_notices()
 
 
 @utils_manager.option('-t', '--text', dest='text',

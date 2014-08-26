@@ -23,6 +23,7 @@ def parse_tender(html):
     documents = soup.find_all('div', 'docslist')[0].find_all('div', 'filterDiv')
     description = soup.find_all('div', CSS_DESCRIPTION)
     tender = {
+        'source': 'UNGM',
         'notice_type': to_unicode(details[0].span.string),
         'title': to_unicode(details[2].span.string),
         'organization': to_unicode(details[3].span.string),
@@ -43,7 +44,7 @@ def parse_tender(html):
     gmt = details[7].span.string.split('GMT')[1].split(')')[0]
     if gmt:
         tender['deadline'] -= timedelta(hours=float(gmt[1:]))
-        tender['deadline'] += timedelta(hours=app.config['GMT'])
+        tender['deadline'] += timedelta(hours=app.config.get('GMT', '+2'))
 
     return tender
 

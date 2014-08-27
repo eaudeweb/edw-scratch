@@ -30,7 +30,7 @@ class TEDWorker(object):
 
     def _initialize_session(self):
         session = requests.Session()
-        resp = session.get(self.HOMEPAGE_URL)
+        session.get(self.HOMEPAGE_URL)
 
         data = {'action': 'gp'}
         additional_params = {'pid': 'secured'}
@@ -97,7 +97,7 @@ class TEDParser(object):
         self.path = path or get_archives_path()
         self.folder_names = folder_names
 
-    def _parce_notice(self, content):
+    def _parse_notice(self, content):
         soup = BeautifulSoup(content)
 
         cpv = soup.find('original_cpv').get('code')
@@ -124,12 +124,12 @@ class TEDParser(object):
 
         return tender
 
-    def parce_notices(self):
+    def parse_notices(self):
         for folder in self.folder_names:
             for xml_file in os.listdir(os.path.join(self.path, folder)):
                 file_path = os.path.join(self.path, folder, xml_file)
                 with open(file_path, 'r') as f:
-                    tender = self._parce_notice(f.read())
+                    tender = self._parse_notice(f.read())
                     if tender:
                         save_tender(tender)
                 os.remove(file_path)

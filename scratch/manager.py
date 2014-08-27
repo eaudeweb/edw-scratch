@@ -117,7 +117,7 @@ def update_ted():
     w.extract_archives()
 
     p = TEDParser(w.path, w.folder_names)
-    p.parce_notices()
+    p.parse_notices()
 
 
 @utils_manager.option('-t', '--text', dest='text',

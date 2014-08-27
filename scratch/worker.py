@@ -30,14 +30,10 @@ def get_new_winners(request_cls):
     if not new_winners:
         return []
 
-    winners = []
     for new_winner in new_winners:
         html_data = request_cls.get_request(new_winner['url'])
         tender_fields, winner_fields = parse_winner(html_data)
-        tender = save_winner(tender_fields, winner_fields)
-        winners.append(tender.winner[0])
-
-    return winners
+        save_winner(tender_fields, winner_fields)
 
 
 def get_new_tenders(last_date, request_cls):
@@ -62,7 +58,6 @@ def get_new_tenders(last_date, request_cls):
     if not new_tenders:
         return []
 
-    tenders = []
     for new_tender in new_tenders:
         url = new_tender['url']
         html_data = request_cls.get_request(url)
@@ -71,9 +66,6 @@ def get_new_tenders(last_date, request_cls):
         tender = save_tender(tender_fields)
         for document in tender_fields['documents']:
             save_document(document, str(tender.id), request_cls)
-        tenders.append(tender)
-
-    return tenders
 
 
 def save_document(document, dirname, request_cls):

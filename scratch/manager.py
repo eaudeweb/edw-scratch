@@ -103,12 +103,10 @@ def update(days, public):
     request_cls = get_request_class(public)
     last_date = last_update('UNGM') or days_ago(int(days))
 
-    new_tenders = get_new_tenders(last_date, request_cls)
-    new_winners = get_new_winners(request_cls)
+    get_new_tenders(last_date, request_cls)
+    get_new_winners(request_cls)
 
-    send_tenders_mail(new_tenders)
-    send_winners_mail(new_winners)
-
+    notify()
     add_worker_log('UNGM')
 
 

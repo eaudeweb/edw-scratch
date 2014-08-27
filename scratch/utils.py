@@ -48,3 +48,8 @@ def random_sleeper(func):
         sleep(randint(2, 5))
         return func(self, *args, **kwargs)
     return inner
+
+
+def get_local_gmt():
+    d = datetime.now() - datetime.utcnow()
+    return round(float(d.total_seconds()) / 3600)

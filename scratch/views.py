@@ -156,7 +156,6 @@ class OverviewView(GenericView):
 
     def get_context(self):
         from flask import current_app as app
-        gmt = app.config['GMT']
         return {
             'last_updates': [d[0] for d in (
                 WorkerLog.query
@@ -168,7 +167,6 @@ class OverviewView(GenericView):
             'notify_emails': app.config['NOTIFY_EMAILS'],
             'developers_emails': app.config['DEVELOPERS_EMAILS'],
             'UNSPSC_CODES': app.config.get('UNSPSC_CODES', {}),
-            'gmt': ('+' if gmt >= 0 else '-') + str(gmt),
         }
 
 

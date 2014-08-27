@@ -1,9 +1,7 @@
 from bs4 import BeautifulSoup
 from datetime import date, timedelta
 
-from flask import current_app as app
-
-from utils import string_to_date, string_to_datetime, to_unicode
+from utils import string_to_date, string_to_datetime, to_unicode, get_local_gmt
 
 
 CSS_ROW_LIST_NAME = 'tableRow dataRow'
@@ -44,7 +42,7 @@ def parse_tender(html):
     gmt = details[7].span.string.split('GMT')[1].split(')')[0]
     if gmt:
         tender['deadline'] -= timedelta(hours=float(gmt[1:]))
-        tender['deadline'] += timedelta(hours=app.config.get('GMT', '+2'))
+        tender['deadline'] += timedelta(hours=get_local_gmt())
 
     return tender
 

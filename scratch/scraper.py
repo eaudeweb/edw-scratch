@@ -76,6 +76,7 @@ def parse_winner(html):
     details = soup.find_all('div', CSS_ROW_DETAIL_NAME)
     description = soup.find_all('div', CSS_DESCRIPTION)
     tender_fields = {
+        'source': 'UNGM',
         'title': to_unicode(details[0].span.string),
         'organization': to_unicode(details[1].span.string),
         'reference': to_unicode(details[2].span.string),

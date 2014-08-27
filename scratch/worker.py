@@ -8,9 +8,7 @@ from scratch.scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
 )
 from scratch.utils import string_to_date, save_file
-from scratch.mails import (
-    send_tender_mail, send_winner_mail, send_update_mail, send_warning_mail,
-)
+from scratch.mails import send_tender_mail, send_winner_mail, send_update_mail
 
 
 def get_new_winners(request_cls):
@@ -22,11 +20,7 @@ def get_new_winners(request_cls):
     )
 
     requested_html_winners = request_cls.request_winners_list()
-    try:
-        requested_winners = parse_winners_list(requested_html_winners)
-    except Exception as e:
-        send_warning_mail(e, 'parse_winners_list')
-        return []
+    requested_winners = parse_winners_list(requested_html_winners)
 
     new_winners = filter(
         lambda x: (x['reference'], ) not in saved_winners,
@@ -39,11 +33,7 @@ def get_new_winners(request_cls):
     winners = []
     for new_winner in new_winners:
         html_data = request_cls.get_request(new_winner['url'])
-        try:
-            tender_fields, winner_fields = parse_winner(html_data)
-        except Exception as e:
-            send_warning_mail(e, 'parse_winner', new_winner['url'])
-            return winners
+        tender_fields, winner_fields = parse_winner(html_data)
         tender = save_winner(tender_fields, winner_fields)
         winners.append(tender.winner[0])
 
@@ -59,11 +49,7 @@ def get_new_tenders(last_date, request_cls):
     )
 
     requested_html_tenders = request_cls.request_tenders_list()
-    try:
-        extracted_tenders = parse_tenders_list(requested_html_tenders)
-    except Exception as e:
-        send_warning_mail(e, 'parse_tenders_list')
-        return []
+    extracted_tenders = parse_tenders_list(requested_html_tenders)
 
     new_tenders = filter(
         lambda x: (
@@ -80,11 +66,7 @@ def get_new_tenders(last_date, request_cls):
     for new_tender in new_tenders:
         url = new_tender['url']
         html_data = request_cls.get_request(url)
-        try:
-            tender_fields = parse_tender(html_data)
-        except Exception as e:
-            send_warning_mail(e, 'parse_tender', url)
-            return tenders
+        tender_fields = parse_tender(html_data)
         tender_fields.update({'url': url})
         tender = save_tender(tender_fields)
         for document in tender_fields['documents']:
@@ -126,10 +108,7 @@ def scrap_favorites(request_cls):
     changed_tenders = []
     for tender in tenders:
         html_data = request_cls.get_request(tender.url)
-        try:
-            tender_fields = parse_tender(html_data)
-        except Exception as e:
-            send_warning_mail(e, 'parse_tender', tender.url)
+        tender_fields = parse_tender(html_data)
 
         attr_changes = {}
         for attr, value in [(k, v) for (k, v) in tender_fields.items()

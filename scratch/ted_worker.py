@@ -94,15 +94,16 @@ class TEDWorker(object):
 class TEDParser(object):
 
     def __init__(self, path='', folder_names=[]):
-        self.path = path or get_archives_path()
-        self.folder_names = folder_names
+        path = path or get_archives_path()
+        self.xml_files = [
+            os.path.join(path, folder, xml_file)
+            for folder in folder_names
+            for xml_file in os.listdir(os.path.join(path, folder))
+        ]
+        self.folders = [os.path.join(path, folder) for folder in folder_names]
 
     def _parse_notice(self, content):
         soup = BeautifulSoup(content)
-
-        cpv = soup.find('original_cpv').get('code')
-        if cpv not in app.config.get('CPV_CODES', []):
-            return None
 
         tender = {}
         tender['reference'] = soup.find('ted_export').get('doc_id')
@@ -124,13 +125,23 @@ class TEDParser(object):
 
         return tender
 
+    def _filter_notices(self):
+        for xml_file in self.xml_files[:]:
+            with open(xml_file, 'r') as f:
+                soup = BeautifulSoup(f.read())
+                cpv = soup.find('original_cpv').get('code')
+                if cpv not in app.config.get('CPV_CODES', []):
+                    self.xml_files.remove(xml_file)
+                    os.remove(xml_file)
+
     def parse_notices(self):
-        for folder in self.folder_names:
-            for xml_file in os.listdir(os.path.join(self.path, folder)):
-                file_path = os.path.join(self.path, folder, xml_file)
-                with open(file_path, 'r') as f:
-                    tender = self._parse_notice(f.read())
-                    if tender:
-                        save_tender(tender)
-                os.remove(file_path)
+        self._filter_notices()
+        for xml_file in self.xml_files:
+            with open(xml_file, 'r') as f:
+                tender = self._parse_notice(f.read())
+                save_tender(tender)
+            os.remove(xml_file)
+
+    def __del__(self):
+        for folder in self.folders:
             os.rmdir(folder)

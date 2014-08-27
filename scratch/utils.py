@@ -1,6 +1,8 @@
 import os
-from datetime import datetime, date, timedelta
 import tarfile
+from datetime import datetime, date, timedelta
+from random import randint
+from time import sleep
 
 
 def string_to_date(string_date):
@@ -39,3 +41,10 @@ def extract_data(archive_path, extract_path):
     tf = tarfile.open(archive_path, 'r:gz')
     tf.extractall(extract_path)
     return tf.getnames()[0]
+
+
+def random_sleeper(func):
+    def inner(self, *args, **kwargs):
+        sleep(randint(2, 5))
+        return func(self, *args, **kwargs)
+    return inner

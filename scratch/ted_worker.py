@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from flask import current_app as app
 
 from scratch.models import last_update, add_worker_log, save_tender
-from scratch.utils import days_ago, save_file, extract_data
+from scratch.utils import days_ago, save_file, extract_data, random_sleeper
 
 
 def get_publication_date(row):
@@ -20,6 +20,11 @@ def get_archives_path():
     return os.path.join(app.config.get('FILES_DIR'), 'TED_archives')
 
 
+@random_sleeper
+def request(session, request_type, *args, **kwargs):
+    return getattr(session, request_type)(*args, **kwargs)
+
+
 class TEDWorker(object):
     HOMEPAGE_URL = 'http://ted.europa.eu/TED/main/HomePage.do'
     DOWNLOAD_URL = 'http://ted.europa.eu/TED/misc/bulkDownloadExport.do'
@@ -30,15 +35,15 @@ class TEDWorker(object):
 
     def _initialize_session(self):
         session = requests.Session()
-        session.get(self.HOMEPAGE_URL)
+        request(session, 'get', self.HOMEPAGE_URL)
 
         data = {'action': 'gp'}
         additional_params = {'pid': 'secured'}
         url = '?'.join((self.HOMEPAGE_URL, urlencode(additional_params)))
-        resp = session.post(url, data=data, allow_redirects=True)
+        resp = request(session, 'post', url, data=data, allow_redirects=True)
 
         a = BeautifulSoup(resp.content).find('a', {'title': 'External'})
-        resp = session.get(a.get('href'))
+        resp = request(session, 'get', a.get('href'))
 
         form = BeautifulSoup(resp.content).find('form', {'id': 'loginForm'})
         data = {i.get('name'): i.get('value') for i in form.find_all('input')}
@@ -47,23 +52,24 @@ class TEDWorker(object):
         data['selfHost'] = 'webgate.ec.europa.eu'
         data['timeZone'] = 'GMT+03:00'
         url = form.get('action')
-        resp = session.post(url, data=data, allow_redirects=True)
+        resp = request(session, 'post', url, data=data, allow_redirects=True)
 
         form = BeautifulSoup(resp.content).find(
             'form', {'id': 'showAccountDetailsForm'})
         data = {i.get('name'): i.get('value') for i in form.find_all('input')}
         url = form.get('action')
-        resp = session.post(url, data=data, allow_redirects=True)
+        resp = request(session, 'post', url, data=data, allow_redirects=True)
 
         a = BeautifulSoup(resp.content).select('p.note > a')[0]
-        session.get(a.get('href'))
+        request(session, 'get', a.get('href'))
         return session
 
     def _download_by_id(self, archive_id):
         data = {'action': 'dlTedExport'}
         additional_params = {'dlTedExportojsId': archive_id}
         url = '?'.join((self.DOWNLOAD_URL, urlencode(additional_params)))
-        resp = self.session.post(url, data=data, allow_redirects=True)
+        resp = request(self.session, 'post', url, data=data,
+                       allow_redirects=True)
 
         if resp.status_code == 200:
             archive_name = archive_id + '.tgz'
@@ -72,7 +78,7 @@ class TEDWorker(object):
 
     def download_latest(self):
         self.session = self._initialize_session()
-        resp = self.session.get(self.DOWNLOAD_URL)
+        resp = request(self.session, 'get', self.DOWNLOAD_URL)
         soup = BeautifulSoup(resp.content)
         rows = soup.select('table#availableBulkDownloadRelease tr')[1:]
         last_date = last_update('TED') or days_ago(30)

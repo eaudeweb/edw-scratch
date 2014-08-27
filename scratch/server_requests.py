@@ -1,26 +1,20 @@
-from random import randint
-from time import sleep
 import requests
 import urllib2
-from datetime import datetime
 import json
+from datetime import datetime
+from random import randint
+from time import sleep
 from flask import current_app as app
 
 from scratch.common import (
     LOCAL_ENDPOINT_URI, LIVE_ENDPOINT_URI, TENDERS_ENDPOINT_URI,
     WINNERS_ENDPOINT_URI, HEADERS, PAYLOAD,
 )
+from scratch.utils import random_sleeper
 
 
 def get_request_class(public=True):
     return UNGMrequester() if public else LOCALrequester()
-
-
-def random_sleeper(func):
-    def inner(self, *args, **kwargs):
-        sleep(randint(2, 5))
-        return func(self, *args, **kwargs)
-    return inner
 
 
 class Requester(object):

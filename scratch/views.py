@@ -177,7 +177,7 @@ class OverviewView(GenericView):
             ),
             'notify_emails': app.config['NOTIFY_EMAILS'],
             'developers_emails': app.config['DEVELOPERS_EMAILS'],
-            'UNSPSC_CODES': app.config.get('UNSPSC_CODES', {}),
+            'UNSPSC_CODES': app.config.get('UNSPSC_CODES', []),
             'CPV_CODES': app.config.get('CPV_CODES', []),
         }
 

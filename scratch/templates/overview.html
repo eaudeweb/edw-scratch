@@ -30,10 +30,10 @@
 
 	<br/>
 
-	<h4>Tender categories scraped, expressed as codes:</h4>
+	<h4>Notices categories scraped, expressed as codes:</h4>
         <h5>UNGM</h5>
 	<ol>
-    {% for code in UNSPSC_CODES.tenders %}
+    {% for code in UNSPSC_CODES %}
       <li>{{ code }}</li>
     {% endfor %}
 	</ol>
@@ -44,24 +44,5 @@
       <li>{{ code }}</li>
     {% endfor %}
 	</ol>
-
-	<br/>
-
-	<h4>Winner categories scraped, expressed as codes:</h4>
-        <h5>UNGM</h5>
-	<ol>
-    {% for code in UNSPSC_CODES.winners%}
-      <li>{{ code }}</li>
-    {% endfor %}
-	</ol>
-
-        <h5>TED</h5>
-	<ol>
-    {% for code in CPV_CODES %}
-      <li>{{ code }}</li>
-    {% endfor %}
-	</ol>
-
-	<br/>
 
 {% endblock %}

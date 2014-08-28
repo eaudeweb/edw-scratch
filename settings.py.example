@@ -23,10 +23,7 @@ MAIL_PASSWORD = 'your-gmail-password'
 NOTIFY_EMAILS = ['your-edw-username@eaudeweb.ro']
 
 # UNSPSCs codes
-UNSPSC_CODES = {
-    'tenders': [],
-    'winners': [],
-}
+UNSPSC_CODES = []
 
 USERNAME = 'edw'
 PASSWORD = 'edw'

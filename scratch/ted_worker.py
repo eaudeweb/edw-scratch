@@ -1,12 +1,14 @@
 import os
 from urllib import urlencode
-from datetime import datetime
+from datetime import datetime, date
 
 import requests
 from bs4 import BeautifulSoup
 from flask import current_app as app
 
-from scratch.models import last_update, add_worker_log, save_tender
+from scratch.models import (
+    last_update, add_worker_log, save_tender, save_winner,
+)
 from scratch.utils import days_ago, save_file, extract_data, random_sleeper
 
 
@@ -18,6 +20,22 @@ def get_publication_date(row):
 
 def get_archives_path():
     return os.path.join(app.config.get('FILES_DIR'), 'TED_archives')
+
+
+def update_winner(winner, soup):
+    award_date = soup.find('contract_award_date')
+    if award_date:
+        fields = {c.name: int(c.text) for c in award_date.contents}
+        winner['award_date'] = date(**fields)
+    vendor = soup.find('economic_operator_name_address') or \
+        soup.find('contact_data_without_responsible_name_chp')
+    if vendor:
+        winner['vendor'] = vendor.officialname.text \
+            if vendor.officialname else None
+    value = soup.find('value_cost')
+    if value:
+        winner['value'] = value.get('fmtval')
+        winner['currency'] = value.parent.get('currency')
 
 
 @random_sleeper
@@ -120,16 +138,26 @@ class TEDParser(object):
                                   soup.find('aa_name')).text
         published_str = soup.find('date_pub').text
         tender['published'] = datetime.strptime(published_str, '%Y%m%d').date()
+
         deadline = soup.find('dt_date_for_submission')
-        tender['deadline'] = datetime.strptime(deadline.text, '%Y%m%d %H:%M') \
-            if deadline else None
+        if deadline:
+            try:
+                deadline = datetime.strptime(deadline.text, '%Y%m%d %H:%M')
+            except ValueError:
+                deadline = datetime.strptime(deadline.text, '%Y%m%d')
+        tender['deadline'] = deadline
+
         description = soup.find('SHORT_CONTRACT_DESCRIPTION')
         tender['description'] = description.text if description else ''
         url = soup.find('uri_doc')
         tender['url'] = url.text.replace(url.get('lg'), 'EN')
         tender['source'] = 'TED'
 
-        return tender
+        winner = {}
+        if tender['notice_type'] == 'Contract award':
+            update_winner(winner, soup)
+
+        return tender, winner
 
     def _filter_notices(self):
         for xml_file in self.xml_files[:]:
@@ -144,8 +172,11 @@ class TEDParser(object):
         self._filter_notices()
         for xml_file in self.xml_files:
             with open(xml_file, 'r') as f:
-                tender = self._parse_notice(f.read())
-                save_tender(tender)
+                tender, winner = self._parse_notice(f.read())
+                if winner:
+                    save_winner(tender, winner)
+                else:
+                    save_tender(tender)
             os.remove(xml_file)
 
     def __del__(self):

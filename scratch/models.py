@@ -54,6 +54,7 @@ class Winner(db.Model):
     id = Column(Integer, primary_key=True)
     vendor = Column(String(255), nullable=True)
     value = Column(Float, nullable=True)
+    currency = Column(String(3), nullable=True)
     award_date = Column(Date)
     notified = Column(Boolean, default=False)
 

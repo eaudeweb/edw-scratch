@@ -106,7 +106,6 @@ def update(days, public):
     get_new_tenders(last_date, request_cls)
     get_new_winners(request_cls)
 
-    notify()
     add_worker_log('UNGM')
 
 

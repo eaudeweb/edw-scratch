@@ -88,6 +88,8 @@ def parse_winner(html):
         'value': float(details[5].span.string) if details[5].span.string
         else None
     }
+    if winner_fields['value']:
+        winner_fields['currency'] = 'USD'
 
     return tender_fields, winner_fields
 

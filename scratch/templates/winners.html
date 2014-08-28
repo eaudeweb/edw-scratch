@@ -11,7 +11,7 @@
     <tr>
       <th class='text-center col-sm-3'>Title</th>
       <th class='text-center col-sm-1'>Source</th>
-      <th class='text-center col-sm-3'>UN Organization</th>
+      <th class='text-center col-sm-3'>Organization</th>
       <th class='text-center col-sm-1'>Award date</th>
       <th class='text-center col-sm-1'>Vendor</th>
       <th class='text-center col-sm-1'>Value ($)</th>
@@ -26,8 +26,8 @@
         <td class='text-center'>{{ winner.tender.source }}</td>
         <td class='text-center'>{{ winner.tender.organization }}</td>
         <td class='text-center'>{{ winner.award_date|datetime }}</td>
-        <td class='text-center'>{{ winner.vendor }}</td>
-        <td class='text-center'>{{ winner.value }}</td>
+        <td class='text-center'>{{ winner.vendor or 'Unknown' }}</td>
+        <td class='text-center'>{{ winner.value or 'Unknown' }}</td>
       </tr>
     {% endfor %}
     </tbody>

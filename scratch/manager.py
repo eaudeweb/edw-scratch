@@ -7,11 +7,11 @@ from scratch.models import (
     db_manager, last_update, save_tender, save_winner, db, add_worker_log,
     Tender, Winner,
 )
-from scratch.scraper import (
+from scratch.ungm_scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
     parse_UNSPSCs_list,
 )
-from scratch.worker import (
+from scratch.ungm_worker import (
     get_new_tenders, get_new_winners, send_tenders_mail, send_winners_mail,
     scrap_favorites, send_updates_mail,
 )

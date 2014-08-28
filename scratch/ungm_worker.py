@@ -4,7 +4,7 @@ from flask import current_app as app
 from scratch.models import (
     Tender, Winner, save_tender, save_winner, set_notified, update_tender,
 )
-from scratch.scraper import (
+from scratch.ungm_scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
 )
 from scratch.utils import string_to_date, save_file

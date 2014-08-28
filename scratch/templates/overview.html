@@ -21,18 +21,26 @@
 
   <br/>
 
-	<h4>Last timestamps when UNGM was scraped:</h4>
+	<h4>Latest scraping sessions:</h4>
 	<ul>
-  {% for update in last_updates %}
-    <li>{{ update|datetime }}</li>
+  {% for log in worker_logs %}
+  <li>{{ log.update|datetime }} ({{ log.source }})</li>
   {% endfor %}
   </ul>
 
 	<br/>
 
 	<h4>Tender categories scraped, expressed as codes:</h4>
+        <h5>UNGM</h5>
 	<ol>
     {% for code in UNSPSC_CODES.tenders %}
+      <li>{{ code }}</li>
+    {% endfor %}
+	</ol>
+
+        <h5>TED</h5>
+	<ol>
+    {% for code in CPV_CODES %}
       <li>{{ code }}</li>
     {% endfor %}
 	</ol>
@@ -40,8 +48,16 @@
 	<br/>
 
 	<h4>Winner categories scraped, expressed as codes:</h4>
+        <h5>UNGM</h5>
 	<ol>
     {% for code in UNSPSC_CODES.winners%}
+      <li>{{ code }}</li>
+    {% endfor %}
+	</ol>
+
+        <h5>TED</h5>
+	<ol>
+    {% for code in CPV_CODES %}
       <li>{{ code }}</li>
     {% endfor %}
 	</ol>

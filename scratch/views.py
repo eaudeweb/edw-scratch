@@ -170,16 +170,15 @@ class OverviewView(GenericView):
 
     def get_context(self):
         return {
-            'last_updates': [d[0] for d in (
+            'worker_logs': (
                 WorkerLog.query
                 .order_by(desc(WorkerLog.update))
-                .with_entities(WorkerLog.update)
                 .limit(15)
-                .all()
-            )],
+            ),
             'notify_emails': app.config['NOTIFY_EMAILS'],
             'developers_emails': app.config['DEVELOPERS_EMAILS'],
             'UNSPSC_CODES': app.config.get('UNSPSC_CODES', {}),
+            'CPV_CODES': app.config.get('CPV_CODES', []),
         }
 
 

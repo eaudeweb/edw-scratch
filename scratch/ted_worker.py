@@ -163,8 +163,8 @@ class TEDParser(object):
         for xml_file in self.xml_files[:]:
             with open(xml_file, 'r') as f:
                 soup = BeautifulSoup(f.read())
-                cpv = soup.find('original_cpv').get('code')
-                if cpv not in app.config.get('CPV_CODES', []):
+                cpv_codes = set([c.get('code') for c in soup.find('cpv_code')])
+                if not cpv_codes & set(app.config.get('CPV_CODES', [])):
                     self.xml_files.remove(xml_file)
                     os.remove(xml_file)
 

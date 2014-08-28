@@ -1,8 +1,10 @@
-from flask import render_template, request, redirect, url_for
+from flask import (
+    render_template, request, redirect, url_for, current_app as app,
+)
 from flask.views import View
 from sqlalchemy import desc
 
-from scratch.models import Tender, Winner, WorkerLog, db, update_tender
+from scratch.models import Tender, Winner, WorkerLog, update_tender
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
@@ -25,7 +27,7 @@ class TendersFilterView(GenericView):
                 'tenders': tenders.all(),
                 'filter_form': TendersFilter(),
                 'reset': False,
-                }
+            }
 
         source = request.args.get('source')
         organization = request.args.get('organization')
@@ -58,9 +60,10 @@ class TendersView(TendersFilterView):
     template_name = 'tenders.html'
 
     def get_objects(self):
-        return (Tender.query
-                .filter_by(hidden=False)
-                .order_by(desc(Tender.published))
+        return (
+            Tender.query
+            .filter_by(hidden=False)
+            .order_by(desc(Tender.published))
         )
 
 
@@ -68,9 +71,10 @@ class ArchiveView(TendersFilterView):
     template_name = 'archive.html'
 
     def get_objects(self):
-        return (Tender.query
-                .filter_by(hidden=True)
-                .order_by(desc(Tender.published))
+        return (
+            Tender.query
+            .filter_by(hidden=True)
+            .order_by(desc(Tender.published))
         )
 
 
@@ -165,7 +169,6 @@ class OverviewView(GenericView):
     template_name = 'overview.html'
 
     def get_context(self):
-        from flask import current_app as app
         return {
             'last_updates': [d[0] for d in (
                 WorkerLog.query

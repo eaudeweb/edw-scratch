@@ -25,12 +25,15 @@ class TendersFilterView(GenericView):
                 'tenders': tenders.all(),
                 'filter_form': TendersFilter(),
                 'reset': False,
-            }
+                }
 
+        source = request.args.get('source')
         organization = request.args.get('organization')
         status = request.args.get('status')
         favourite = request.args.get('favourite')
 
+        if source:
+            tenders = tenders.filter_by(source=source)
         if organization:
             tenders = tenders.filter_by(organization=organization)
         if status == 'closed':
@@ -42,11 +45,12 @@ class TendersFilterView(GenericView):
         return {
             'tenders': tenders.all(),
             'filter_form': TendersFilter(
+                source=source,
                 organization=organization,
                 status=status,
                 favourite=favourite,
             ),
-            'reset': organization or status or favourite,
+            'reset': any([source, organization, status, favourite]),
         }
 
 
@@ -82,10 +86,15 @@ class WinnersView(GenericView):
                 'reset': False,
             }
 
+        source = request.args.get('source')
         organization = request.args.get('organization')
         vendor = request.args.get('vendor')
         value = request.args.get('value')
 
+        if source:
+            winners = winners.filter(
+                Winner.tender.has(source=source)
+            )
         if organization:
             winners = winners.filter(
                 Winner.tender.has(organization=organization)
@@ -104,11 +113,12 @@ class WinnersView(GenericView):
         return {
             'winners': winners.order_by(desc(Winner.award_date)).all(),
             'filter_form': WinnerFilter(
+                source=source,
                 organization=organization,
                 vendor=vendor,
                 value=value,
             ),
-            'reset': organization or vendor or value
+            'reset': any([source, organization, vendor, value]),
         }
 
     def get_objects(self):

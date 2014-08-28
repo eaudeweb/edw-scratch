@@ -19,6 +19,7 @@
     <thead>
     <tr>
       <th class='text-center col-sm-3'>Title</th>
+      <th class='text-center col-sm-1'>Source</th>
       <th class='text-center col-sm-2'>Organization</th>
       <th class='text-center col-sm-1'>Deadline in</th>
       <th class='text-center col-sm-1'>Published</th>
@@ -31,6 +32,7 @@
         <td class='text-center'>
           <a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a>
         </td>
+        <td class='text-center'>{{ tender.source }}</td>
         <td class='text-center'>{{ tender.organization }}</td>
         <td class='text-center'>{{ tender.deadline|deadline(True)|safe }}</td>
         <td class='text-center'>{{ tender.published|datetime }}</td>

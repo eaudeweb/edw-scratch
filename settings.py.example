@@ -34,3 +34,7 @@ TED_USERNAME = ''
 TED_PASSWORD = ''
 
 CPV_CODES = []
+
+# at first run, TED worker will download notices more recent than
+# current_date - TED_DAY_AGO (by default 30 days)
+TED_DAYS_AGO = 3

@@ -99,7 +99,8 @@ class TEDWorker(object):
         resp = request(self.session, 'get', self.DOWNLOAD_URL)
         soup = BeautifulSoup(resp.content)
         rows = soup.select('table#availableBulkDownloadRelease tr')[1:]
-        last_date = last_update('TED') or days_ago(30)
+        last_date = last_update('TED') or \
+            days_ago(app.config.get('TED_DAYS_AGO', 30))
         for row in rows:
             publication_date = get_publication_date(row)
             if publication_date <= last_date:

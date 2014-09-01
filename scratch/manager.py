@@ -155,8 +155,10 @@ def notify(attachment, digest):
     send_winners_mail(winners, digest)
 
 
+@worker_manager.option('-a', '--attachment', dest='attachment', default=False)
+@worker_manager.option('-d', '--dailydigest', dest='digest', default=True)
 @worker_manager.option('-p', '--public', dest='public', default=True)
-def update_favorites(public):
+def update_favorites(public, attachment, digest):
     request_cls = get_request_class(public)
     changed_tenders = scrap_favorites(request_cls)
-    send_updates_mail(changed_tenders)
+    send_updates_mail(changed_tenders, attachment, digest)

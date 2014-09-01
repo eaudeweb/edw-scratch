@@ -40,19 +40,22 @@ def send_winners_mail(winners, digest):
                 set_notified(winner)
 
 
-def send_updates_mail(changed_tenders):
-    subject = 'UNGM - Tender Update'
+def send_updates_mail(changed_tenders, attachment, digest):
+    subject = 'UNGM - Tender update'
     recipients = app.config.get('NOTIFY_EMAILS', [])
     sender = 'Eau De Web'
-    for tender, changes, docs in changed_tenders:
-        html = render_template(
-            'mails/tender_update.html',
-            tender=tender,
-            changes=changes,
-            documents=True if docs else False
-        ),
-        send_mail(subject, recipients, html, sender,
-                  attachment=True, tender_id=tender.id, new_docs=docs)
+    if digest:
+        html = render_template('mails/tender_update.html',
+                               tenders=changed_tenders)
+        send_mail(subject, recipients, html, sender, attachment)
+    else:
+        for tender, changes, docs in changed_tenders:
+            html = render_template(
+                'mails/tender_update.html',
+                tenders=[(tender, changes, docs)],
+            ),
+            send_mail(subject, recipients, html, sender,
+                      attachment=True, tender_id=tender.id, new_docs=docs)
 
 
 def attach(msg, tender_id, new_docs=None):

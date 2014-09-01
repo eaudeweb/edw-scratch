@@ -2,7 +2,7 @@ import smtplib
 import os
 
 from flask.ext.mail import Mail, Message
-from flask import current_app as app, render_template
+from flask import current_app as app
 
 
 def attach(msg, tender_id, new_docs=None):
@@ -20,54 +20,14 @@ def attach(msg, tender_id, new_docs=None):
         document.close()
 
 
-def send_tender_mail(tender, subject, recipients, sender):
-    msg = Message(
-        subject=subject,
-        recipients=recipients,
-        html=render_template(
-            'mails/single_tender.html',
-            tender=tender,
-        ),
-        sender=sender,
-    )
-    attach(msg, tender.id)
-    return send_mail(msg)
-
-
-def send_winner_mail(winner, subject, recipients, sender):
-    msg = Message(
-        subject=subject,
-        recipients=recipients,
-        html=render_template(
-            'mails/single_winner.html',
-            winner=winner,
-        ),
-        sender=sender,
-    )
-    return send_mail(msg)
-
-
-def send_update_mail(tender, changes, documents, subject, recipients, sender):
-    msg = Message(
-        subject=subject,
-        recipients=recipients,
-        html=render_template(
-            'mails/tender_update.html',
-            tender=tender,
-            changes=changes,
-            documents=True if documents else False
-        ),
-        sender=sender
-    )
-    attach(msg, tender.id, documents)
-
-    return send_mail(msg)
-
-
-def send_mail(msg):
+def send_mail(subject, recipients, html, sender, attachment=False, **kwargs):
+    message = Message(subject=subject, recipients=recipients, html=html,
+                      sender=sender)
+    if attachment:
+        attach(message, **kwargs)
     mail = Mail(app)
     try:
-        mail.send(msg)
+        mail.send(message)
         return True
     except smtplib.SMTPAuthenticationError:
         print 'Wrong username/password. ' + \

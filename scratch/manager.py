@@ -12,14 +12,16 @@ from scratch.ungm_scraper import (
     parse_UNSPSCs_list,
 )
 from scratch.ungm_worker import (
-    get_new_tenders, get_new_winners, send_tenders_mail, send_winners_mail,
-    scrap_favorites, send_updates_mail,
+    get_new_tenders, get_new_winners, scrap_favorites,
 )
 from scratch.utils import days_ago
 from scratch.common import (
     TENDERS_ENDPOINT_URI, WINNERS_ENDPOINT_URI, SEARCH_UNSPSCS_URI, PAYLOAD,
 )
 from scratch.ted_worker import TEDWorker, TEDParser
+from scratch.mails import (
+    send_tenders_mail, send_winners_mail, send_updates_mail,
+)
 
 
 scrap_manager = Manager()
@@ -98,7 +100,7 @@ def add_winner(filename, public=False):
 
 
 @worker_manager.option('-d', '--days', dest='days', default=30)
-@worker_manager.option('-p', '--public', dest='public', default=False)
+@worker_manager.option('-p', '--public', dest='public', default=True)
 def update(days, public):
     request_cls = get_request_class(public)
     last_date = last_update('UNGM') or days_ago(int(days))
@@ -144,16 +146,17 @@ def search_unspscs(text):
         print 'POST request failed.'
 
 
-@worker_manager.command
-def notify():
+@worker_manager.option('-a', '--attachment', dest='attachment', default=False)
+@worker_manager.option('-d', '--dailydigest', dest='digest', default=True)
+def notify(attachment, digest):
     tenders = Tender.query.filter_by(notified=False)
     winners = Winner.query.filter_by(notified=False)
-    send_tenders_mail(tenders)
-    send_winners_mail(winners)
+    send_tenders_mail(tenders, attachment, digest)
+    send_winners_mail(winners, digest)
 
 
-@worker_manager.option('-p', '--public', dest='public', default=False)
-def update_favorites(public=False):
+@worker_manager.option('-p', '--public', dest='public', default=True)
+def update_favorites(public):
     request_cls = get_request_class(public)
     changed_tenders = scrap_favorites(request_cls)
     send_updates_mail(changed_tenders)

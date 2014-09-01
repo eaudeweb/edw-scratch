@@ -1,14 +1,13 @@
 import os
-from flask import current_app as app, render_template
+from flask import current_app as app
 
 from scratch.models import (
-    Tender, Winner, save_tender, save_winner, set_notified, update_tender,
+    Tender, Winner, save_tender, save_winner, update_tender,
 )
 from scratch.ungm_scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
 )
 from scratch.utils import string_to_date, save_file
-from scratch.mails import send_mail
 
 
 def get_new_winners(request_cls):
@@ -108,39 +107,3 @@ def scrap_favorites(request_cls):
             changed_tenders.append((tender, attr_changes, new_docs))
 
     return changed_tenders
-
-
-def send_tenders_mail(tenders):
-    subject = 'UNGM - New tender available'
-    recipients = app.config.get('NOTIFY_EMAILS', [])
-    sender = 'Eau De Web'
-    for tender in tenders:
-        html = render_template('mails/single_tender.html', tender=tender)
-        if send_mail(subject, recipients, html, sender, attachment=True,
-                     tender_id=tender.id):
-            set_notified(tender)
-
-
-def send_winners_mail(winners):
-    subject = 'UNGM - New Contract Award'
-    recipients = app.config.get('NOTIFY_EMAILS', [])
-    sender = 'Eau De Web'
-    for winner in winners:
-        html = render_template('mails/single_winner.html', winner=winner)
-        if send_mail(subject, recipients, html, sender):
-            set_notified(winner)
-
-
-def send_updates_mail(changed_tenders):
-    subject = 'UNGM - Tender Update'
-    recipients = app.config.get('NOTIFY_EMAILS', [])
-    sender = 'Eau De Web'
-    for tender, changes, docs in changed_tenders:
-        html = render_template(
-            'mails/tender_update.html',
-            tender=tender,
-            changes=changes,
-            documents=True if docs else False
-        ),
-        send_mail(subject, recipients, html, sender,
-                  attachment=True, tender_id=tender.id, new_docs=docs)

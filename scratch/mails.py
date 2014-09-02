@@ -10,16 +10,15 @@ from scratch.models import set_notified
 def send_tenders_mail(tenders, attachment, digest):
     subject = 'New tenders available' if digest else 'New tender available'
     recipients = app.config.get('NOTIFY_EMAILS', [])
-    sender = 'Eau De Web'
     if digest:
         html = render_template('mails/new_tenders.html', tenders=tenders)
-        if send_mail(subject, recipients, html, sender, attachment):
+        if send_mail(subject, recipients, html, attachment):
             for tender in tenders:
                 set_notified(tender)
     else:
         for tender in tenders:
             html = render_template('mails/new_tenders.html', tenders=[tender])
-            if send_mail(subject, recipients, html, sender, attachment,
+            if send_mail(subject, recipients, html, attachment,
                          tender_id=tender.id):
                 set_notified(tender)
 
@@ -27,34 +26,32 @@ def send_tenders_mail(tenders, attachment, digest):
 def send_winners_mail(winners, digest):
     subject = 'New contract award' if digest else 'New contract awards'
     recipients = app.config.get('NOTIFY_EMAILS', [])
-    sender = 'Eau De Web'
     if digest:
         html = render_template('mails/new_winners.html', winners=winners)
-        if send_mail(subject, recipients, html, sender):
+        if send_mail(subject, recipients, html):
             for winner in winners:
                 set_notified(winners)
     else:
         for winner in winners:
             html = render_template('mails/new_winner.html', winners=[winner])
-            if send_mail(subject, recipients, html, sender):
+            if send_mail(subject, recipients, html):
                 set_notified(winner)
 
 
 def send_updates_mail(changed_tenders, attachment, digest):
     subject = 'UNGM - Tender update'
     recipients = app.config.get('NOTIFY_EMAILS', [])
-    sender = 'Eau De Web'
     if digest:
         html = render_template('mails/tender_update.html',
                                tenders=changed_tenders)
-        send_mail(subject, recipients, html, sender, attachment)
+        send_mail(subject, recipients, html, attachment)
     else:
         for tender, changes, docs in changed_tenders:
             html = render_template(
                 'mails/tender_update.html',
                 tenders=[(tender, changes, docs)],
             ),
-            send_mail(subject, recipients, html, sender,
+            send_mail(subject, recipients, html,
                       attachment=True, tender_id=tender.id, new_docs=docs)
 
 
@@ -73,7 +70,8 @@ def attach(msg, tender_id, new_docs=None):
         document.close()
 
 
-def send_mail(subject, recipients, html, sender, attachment=False, **kwargs):
+def send_mail(subject, recipients, html, attachment=False, **kwargs):
+    sender = 'Eau de Web <%s>' % app.config.get('MAIL_USERNAME')
     message = Message(subject=subject, recipients=recipients, html=html,
                       sender=sender)
     if attachment:

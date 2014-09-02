@@ -161,4 +161,5 @@ def notify(attachment, digest):
 def update_favorites(public, attachment, digest):
     request_cls = get_request_class(public)
     changed_tenders = scrap_favorites(request_cls)
-    send_updates_mail(changed_tenders, attachment, digest)
+    if changed_tenders:
+        send_updates_mail(changed_tenders, attachment, digest)

@@ -178,6 +178,8 @@ class OverviewView(GenericView):
             'notify_emails': app.config['NOTIFY_EMAILS'],
             'UNSPSC_CODES': app.config.get('UNSPSC_CODES', []),
             'CPV_CODES': app.config.get('CPV_CODES', []),
+            'tenders_count': Tender.query.count(),
+            'winners_count': Winner.query.count(),
         }
 
 

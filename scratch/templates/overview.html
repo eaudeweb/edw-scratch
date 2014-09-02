@@ -3,37 +3,40 @@
 {% block title %}Settings overview{% endblock %}
 
 {% block content %}
+  <h4>Data</h4>
+
+  <p>Tenders: {{ tenders_count }}, Winners: {{ winners_count }}</p>
   <h4>List of mails to be notified about the tender news:</h4>
   <ol>
-  {% for email in notify_emails %}
-    <li>{{ email }}</li>
-  {% endfor %}
+    {% for email in notify_emails %}
+      <li>{{ email }}</li>
+    {% endfor %}
   </ol>
 
-	<br/>
+  <br/>
 
-	<h4>Latest scraping sessions:</h4>
-	<ul>
-  {% for log in worker_logs %}
-  <li>{{ log.update|datetime }} ({{ log.source }})</li>
-  {% endfor %}
+  <h4>Latest scraping sessions:</h4>
+  <ul>
+    {% for log in worker_logs %}
+      <li>{{ log.update|datetime }} ({{ log.source }})</li>
+    {% endfor %}
   </ul>
 
-	<br/>
+  <br/>
 
-	<h4>Notices categories scraped, expressed as codes:</h4>
-        <h5>UNGM</h5>
-	<ol>
+  <h4>Notices categories scraped, expressed as codes:</h4>
+  <h5>UNGM</h5>
+  <ol class="list-inline">
     {% for code in UNSPSC_CODES %}
       <li>{{ code }}</li>
     {% endfor %}
-	</ol>
+  </ol>
 
-        <h5>TED</h5>
-	<ol>
+  <h5>TED</h5>
+  <ol class="list-inline">
     {% for code in CPV_CODES %}
       <li>{{ code }}</li>
     {% endfor %}
-	</ol>
+  </ol>
 
 {% endblock %}

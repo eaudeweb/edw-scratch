@@ -10,6 +10,7 @@ WHOOSH_BASE = os.path.join(
 )
 
 FILES_DIR = os.path.join(instance_dir, 'files')
+SERVER_NAME = 'localhost'
 
 # email server
 MAIL_SERVER = 'smtp.googlemail.com'

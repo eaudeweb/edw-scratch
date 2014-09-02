@@ -38,6 +38,10 @@ def create_app():
     app.register_blueprint(auth)
     login_manager.init_app(app)
     db.init_app(app)
+    
+    if app.config.get('SENTRY_DSN'):
+        from raven.contrib.flask import Sentry
+        Sentry(app)
     return app
 
 

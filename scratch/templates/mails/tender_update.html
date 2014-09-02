@@ -2,7 +2,7 @@
 
 {% block content %}
 <h2>
-  {% if len(tenders) == 1 %}
+  {% if tenders|count == 1 %}
     A tender has been updated.
   {% else %}
     Several tenders have been updated.

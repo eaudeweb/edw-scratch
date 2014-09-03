@@ -30,10 +30,10 @@ def send_winners_mail(winners, digest):
         html = render_template('mails/new_winners.html', winners=winners)
         if send_mail(subject, recipients, html):
             for winner in winners:
-                set_notified(winners)
+                set_notified(winner)
     else:
         for winner in winners:
-            html = render_template('mails/new_winner.html', winners=[winner])
+            html = render_template('mails/new_winners.html', winners=[winner])
             if send_mail(subject, recipients, html):
                 set_notified(winner)
 

@@ -3,11 +3,10 @@
 {% block content %}
 <h2>New tenders available.</h2>
 
-<ul>
+<ol>
 {% for tender in tenders %}
   <li>
     <ul>
-      <li><b>{{ loop.index }}.</b></li>
       <li><b>Title</b>: {{ tender.title }}</li>
       <li><b>Organization</b>: {{ tender.organization }}</li>
       <li><b>Published</b>: {{ tender.published|datetime }}</li>
@@ -16,8 +15,9 @@
       <li><a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See this tender in-site</a></li>
     </ul>
   </li>
+	<br/>
 {% endfor %}
-</ul>
+</ol>
 
 </br></br>
 <h4><a href="{{ url_for('.tenders', _external=True) }}">See the in-site list of all tenders</a></h4>

@@ -3,20 +3,20 @@
 {% block content %}
 <h2>New contract awards.</h2>
 
-<ul>
+<ol>
 {% for winner in winners %}
   <li>
     <ul>
-      <li><b>{{ loop.index }}.</b></li>
       <li><b>Title</b>: {{ winner.tender.title }}</li>
       <li><b>Organization</b>: {{ winner.tender.organization }}</li>
-      <li><b>Contract vendor</b>: {% if not winner.vendor %}Unknown{% else %}{{ winner.vendor }}{% endif %}</li>
-      <li><b>Contract value</b>: {% if not winner.value %}Unknown{% else %}{{ winner.value }}{% endif %} {{ winner.currency }}</li>
-      <li><a href="{{ url_for('.tender', tender_id=winner.id, _external=True) }}">See this contract award in-site</a></li>
+      <li><b>Contract vendor</b>: {{ winner.vendor or ' Unknown' }}</li>
+      <li><b>Contract value</b>: {{ winner.value or 'Unknown' }} {{ winner.currency or '' }}</li>
+      <li><a href="{{ url_for('.tender', tender_id=winner.tender.id, _external=True) }}">See this contract award in-site</a></li>
     </ul>
   </li>
+	<br/>
 {% endfor %}
-</ul>
+</ol>
 
 </br></br>
 <h4><a href="{{ url_for('.winners', _external=True) }}">See the in-site list of all contract awards</a></h4>

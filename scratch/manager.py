@@ -149,10 +149,12 @@ def search_unspscs(text):
 @worker_manager.option('-a', '--attachment', dest='attachment', default=False)
 @worker_manager.option('-d', '--dailydigest', dest='digest', default=True)
 def notify(attachment, digest):
-    tenders = Tender.query.filter_by(notified=False)
-    winners = Winner.query.filter_by(notified=False)
-    send_tenders_mail(tenders, attachment, digest)
-    send_winners_mail(winners, digest)
+    tenders = Tender.query.filter_by(notified=False).all()
+    winners = Winner.query.filter_by(notified=False).all()
+    if tenders:
+        send_tenders_mail(tenders, attachment, digest)
+    if winners:
+        send_winners_mail(winners, digest)
 
 
 @worker_manager.option('-a', '--attachment', dest='attachment', default=False)

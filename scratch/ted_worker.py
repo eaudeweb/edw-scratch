@@ -148,8 +148,10 @@ class TEDParser(object):
                 deadline = datetime.strptime(deadline.text, '%Y%m%d')
         tender['deadline'] = deadline
 
-        description = soup.find('SHORT_CONTRACT_DESCRIPTION')
-        tender['description'] = description.text if description else ''
+        section = soup.find('contract', {'lg': 'EN'})
+        desc = section.find('short_contract_description') if section else None
+        tender['description'] = ''.join([str(e) for e in desc.contents]) \
+            if desc else ''
         url = soup.find('uri_doc')
         tender['url'] = url.text.replace(url.get('lg'), 'EN')
         tender['source'] = 'TED'

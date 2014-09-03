@@ -52,6 +52,7 @@
       <th>Description</th>
       <td>{{ tender.description|safe }}</td>
     </tr>
+	  {% if not config.DISABLE_UNGM_DOWNLOAD %}
     <tr>
       <th>Documents</th>
       <td><ol>
@@ -62,6 +63,7 @@
         {% endfor %}
       </ol></td>
     </tr>
+	  {% endif %}
     {% if tender.winner %}
     <tr>
       <th>Vendor</th>

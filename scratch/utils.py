@@ -4,6 +4,8 @@ from datetime import datetime, date, timedelta
 from random import randint
 from time import sleep
 
+from flask import current_app
+
 
 def string_to_date(string_date):
     if string_date:
@@ -53,3 +55,13 @@ def random_sleeper(func):
 def get_local_gmt():
     d = datetime.now() - datetime.utcnow()
     return round(float(d.total_seconds()) / 3600)
+
+
+def check_save_permission(func):
+    def inner(self, *args, **kwargs):
+        disable = current_app.config.get('DISABLE_UNGM_DOWNLOAD', False)
+        if disable:
+            pass
+        else:
+            return func(self, *args, **kwargs)
+    return inner

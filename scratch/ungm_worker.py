@@ -7,7 +7,7 @@ from scratch.models import (
 from scratch.ungm_scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
 )
-from scratch.utils import string_to_date, save_file
+from scratch.utils import string_to_date, save_file, check_save_permission
 
 
 def get_new_winners(request_cls):
@@ -68,6 +68,7 @@ def get_new_tenders(last_date, request_cls):
             save_document(document, str(tender.id), request_cls)
 
 
+@check_save_permission
 def save_document(document, dirname, request_cls):
     doc = request_cls.request_document(document['download_url'])
     if doc:

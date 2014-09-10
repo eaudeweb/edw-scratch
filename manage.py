@@ -8,4 +8,13 @@ app = create_app()
 
 
 if __name__ == '__main__':
-    create_manager(app).run()
+    try:
+        create_manager(app).run()
+        assert False
+    except:
+        if app.config['DEBUG']:
+            raise
+        else:
+            from raven import Client
+            client = Client(app.config.get('SENTRY_DSN'))
+            client.captureException()

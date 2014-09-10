@@ -102,6 +102,8 @@ def add_winner(filename, public=False):
 @worker_manager.option('-d', '--days', dest='days', default=30)
 @worker_manager.option('-p', '--public', dest='public', default=True)
 def update(days, public):
+    if public is not True:
+        public = False
     request_cls = get_request_class(public)
     last_date = last_update('UNGM') or days_ago(int(days))
 

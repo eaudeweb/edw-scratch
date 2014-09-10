@@ -83,6 +83,13 @@ def last_update(source):
 
 
 def save_tender(tender):
+    old_tender = Tender.query.filter_by(reference=tender['reference']).first()
+    if old_tender:
+        for attr, value in [(k, v) for (k, v) in tender.items()
+                            if k != 'documents']:
+            update_tender(old_tender, attr, value)
+        return old_tender
+
     documents = tender.pop('documents', [])
     tender_entry = Tender(**tender)
     db.session.add(tender_entry)

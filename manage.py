@@ -10,7 +10,6 @@ app = create_app()
 if __name__ == '__main__':
     try:
         create_manager(app).run()
-        assert False
     except:
         if app.config['DEBUG']:
             raise

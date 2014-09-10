@@ -78,7 +78,7 @@ def save_document(document, dirname, request_cls):
 
 
 def scrap_favorites(request_cls):
-    tenders = Tender.query.filter_by(favourite=True).all()
+    tenders = Tender.query.filter_by(favourite=True, source='UNGM').all()
 
     changed_tenders = []
     for tender in tenders:

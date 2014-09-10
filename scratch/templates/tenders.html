@@ -38,7 +38,7 @@
         <td class='text-center'>{{ tender.published|datetime }}</td>
         <td class='text-center'>
           {{ tender.notice_type }}<br/>
-          {% if not tender.winner and tender.source == 'UNGM' %}
+          {% if not tender.winner %}
             <a class="favourite-list" href="{{ url_for('.toggle', attribute='favourite', tender_id=tender.id) }}"><i style="color: orange" class="{{ tender|favourite }}"></i></a>
           {% endif %}
           <a class="archive-list" href="{{ url_for('.toggle', attribute='hidden', tender_id=tender.id) }}"><i class="fa fa-lg fa-trash-o"></i></a>

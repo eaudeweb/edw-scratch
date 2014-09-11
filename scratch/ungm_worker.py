@@ -19,6 +19,8 @@ def get_new_winners(request_cls):
     )
 
     requested_html_winners = request_cls.request_winners_list()
+    if not requested_html_winners:
+        return []
     requested_winners = parse_winners_list(requested_html_winners)
 
     new_winners = filter(
@@ -45,6 +47,8 @@ def get_new_tenders(last_date, request_cls):
     )
 
     requested_html_tenders = request_cls.request_tenders_list()
+    if not requested_html_tenders:
+        return []
     extracted_tenders = parse_tenders_list(requested_html_tenders)
 
     new_tenders = filter(

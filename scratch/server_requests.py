@@ -59,7 +59,11 @@ class UNGMrequester(Requester):
         return json.dumps(payload)
 
     def request(self, url):
-        return self.post_request(url, url + '/Search', self.get_data(url))
+        for i in range(0, app.config.get('MAX_UNGM_REQUESTS', 1)):
+            resp = self.post_request(url, url + '/Search', self.get_data(url))
+            if resp:
+                return resp
+            sleep(randint(10, 15))
 
     @random_sleeper
     def post_request(self, get_url, post_url, data, headers=HEADERS,

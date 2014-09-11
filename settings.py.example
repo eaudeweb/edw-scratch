@@ -45,3 +45,7 @@ TED_DOC_TYPES = []
 TED_AUTH_TYPE = ''
 
 DISABLE_UNGM_DOWNLOAD = False
+
+# Set this as the maximum number of tries scraper will attempt to get data from
+# UNGM.
+MAX_UNGM_REQUESTS = 3

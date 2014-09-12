@@ -10,7 +10,7 @@
       <li><b>Title</b>: {{ winner.tender.title }}</li>
       <li><b>Organization</b>: {{ winner.tender.organization }}</li>
       <li><b>Contract vendor</b>: {{ winner.vendor or ' Unknown' }}</li>
-      <li><b>Contract value</b>: {{ winner.value or 'Unknown' }} {{ winner.currency or '' }}</li>
+      <li><b>Contract value</b>: {{ winner.value|format_digits or 'Unknown' }} {{ winner.currency or '' }}</li>
       <li><a href="{{ url_for('.tender', tender_id=winner.tender.id, _external=True) }}">See this contract award in-site</a></li>
     </ul>
   </li>

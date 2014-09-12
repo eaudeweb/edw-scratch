@@ -1,4 +1,5 @@
 import os
+
 from flask import current_app as app
 
 from scratch.models import (

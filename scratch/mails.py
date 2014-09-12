@@ -55,6 +55,17 @@ def send_updates_mail(changed_tenders, attachment, digest):
                       attachment=True, tender_id=tender.id, new_docs=docs)
 
 
+def send_deadline_mail(tender, days_remained):
+    subject = 'Deadline alert'
+    recipients = app.config.get('NOTIFY_EMAILS', [])
+    html = render_template(
+        'mails/deadline_alert.html',
+        tender=tender,
+        days_remained=days_remained,
+    )
+    send_mail(subject, recipients, html)
+
+
 def attach(msg, tender_id, new_docs=None):
     path = os.path.join(app.config['FILES_DIR'], str(tender_id))
     if not os.path.exists(path):

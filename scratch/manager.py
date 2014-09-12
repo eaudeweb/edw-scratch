@@ -1,7 +1,10 @@
 import pprint
 import urllib
+from datetime import datetime, timedelta
 
 from flask.ext.script import Manager
+from flask import current_app
+
 from scratch.server_requests import get_request_class
 from scratch.models import (
     db_manager, last_update, save_tender, save_winner, db, add_worker_log,
@@ -20,7 +23,7 @@ from scratch.common import (
 )
 from scratch.ted_worker import TEDWorker, TEDParser
 from scratch.mails import (
-    send_tenders_mail, send_winners_mail, send_updates_mail,
+    send_tenders_mail, send_winners_mail, send_updates_mail, send_deadline_mail,
 )
 
 
@@ -163,7 +166,30 @@ def notify(attachment, digest):
 @worker_manager.option('-d', '--dailydigest', dest='digest', default=True)
 @worker_manager.option('-p', '--public', dest='public', default=True)
 def update_favorites(public, attachment, digest):
+    if public is not True:
+        public = False
     request_cls = get_request_class(public)
     changed_tenders = scrap_favorites(request_cls)
     if changed_tenders:
         send_updates_mail(changed_tenders, attachment, digest)
+    send_deadline_notifications()
+
+
+@worker_manager.command
+def send_deadline_notifications():
+    tenders = (
+        Tender.query
+        .filter_by(favourite=True, winner=None)
+        .all()
+    )
+    days_list = sorted(current_app.config.get(['DEADLINE_NOTIFICATIONS'], [1]))
+
+    for tender in tenders:
+        for days in days_list:
+            if (
+                datetime.today()+timedelta(days=days) >
+                tender.deadline >=
+                datetime.today()+timedelta(days=days-1)
+            ):
+                send_deadline_mail(tender, days)
+                break

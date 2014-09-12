@@ -49,3 +49,9 @@ DISABLE_UNGM_DOWNLOAD = False
 # Set this as the maximum number of tries scraper will attempt to get data from
 # UNGM.
 MAX_UNGM_REQUESTS = 3
+
+# Set this as being a list representing a sequence of number of days.
+# If, for example, 3 is in that list, mail alerts are sent to mail when
+# there are 3 or less days remaining until deadline for each favourite tender is
+# achieved.
+DEADLINE_NOTIFICATIONS = [1, 3, 7]

@@ -71,7 +71,7 @@
     </tr>
     <tr>
       <th>Contract value ($)</th>
-      <td>{% if tender.winner %}{{ tender.winner.0.value or 'Unknown' }}{% endif %}</td>
+      <td>{% if tender.winner %}{{ tender.winner.0.value|format_digits or 'Unknown' }}{% endif %}</td>
     </tr>
     <tr>
       <th>Award date</th>

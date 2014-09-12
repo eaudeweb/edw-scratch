@@ -6,7 +6,7 @@ import flask.ext.whooshalchemy as whooshalchemy
 from flask.ext.assets import Environment, Bundle
 from scratch.custom_filters import (
     datetime_filter, get_color_class, get_favorite_class, time_to_deadline,
-    get_filename,
+    get_filename, format_digits,
 )
 from scratch.models import Tender, Winner, db
 from scratch.views import (
@@ -64,6 +64,7 @@ def _configure_filters(app):
     app.jinja_env.filters['favourite'] = get_favorite_class
     app.jinja_env.filters['deadline'] = time_to_deadline
     app.jinja_env.filters['filename'] = get_filename
+    app.jinja_env.filters['format_digits'] = format_digits
 
 
 def _configure_routes(app):

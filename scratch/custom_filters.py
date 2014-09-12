@@ -52,3 +52,7 @@ def get_filename(tender_id, name):
             doc_name=name
         )
     )
+
+
+def format_digits(value):
+    return '{0:,}'.format(int(value))

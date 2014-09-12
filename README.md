@@ -162,7 +162,19 @@ Settings Information
   are found by inspecting the ``ID`` values returned by
   ``./manage.py utils search_unspscs -t <text>``, where ``text`` can be replaced
   with ``software`` for example.
+  
+* ``DISABLE_UNGM_DOWNLOAD`` is a boolean specifying if files are downloaded
+when tenders are scraped.
 
+* ``MAX_UNGM_REQUESTS`` The scraper will try to access data at scraped servers
+the number of times this variable is set to. If there will be no response from
+the server within this maximum number of tries, than the scraper will consider 
+that there is no new data
+
+* ``DEADLINE_NOTIFICATIONS`` Set this as being a list representing a sequence of
+ number of days. If, for example, 3 is in that list, mail alerts are sent when 
+there are 3 or less days remaining until deadline for each favourite tender is 
+achieved.
 
 Local Testing
 -------------

@@ -56,5 +56,5 @@ def get_filename(tender_id, name):
 
 def format_digits(value):
     if value is None:
-        return '-'
+        return 'Unknown'
     return '{0:,}'.format(int(value))

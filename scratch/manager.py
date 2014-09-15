@@ -182,7 +182,7 @@ def send_deadline_notifications():
         .filter_by(favourite=True, winner=None)
         .all()
     )
-    days_list = sorted(current_app.config.get(['DEADLINE_NOTIFICATIONS'], [1]))
+    days_list = sorted(current_app.config.get('DEADLINE_NOTIFICATIONS', [1]))
 
     for tender in tenders:
         for days in days_list:

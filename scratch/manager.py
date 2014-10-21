@@ -145,8 +145,10 @@ def search_unspscs(text):
         UNSPSCs = parse_UNSPSCs_list(resp)
         if not UNSPSCs:
             print 'Search returned no results.'
-        for UNSPSC in UNSPSCs:
-            print 'ID: {id}    NAME: {name}'.format(**UNSPSC)
+        else:
+            import json
+            with open('UNSPSC_codes_{}.json'.format(text), 'wb') as fp:
+                json.dump(UNSPSCs, fp)
     else:
         print 'POST request failed.'
 

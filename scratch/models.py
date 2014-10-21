@@ -1,3 +1,4 @@
+import argparse
 from datetime import date
 from sqlalchemy import (
     Column, Integer, String, Float, Date, DateTime, ForeignKey, Text, Boolean,
@@ -29,6 +30,7 @@ class Tender(db.Model):
     url = Column(String(255))
     hidden = Column(Boolean, default=False)
     source = Column(Enum('UNGM', 'TED'))
+    unspsc_codes = Column(String(1024))
 
     documents = relationship("TenderDocument", backref="tender")
     winner = relationship("Winner", backref="tender")
@@ -133,3 +135,27 @@ def add_worker_log(source, new_date=None):
 def update_tender(tender, attribute, value):
     setattr(tender, attribute, value)
     db.session.commit()
+
+
+@db_manager.option('alembic_args', nargs=argparse.REMAINDER)
+def alembic(alembic_args):
+    from alembic.config import CommandLine
+
+    CommandLine().main(argv=alembic_args)
+
+
+@db_manager.command
+def revision(message=None):
+    if message is None:
+        message = raw_input('revision name: ')
+    return alembic(['revision', '--autogenerate', '-m', message])
+
+
+@db_manager.command
+def upgrade(revision='head'):
+    return alembic(['upgrade', revision])
+
+
+@db_manager.command
+def downgrade(revision):
+    return alembic(['downgrade', revision])

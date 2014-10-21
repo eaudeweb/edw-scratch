@@ -1,9 +1,12 @@
+import os
+import json
 from bs4 import BeautifulSoup
 from datetime import date, timedelta
 
 from utils import string_to_date, string_to_datetime, to_unicode, get_local_gmt
 
-
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+json_unspsc_codes = os.path.join(BASE_DIR, 'UNSPSC_codes_software.json')
 CSS_ROW_LIST_NAME = 'tableRow dataRow'
 CSS_ROW_DETAIL_NAME = 'reportRow'
 CSS_DESCRIPTION = 'raw clear'
@@ -20,6 +23,16 @@ def parse_tender(html):
     details = soup.find_all('div', CSS_ROW_DETAIL_NAME)
     documents = soup.find_all('div', 'docslist')[0].find_all('div', 'filterDiv')
     description = soup.find_all('div', CSS_DESCRIPTION)
+    unspsc_tree = soup.find_all('div', {'class': 'unspscTree'})[0]
+    ### important!! {'class': 'nodeName '} cu spatiu ca altfel nu merge
+    nodes = unspsc_tree.findAll('span', {'class': 'nodeName '})
+    scraped_nodes = [node.text for node in nodes]
+    with open(json_unspsc_codes, 'rb') as fp:
+        codes = json.load(fp)
+    unspsc_codes = [code['id']
+                    for code in codes
+                    if code['name'] in scraped_nodes]
+
     tender = {
         'source': 'UNGM',
         'notice_type': to_unicode(details[0].span.string),

@@ -42,6 +42,7 @@ def parse_tender(html):
         'published': string_to_date(details[5].span.string) or date.today(),
         'deadline': string_to_datetime(details[6].span.string),
         'description': to_unicode(str(description[0])),
+        'unspsc_codes': ', '.join(unspsc_codes),
         'documents': [
             {
                 'name': to_unicode(document.span.string),

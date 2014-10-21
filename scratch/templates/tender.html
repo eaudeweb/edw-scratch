@@ -52,6 +52,10 @@
       <th>Description</th>
       <td>{{ tender.description|safe }}</td>
     </tr>
+    <tr>
+      <th>UNSPSCS codes</th>
+      <td>{{ tender.unspsc_codes }}</td>
+    </tr>
 	  {% if not config.DISABLE_UNGM_DOWNLOAD %}
     <tr>
       <th>Documents</th>

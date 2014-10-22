@@ -17,7 +17,17 @@ There are new changes in:
         <strong>{{ attribute }}</strong>
       </li>
     {% endfor %}
-    {% if docs %}New documents available. See attachments{% endif %}
+    {% if docs %}
+      <h4>New documents available</h4>
+      <ul>
+        {% for doc in docs %}
+          <li>
+            {{ doc.name }}<br/>
+            Download: <a href="{{ doc.download_url }}">{{ doc.download_url }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
     </ul>
     <h4><a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See this tender in-site</a></h4>
     <br/><br/>

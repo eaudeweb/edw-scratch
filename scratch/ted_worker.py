@@ -7,9 +7,9 @@ from bs4 import BeautifulSoup
 from flask import current_app as app
 
 from scratch.models import (
-    last_update, add_worker_log, save_tender, save_winner,
+    last_update, add_worker_log, save_tender, save_winner, save_file,
 )
-from scratch.utils import days_ago, save_file, extract_data, random_sleeper
+from scratch.utils import days_ago, extract_data, random_sleeper
 
 
 def get_publication_date(row):

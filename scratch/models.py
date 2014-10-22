@@ -1,5 +1,7 @@
 import argparse
+import os
 from datetime import date
+
 from sqlalchemy import (
     Column, Integer, String, Float, Date, DateTime, ForeignKey, Text, Boolean,
     Enum, desc,
@@ -7,7 +9,9 @@ from sqlalchemy import (
 from flask.ext.script import Manager
 from sqlalchemy.orm import relationship
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask import current_app
 
+from scratch.utils import has_save_permission
 
 db_manager = Manager()
 db = SQLAlchemy()
@@ -97,12 +101,34 @@ def save_tender(tender):
     db.session.add(tender_entry)
     db.session.commit()
     for document in documents:
-        document_entry = TenderDocument(tender=tender_entry, **document)
-        db.session.add(document_entry)
-    db.session.commit()
+        save_document_to_models(tender_entry, document)
     tender['documents'] = documents
 
     return tender_entry
+
+
+def save_document_to_models(tender, document):
+    document_entry = TenderDocument(tender=tender, **document)
+    db.session.add(document_entry)
+    db.session.commit()
+
+
+@has_save_permission
+def save_document_to_filesystem(document, dirname, request_cls):
+    doc = request_cls.request_document(document['download_url'])
+    if doc:
+        filename = document['name']
+        path = os.path.join(current_app.config.get('FILES_DIR'), dirname)
+        save_file(path, filename, doc)
+
+
+def save_file(path, filename, content):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    file_path = os.path.join(path, filename)
+    with open(file_path, "wb") as f:
+        f.write(content)
+    return file_path
 
 
 def save_winner(tender_fields, winner_fields):

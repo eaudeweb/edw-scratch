@@ -1,4 +1,3 @@
-import os
 import tarfile
 from datetime import datetime, date, timedelta
 from random import randint
@@ -30,15 +29,6 @@ def days_ago(days):
     return date.today() - timedelta(days=days)
 
 
-def save_file(path, filename, content):
-    if not os.path.exists(path):
-        os.makedirs(path)
-    file_path = os.path.join(path, filename)
-    with open(file_path, "wb") as f:
-        f.write(content)
-    return file_path
-
-
 def extract_data(archive_path, extract_path):
     tf = tarfile.open(archive_path, 'r:gz')
     tf.extractall(extract_path)
@@ -57,7 +47,7 @@ def get_local_gmt():
     return round(float(d.total_seconds()) / 3600)
 
 
-def check_save_permission(func):
+def has_save_permission(func):
     def inner(self, *args, **kwargs):
         disable = current_app.config.get('DISABLE_UNGM_DOWNLOAD', False)
         if disable:

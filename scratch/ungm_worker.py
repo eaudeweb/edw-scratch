@@ -1,14 +1,11 @@
-import os
-
-from flask import current_app as app
-
 from scratch.models import (
     Tender, Winner, save_tender, save_winner, update_tender,
+    save_document_to_filesystem, save_document_to_models,
 )
 from scratch.ungm_scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
 )
-from scratch.utils import string_to_date, save_file, check_save_permission
+from scratch.utils import string_to_date
 
 
 def get_new_winners(request_cls):
@@ -70,16 +67,7 @@ def get_new_tenders(last_date, request_cls):
         tender_fields.update({'url': url})
         tender = save_tender(tender_fields)
         for document in tender_fields['documents']:
-            save_document(document, str(tender.id), request_cls)
-
-
-@check_save_permission
-def save_document(document, dirname, request_cls):
-    doc = request_cls.request_document(document['download_url'])
-    if doc:
-        filename = document['name']
-        path = os.path.join(app.config.get('FILES_DIR'), dirname)
-        save_file(path, filename, doc)
+            save_document_to_filesystem(document, str(tender.id), request_cls)
 
 
 def scrap_favorites(request_cls):
@@ -98,16 +86,19 @@ def scrap_favorites(request_cls):
                 attr_changes.update({attr: (old_value, value)})
                 update_tender(tender, attr, value)
 
-        new_docs = []
         received_docs = tender_fields['documents']
         saved_docs = [
             {'name': d.name, 'download_url': d.download_url}
             for d in tender.documents
         ]
+
+        new_docs = []
         for document in received_docs:
             if document not in saved_docs:
-                new_docs.append(document['name'])
-                save_document(document, str(tender.id), request_cls)
+                new_docs.append(document)
+                save_document_to_models(tender, document)
+                save_document_to_filesystem(document, str(tender.id),
+                                            request_cls)
 
         if attr_changes or new_docs:
             changed_tenders.append((tender, attr_changes, new_docs))

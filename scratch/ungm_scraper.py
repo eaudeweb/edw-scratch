@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 import json
 from bs4 import BeautifulSoup
@@ -24,8 +25,7 @@ def parse_tender(html):
     documents = soup.find_all('div', 'docslist')[0].find_all('div', 'filterDiv')
     description = soup.find_all('div', CSS_DESCRIPTION)
     unspsc_tree = soup.find_all('div', {'class': 'unspscTree'})[0]
-    ### important!! {'class': 'nodeName '} cu spatiu ca altfel nu merge
-    nodes = unspsc_tree.findAll('span', {'class': 'nodeName '})
+    nodes = unspsc_tree.findAll('span', {'class': 'nodeName'})
     scraped_nodes = [node.text for node in nodes]
     with open(json_unspsc_codes, 'rb') as fp:
         codes = json.load(fp)

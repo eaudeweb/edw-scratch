@@ -72,6 +72,9 @@ class TEDWorker(object):
         url = form.get('action')
         resp = request(session, 'post', url, data=data, allow_redirects=True)
 
+        a = BeautifulSoup(resp.content).find('a', {'id': 'fallbackLink'})
+        resp = request(session, 'get', a.get('href'))
+
         form = BeautifulSoup(resp.content).find(
             'form', {'id': 'showAccountDetailsForm'})
         data = {i.get('name'): i.get('value') for i in form.find_all('input')}

@@ -1,2 +1,5 @@
 -r requirements.txt
+pysqlite==2.6.3
 raven==2.0.12.2
+supervisor==3.1.1
+waitress==0.8.9

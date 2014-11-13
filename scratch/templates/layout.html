@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
 </head>
 <body>
+    {%  block header %}
     <div class="container">
       <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
@@ -15,7 +16,7 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="sr-only">Toggle navigation</span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('.tenders') }}">UNGM-Scraper</a>
+            <a class="navbar-brand" href="{{ url_for('.tenders') }}">Scraper</a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -25,6 +26,7 @@
               <li><a href="{{ url_for('.overview') }}">Overview</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+              <li><p>{{ current_user }} <a href="{{ url_for('.logout') }}">Log out</a></p></li>
               <li>
                 <p>
                   <form class="form-inline"  role="form" action="{{ url_for('.search') }}" method="get" name="search">
@@ -43,7 +45,7 @@
         </div>
       </div>
     </div>
-
+    {% endblock %}
 
     </br></br>
     <div class="container">
@@ -51,7 +53,7 @@
       {% endblock %}
     </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-{% assets "main_js" %}
+{% assets "all_js" %}
   <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
 </body>

@@ -1,13 +1,16 @@
 import requests
 import urllib2
-from datetime import datetime
 import json
+from datetime import datetime
+from random import randint
+from time import sleep
 from flask import current_app as app
 
 from scratch.common import (
     LOCAL_ENDPOINT_URI, LIVE_ENDPOINT_URI, TENDERS_ENDPOINT_URI,
     WINNERS_ENDPOINT_URI, HEADERS, PAYLOAD,
 )
+from scratch.utils import random_sleeper
 
 
 def get_request_class(public=True):
@@ -16,6 +19,7 @@ def get_request_class(public=True):
 
 class Requester(object):
 
+    @random_sleeper
     def get_request(self, url):
         try:
             response = requests.get(url)
@@ -26,6 +30,7 @@ class Requester(object):
             return response.content
         return None
 
+    @random_sleeper
     def request_document(self, url):
         try:
             response = urllib2.urlopen(url)
@@ -40,7 +45,6 @@ class Requester(object):
         return self.request(self.WINNERS_ENDPOINT_URI)
 
 
-
 class UNGMrequester(Requester):
     TENDERS_ENDPOINT_URI = TENDERS_ENDPOINT_URI
     WINNERS_ENDPOINT_URI = WINNERS_ENDPOINT_URI
@@ -51,12 +55,17 @@ class UNGMrequester(Requester):
         if category == 'tenders':
             today = datetime.now().strftime('%d-%b-%Y')
             payload['DeadlineFrom'] = payload['PublishedTo'] = today
-        payload['UNSPSCs'] = app.config.get('UNSPSCs', {}).get(category, [])
+        payload['UNSPSCs'] = app.config.get('UNSPSC_CODES', [])
         return json.dumps(payload)
 
     def request(self, url):
-        return self.post_request(url, url + '/Search', self.get_data(url))
+        for i in range(0, app.config.get('MAX_UNGM_REQUESTS', 1)):
+            resp = self.post_request(url, url + '/Search', self.get_data(url))
+            if resp:
+                return resp
+            sleep(randint(10, 15))
 
+    @random_sleeper
     def post_request(self, get_url, post_url, data, headers=HEADERS,
                      content_type=None):
         """
@@ -80,6 +89,7 @@ class UNGMrequester(Requester):
             headers.update({'Content-Type': content_type})
 
         try:
+            sleep(randint(2, 5))
             resp = requests.post(post_url, data=data, cookies=cookies,
                                  headers=headers)
         except requests.exceptions.ConnectionError:
@@ -97,7 +107,7 @@ class LOCALrequester(Requester):
 
     def get_request(self, url):
         url = url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
-        url = url + '.html'
+        url += '.html'
         return super(LOCALrequester, self).get_request(url)
 
     def request(self, url):

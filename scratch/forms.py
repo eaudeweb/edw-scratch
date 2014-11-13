@@ -8,6 +8,11 @@ STEP = 20000
 
 class TendersFilter(Form):
 
+    source = SelectField(u'Source', choices=[
+        ('', 'All tenders'),
+        ('UNGM', 'UNGM'),
+        ('TED', 'TED'),
+    ])
     organization = SelectField(u'Organization')
     status = SelectField(u'Status', choices=[
         ('', 'All tenders'),
@@ -41,6 +46,11 @@ class WinnerFilter(Form):
         ) + [('max', '>%s' % format(MAX-STEP, ',d'))]
     )
 
+    source = SelectField(u'Source', choices=[
+        ('', 'All tenders'),
+        ('UNGM', 'UNGM'),
+        ('TED', 'TED'),
+    ])
     organization = SelectField(u'Organization')
     vendor = SelectField(u'Vendor')
     value = SelectField(u'Value', coerce=str, choices=VALUE_CHOICES)

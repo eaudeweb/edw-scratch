@@ -1,9 +1,13 @@
+# coding=utf-8
+import os
+import json
 from bs4 import BeautifulSoup
 from datetime import date, timedelta
 
-from utils import string_to_date, string_to_datetime, to_unicode
+from utils import string_to_date, string_to_datetime, to_unicode, get_local_gmt
 
-
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+json_unspsc_codes = os.path.join(BASE_DIR, 'UNSPSC_codes_software.json')
 CSS_ROW_LIST_NAME = 'tableRow dataRow'
 CSS_ROW_DETAIL_NAME = 'reportRow'
 CSS_DESCRIPTION = 'raw clear'
@@ -20,7 +24,17 @@ def parse_tender(html):
     details = soup.find_all('div', CSS_ROW_DETAIL_NAME)
     documents = soup.find_all('div', 'docslist')[0].find_all('div', 'filterDiv')
     description = soup.find_all('div', CSS_DESCRIPTION)
+    unspsc_tree = soup.find_all('div', {'class': 'unspscTree'})[0]
+    nodes = unspsc_tree.findAll('span', {'class': 'nodeName'})
+    scraped_nodes = [node.text for node in nodes]
+    with open(json_unspsc_codes, 'rb') as fp:
+        codes = json.load(fp)
+    unspsc_codes = [code['id']
+                    for code in codes
+                    if code['name'] in scraped_nodes]
+
     tender = {
+        'source': 'UNGM',
         'notice_type': to_unicode(details[0].span.string),
         'title': to_unicode(details[2].span.string),
         'organization': to_unicode(details[3].span.string),
@@ -28,6 +42,7 @@ def parse_tender(html):
         'published': string_to_date(details[5].span.string) or date.today(),
         'deadline': string_to_datetime(details[6].span.string),
         'description': to_unicode(str(description[0])),
+        'unspsc_codes': ', '.join(unspsc_codes),
         'documents': [
             {
                 'name': to_unicode(document.span.string),
@@ -40,7 +55,8 @@ def parse_tender(html):
     }
     gmt = details[7].span.string.split('GMT')[1].split(')')[0]
     if gmt:
-        tender['deadline'] += timedelta(hours=float(gmt[1:]))
+        tender['deadline'] -= timedelta(hours=float(gmt[1:]))
+        tender['deadline'] += timedelta(hours=get_local_gmt())
 
     return tender
 
@@ -74,6 +90,7 @@ def parse_winner(html):
     details = soup.find_all('div', CSS_ROW_DETAIL_NAME)
     description = soup.find_all('div', CSS_DESCRIPTION)
     tender_fields = {
+        'source': 'UNGM',
         'title': to_unicode(details[0].span.string),
         'organization': to_unicode(details[1].span.string),
         'reference': to_unicode(details[2].span.string),
@@ -85,6 +102,8 @@ def parse_winner(html):
         'value': float(details[5].span.string) if details[5].span.string
         else None
     }
+    if winner_fields['value']:
+        winner_fields['currency'] = 'USD'
 
     return tender_fields, winner_fields
 

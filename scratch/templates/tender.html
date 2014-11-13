@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% block title %}Tender {{ tender.id }}{% endblock %}
+{% block title %}Tender details{% endblock %}
 
 {% block content %}
   <div class="{{ tender|color }}">
@@ -22,10 +22,10 @@
     </tr>
     <tr>
       <th>Type of notice</th>
-      <td>{{ tender.notice_type }}</td>
+      <td>{{ tender.notice_type or 'Unknown ' }}</td>
     </tr>
     <tr>
-      <th>Link to UNGM</th>
+      <th>Link to {{ tender.source }}</th>
       <td><a href={{ tender.url }}>{{ tender.url }}</a></td>
     </tr>
     <tr>
@@ -33,7 +33,7 @@
       <td>{{ tender.title }}</td>
     </tr>
     <tr>
-      <th>UN Organization</th>
+      <th>Organization</th>
       <td>{{ tender.organization }}</td>
     </tr>
     <tr>
@@ -53,23 +53,29 @@
       <td>{{ tender.description|safe }}</td>
     </tr>
     <tr>
+      <th>UNSPSCS codes</th>
+      <td>{{ tender.unspsc_codes }}</td>
+    </tr>
+	  {% if not config.DISABLE_UNGM_DOWNLOAD %}
+    <tr>
       <th>Documents</th>
       <td><ol>
         {% for document in tender.documents %}
           <li>
-            <a href='{{ document.download_url }}'>{{ document.name }}</a>
+          	<a href="{{ tender.id|filename(document.name) }}">{{ document.name }}</a>
           </li>
         {% endfor %}
       </ol></td>
     </tr>
+	  {% endif %}
     {% if tender.winner %}
     <tr>
       <th>Vendor</th>
-      <td>{% if tender.winner %}{{ tender.winner.0.vendor }}{% endif %}</td>
+      <td>{% if tender.winner %}{{ tender.winner.0.vendor or 'Unknown' }}{% endif %}</td>
     </tr>
     <tr>
       <th>Contract value ($)</th>
-      <td>{% if tender.winner %}{{ tender.winner.0.value }}{% endif %}</td>
+      <td>{% if tender.winner %}{{ tender.winner.0.value|format_digits or 'Unknown' }}{% endif %}</td>
     </tr>
     <tr>
       <th>Award date</th>

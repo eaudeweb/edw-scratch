@@ -1,8 +1,10 @@
-from flask import render_template, request
+from flask import (
+    render_template, request, redirect, url_for, current_app as app,
+)
 from flask.views import View
 from sqlalchemy import desc
 
-from scratch.models import Tender, Winner, WorkerLog, db
+from scratch.models import Tender, Winner, WorkerLog, update_tender
 from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
@@ -27,10 +29,13 @@ class TendersFilterView(GenericView):
                 'reset': False,
             }
 
+        source = request.args.get('source')
         organization = request.args.get('organization')
         status = request.args.get('status')
         favourite = request.args.get('favourite')
 
+        if source:
+            tenders = tenders.filter_by(source=source)
         if organization:
             tenders = tenders.filter_by(organization=organization)
         if status == 'closed':
@@ -42,11 +47,12 @@ class TendersFilterView(GenericView):
         return {
             'tenders': tenders.all(),
             'filter_form': TendersFilter(
+                source=source,
                 organization=organization,
                 status=status,
                 favourite=favourite,
             ),
-            'reset': organization or status or favourite,
+            'reset': any([source, organization, status, favourite]),
         }
 
 
@@ -54,9 +60,10 @@ class TendersView(TendersFilterView):
     template_name = 'tenders.html'
 
     def get_objects(self):
-        return (Tender.query
-                .filter_by(hidden=False)
-                .order_by(desc(Tender.published))
+        return (
+            Tender.query
+            .filter_by(hidden=False)
+            .order_by(desc(Tender.published))
         )
 
 
@@ -64,9 +71,10 @@ class ArchiveView(TendersFilterView):
     template_name = 'archive.html'
 
     def get_objects(self):
-        return (Tender.query
-                .filter_by(hidden=True)
-                .order_by(desc(Tender.published))
+        return (
+            Tender.query
+            .filter_by(hidden=True)
+            .order_by(desc(Tender.published))
         )
 
 
@@ -82,10 +90,15 @@ class WinnersView(GenericView):
                 'reset': False,
             }
 
+        source = request.args.get('source')
         organization = request.args.get('organization')
         vendor = request.args.get('vendor')
         value = request.args.get('value')
 
+        if source:
+            winners = winners.filter(
+                Winner.tender.has(source=source)
+            )
         if organization:
             winners = winners.filter(
                 Winner.tender.has(organization=organization)
@@ -104,11 +117,12 @@ class WinnersView(GenericView):
         return {
             'winners': winners.order_by(desc(Winner.award_date)).all(),
             'filter_form': WinnerFilter(
+                source=source,
                 organization=organization,
                 vendor=vendor,
                 value=value,
             ),
-            'reset': organization or vendor or value
+            'reset': any([source, organization, vendor, value]),
         }
 
     def get_objects(self):
@@ -155,16 +169,17 @@ class OverviewView(GenericView):
     template_name = 'overview.html'
 
     def get_context(self):
-        from flask import current_app as app
         return {
-            'last_updates': [d[0] for d in (
+            'worker_logs': (
                 WorkerLog.query
                 .order_by(desc(WorkerLog.update))
-                .with_entities(WorkerLog.update)
                 .limit(15)
-                .all()
-            )],
-            'emails': app.config['NOTIFY_EMAILS'],
+            ),
+            'notify_emails': app.config['NOTIFY_EMAILS'],
+            'UNSPSC_CODES': app.config.get('UNSPSC_CODES', []),
+            'CPV_CODES': app.config.get('CPV_CODES', []),
+            'tenders_count': Tender.query.count(),
+            'winners_count': Winner.query.count(),
         }
 
 
@@ -172,6 +187,10 @@ def toggle(tender_id, attribute):
     if not attribute in ('favourite', 'hidden'):
         return ''
     tender_object = Tender.query.get_or_404(tender_id)
-    setattr(tender_object, attribute, not getattr(tender_object, attribute))
-    db.session.commit()
-    return '{0}'.format(getattr(tender_object, attribute))
+    value = getattr(tender_object, attribute)
+    update_tender(tender_object, attribute, not value)
+    return '{0}'.format(value)
+
+
+def homepage():
+    return redirect(url_for('.tenders'))

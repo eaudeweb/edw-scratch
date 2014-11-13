@@ -16,8 +16,12 @@
         <th class="col-sm-2">Title</th>
         <td><a href="{{ url_for('.tender', tender_id=tender.id) }}">{{ tender.title }}</a></td>
       </tr>
+			<tr>
+        <th class="col-sm-2">Source</th>
+        <td>{{ tender.source }}</td>
+      </tr>
       <tr>
-        <th class="col-sm-2">UN Organization</th>
+        <th class="col-sm-2">Organization</th>
         <td>{{ tender.organization }}</td>
       </tr>
       <tr>
@@ -30,7 +34,11 @@
       </tr>
       <tr>
         <th class="col-sm-2">Vendor</th>
-        <td>{% if tender.winner %}{{ tender.winner.0.vendor }}{% endif %}</td>
+        <td>{% if tender.winner %}{{ tender.winner.0.vendor or 'Unknown' }}{% endif %}</td>
+      </tr>
+			<tr>
+        <th class="col-sm-2">Value</th>
+        <td>{% if tender.winner %}{{ tender.winner.0.value or 'Unknown' }}{% endif %}</td>
       </tr>
     </table>
     </br>

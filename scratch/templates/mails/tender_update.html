@@ -1,0 +1,37 @@
+{% extends 'mails/layout.html' %}
+
+{% block content %}
+<h2>
+  {% if tenders|count == 1 %}
+    A tender has been updated.
+  {% else %}
+    Several tenders have been updated.
+  {% endif %}
+</h2>
+
+There are new changes in:
+{% for tender, changes, docs in tenders %}
+    <ul>
+    {% for attribute, values in changes.iteritems() %}
+      <li>
+        <strong>{{ attribute }}</strong>
+      </li>
+    {% endfor %}
+    {% if docs %}
+      <h4>New documents available</h4>
+      <ul>
+        {% for doc in docs %}
+          <li>
+            {{ doc.name }}<br/>
+            Download: <a href="{{ doc.download_url }}">{{ doc.download_url }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    </ul>
+    <h4><a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See this tender in-site</a></h4>
+    <br/><br/>
+{% endfor %}
+
+<h4><a href="{{ url_for('.tenders', _external=True) }}">See the in-site list of all tenders</a></h4>
+{% endblock %}

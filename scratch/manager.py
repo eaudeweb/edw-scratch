@@ -1,20 +1,29 @@
 import pprint
 import urllib
+from datetime import datetime, timedelta
 
 from flask.ext.script import Manager
+from flask import current_app
+
 from scratch.server_requests import get_request_class
-from scratch.models import (db_manager, last_update, save_tender, save_winner,
-                            db, add_worker_log, Tender, Winner)
-from scratch.scraper import (
+from scratch.models import (
+    db_manager, last_update, save_tender, save_winner, db, add_worker_log,
+    Tender, Winner,
+)
+from scratch.ungm_scraper import (
     parse_tenders_list, parse_winners_list, parse_tender, parse_winner,
     parse_UNSPSCs_list,
 )
-from scratch.worker import (
-    get_new_tenders, get_new_winners, send_tenders_mail, send_winners_mail,
+from scratch.ungm_worker import (
+    get_new_tenders, get_new_winners, scrap_favorites,
 )
 from scratch.utils import days_ago
 from scratch.common import (
     TENDERS_ENDPOINT_URI, WINNERS_ENDPOINT_URI, SEARCH_UNSPSCS_URI, PAYLOAD,
+)
+from scratch.ted_worker import TEDWorker, TEDParser
+from scratch.mails import (
+    send_tenders_mail, send_winners_mail, send_updates_mail, send_deadline_mail,
 )
 
 
@@ -94,18 +103,27 @@ def add_winner(filename, public=False):
 
 
 @worker_manager.option('-d', '--days', dest='days', default=30)
-@worker_manager.option('-p', '--public', dest='public', default=False)
+@worker_manager.option('-p', '--public', dest='public', default=True)
 def update(days, public):
+    if public is not True:
+        public = False
     request_cls = get_request_class(public)
-    last_date = last_update() or days_ago(days)
+    last_date = last_update('UNGM') or days_ago(int(days))
 
-    new_tenders = get_new_tenders(last_date, request_cls)
-    new_winners = get_new_winners(request_cls)
+    get_new_tenders(last_date, request_cls)
+    get_new_winners(request_cls)
 
-    send_tenders_mail(new_tenders)
-    send_winners_mail(new_winners)
+    add_worker_log('UNGM')
 
-    add_worker_log()
+
+@worker_manager.command
+def update_ted():
+    w = TEDWorker()
+    w.download_latest()
+    w.extract_archives()
+
+    p = TEDParser(w.path, w.folder_names)
+    p.parse_notices()
 
 
 @utils_manager.option('-t', '--text', dest='text',
@@ -127,15 +145,53 @@ def search_unspscs(text):
         UNSPSCs = parse_UNSPSCs_list(resp)
         if not UNSPSCs:
             print 'Search returned no results.'
-        for UNSPSC in UNSPSCs:
-            print 'ID: {id}    NAME: {name}'.format(**UNSPSC)
+        else:
+            import json
+            with open('UNSPSC_codes_{}.json'.format(text), 'wb') as fp:
+                json.dump(UNSPSCs, fp)
     else:
         print 'POST request failed.'
 
 
+@worker_manager.option('-a', '--attachment', dest='attachment', default=False)
+@worker_manager.option('-d', '--dailydigest', dest='digest', default=True)
+def notify(attachment, digest):
+    tenders = Tender.query.filter_by(notified=False).all()
+    winners = Winner.query.filter_by(notified=False).all()
+    if tenders:
+        send_tenders_mail(tenders, attachment, digest)
+    if winners:
+        send_winners_mail(winners, digest)
+
+
+@worker_manager.option('-a', '--attachment', dest='attachment', default=False)
+@worker_manager.option('-d', '--dailydigest', dest='digest', default=True)
+@worker_manager.option('-p', '--public', dest='public', default=True)
+def update_favorites(public, attachment, digest):
+    if public is not True:
+        public = False
+    request_cls = get_request_class(public)
+    changed_tenders = scrap_favorites(request_cls)
+    if changed_tenders:
+        send_updates_mail(changed_tenders, attachment, digest)
+    send_deadline_notifications()
+
+
 @worker_manager.command
-def notify():
-    tenders = Tender.query.filter_by(notified=False)
-    winners = Winner.query.filter_by(notified=False)
-    send_tenders_mail(tenders)
-    send_winners_mail(winners)
+def send_deadline_notifications():
+    tenders = (
+        Tender.query
+        .filter_by(favourite=True, winner=None)
+        .all()
+    )
+    days_list = sorted(current_app.config.get('DEADLINE_NOTIFICATIONS', [1]))
+
+    for tender in tenders:
+        for days in days_list:
+            if (
+                datetime.today()+timedelta(days=days) >
+                tender.deadline >=
+                datetime.today()+timedelta(days=days-1)
+            ):
+                send_deadline_mail(tender, days)
+                break

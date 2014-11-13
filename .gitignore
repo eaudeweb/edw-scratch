@@ -52,3 +52,11 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+# Local
+sandbox/
+instance/
+whoosh_index/
+settings.py
+
+# Frond-end
+.sass-cache/

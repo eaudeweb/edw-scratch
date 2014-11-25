@@ -9,7 +9,6 @@ from scratch.forms import TendersFilter, WinnerFilter, MAX, STEP
 
 
 class GenericView(View):
-
     def render_template(self, context):
         return render_template(self.template_name, **context)
 

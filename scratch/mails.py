@@ -93,5 +93,5 @@ def send_mail(subject, recipients, html, attachment=False, **kwargs):
         return True
     except smtplib.SMTPAuthenticationError:
         print 'Wrong username/password. ' + \
-            'Please review their values in settings.py'
+              'Please review their values in settings.py'
         return False

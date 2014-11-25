@@ -23,10 +23,15 @@ _BUNDLE_JS = (
     'js/main.js',
 )
 
+DEFAULT_CONFIG = {
+    'USERNAME': 'edw',
+    'PASSWORD': 'edw',
+}
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.secret_key = app.config['SECRET_KEY']
+    app.config.update(DEFAULT_CONFIG)
     app.config.from_pyfile('settings.py')
 
     _configure_assets(app)

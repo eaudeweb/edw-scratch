@@ -1,5 +1,7 @@
+from datetime import datetime
 from flask import (
     render_template, request, redirect, url_for, current_app as app,
+    Blueprint, abort,
 )
 from flask.views import View
 from sqlalchemy import desc
@@ -193,3 +195,26 @@ def toggle(tender_id, attribute):
 
 def homepage():
     return redirect(url_for('.tenders'))
+
+
+def preview(mail):
+    _known = {
+        'new_tenders': 'mails/new_tenders.html',
+        'new_winners': 'mails/new_winners.html',
+        'tender_update': 'mails/tender_update.html',
+    }
+    tenders = [
+        {
+            'title': 'Example title', 'deadline': datetime.now(),
+            'source': 'TED', 'organization': 'IAEA'
+        }
+    ]
+    winners = [
+        {
+            'title': 'Example title', 'organization': 'IAEA', 'value': 42,
+        }
+    ]
+    context = {'tenders': tenders, 'winners': winners}
+    if mail in _known:
+        return render_template(_known[mail], **context)
+    abort(404)

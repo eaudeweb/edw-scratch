@@ -1,23 +1,28 @@
 {% extends 'mails/layout.html' %}
 
 {% block content %}
-<h2>New contract awards.</h2>
+  <h2>New Contract Awards</h2>
 
-<ol>
-{% for winner in winners %}
-  <li>
-    <ul>
-      <li><b>Title</b>: {{ winner.tender.title }}</li>
-      <li><b>Organization</b>: {{ winner.tender.organization }}</li>
-      <li><b>Contract vendor</b>: {{ winner.vendor or ' Unknown' }}</li>
-      <li><b>Contract value</b>: {{ winner.value|format_digits or 'Unknown' }} {{ winner.currency or '' }}</li>
-      <li><a href="{{ url_for('.tender', tender_id=winner.tender.id, _external=True) }}">See this contract award in-site</a></li>
-    </ul>
-  </li>
-	<br/>
-{% endfor %}
-</ol>
+  <ol>
+    {% for winner in winners %}
+      <li>
+        <span class="title">{{ winner.title }}</span>
+        <ul class="details">
+          <li><b>Organization</b>: {{ winner.organization }}</li>
+          <li><b>Contract vendor</b>: {{ winner.vendor or ' Unknown' }}</li>
+          <li><b>Contract
+            value</b>: {{ winner.value|format_digits or 'Unknown' }} {{ winner.currency or '' }}
+          </li>
 
-</br></br>
-<h4><a href="{{ url_for('.winners', _external=True) }}">See the in-site list of all contract awards</a></h4>
+        </ul>
+        <a href="{{ url_for('.tender', tender_id=winner.tender_id, _external=True) }}">See
+          this contract award in-site</a>
+      </li>
+      <br/>
+    {% endfor %}
+  </ol>
+
+  </br></br>
+  <h4><a href="{{ url_for('.winners', _external=True) }}">See the in-site list
+    of all contract awards</a></h4>
 {% endblock %}

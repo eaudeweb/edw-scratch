@@ -3,8 +3,8 @@
 {% block content %}
 	<h2>Tender expires in less than {{ days_remained }} days!</h2>
 
+    <span class="title">{{ tender.title }}</span>
 	<ul>
-		<li><b>Title</b>: {{ tender.title }}</li>
 		<li><b>Organization</b>: {{ tender.organization }}</li>
 		<li><b>Published</b>: {{ tender.published|datetime }}</li>
 		<li><b>Deadline</b>: {{ tender.deadline|datetime|safe }}.&nbsp;&nbsp; <strong>Deadline in: {{ tender.deadline|deadline }}</strong></li>

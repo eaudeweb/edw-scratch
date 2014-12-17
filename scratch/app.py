@@ -11,7 +11,7 @@ from scratch.custom_filters import (
 from scratch.models import Tender, Winner, db
 from scratch.views import (
     TenderView, TendersView, WinnersView, SearchView, ArchiveView, OverviewView,
-    toggle, homepage,
+    toggle, homepage, preview,
 )
 from scratch.authentication import login_manager, login, logout, auth
 
@@ -23,10 +23,15 @@ _BUNDLE_JS = (
     'js/main.js',
 )
 
+DEFAULT_CONFIG = {
+    'USERNAME': 'edw',
+    'PASSWORD': 'edw',
+}
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.secret_key = app.config['SECRET_KEY']
+    app.config.update(DEFAULT_CONFIG)
     app.config.from_pyfile('settings.py')
 
     _configure_assets(app)
@@ -79,6 +84,7 @@ def _configure_routes(app):
     app.add_url_rule('/toggle/<attribute>/<tender_id>', view_func=toggle)
     app.add_url_rule('/login/', methods=["GET", "POST"], view_func=login)
     app.add_url_rule('/logout/', view_func=logout)
+    app.add_url_rule('/preview/<mail>', view_func=preview)
 
 
 def _configure_uploads(app):

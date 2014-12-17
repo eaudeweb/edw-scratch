@@ -7,7 +7,6 @@ STEP = 20000
 
 
 class TendersFilter(Form):
-
     source = SelectField(u'Source', choices=[
         ('', 'All tenders'),
         ('UNGM', 'UNGM'),
@@ -31,8 +30,8 @@ class TendersFilter(Form):
         self.organization.choices = [('', 'All Organizations')] + [
             (o.organization, o.organization)
             for o in Tender.query
-            .with_entities(Tender.organization)
-            .distinct()
+                .with_entities(Tender.organization)
+                .distinct()
         ]
 
 
@@ -43,7 +42,7 @@ class WinnerFilter(Form):
             map(lambda x: str(x), r),
             ['%s - %s' % (format(x, ',d'), format(y, ',d'))
              for (x, y) in zip(r[:-1], r[1:])]
-        ) + [('max', '>%s' % format(MAX-STEP, ',d'))]
+        ) + [('max', '>%s' % format(MAX - STEP, ',d'))]
     )
 
     source = SelectField(u'Source', choices=[
@@ -66,6 +65,6 @@ class WinnerFilter(Form):
         self.vendor.choices = [('', 'All Vendors')] + [
             (o.vendor, o.vendor)
             for o in Winner.query
-            .with_entities(Winner.vendor)
-            .distinct()
+                .with_entities(Winner.vendor)
+                .distinct()
         ]

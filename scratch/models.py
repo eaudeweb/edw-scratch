@@ -66,6 +66,14 @@ class Winner(db.Model):
 
     tender_id = Column(ForeignKey('tender.id'), nullable=True)
 
+    @property
+    def title(self):
+        return self.tender.title
+
+    @property
+    def organization(self):
+        return self.tender.organization
+
     def __unicode__(self):
         return '%s WON BY %s' % (self.title, self.vendor)
 

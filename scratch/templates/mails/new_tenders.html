@@ -1,14 +1,14 @@
 {% extends 'mails/layout.html' %}
 
 {% block content %}
-<h2>New tenders available.</h2>
+<h2>New Tenders</h2>
 
 <ol>
 {% for tender in tenders %}
   <li>
-    <ul>
-      <li><b>Title</b>: {{ tender.title }}</li>
-      <li><b>Organization</b>: {{ tender.organization }}</li>
+    <span class="title">{{ tender.title }}</span>
+    <ul class="details">
+      <li><b>Organization</b>: {{ tender.organization }} <b>Source</b>: {{ tender.source }}</li>
       <li><b>Published</b>: {{ tender.published|datetime }}</li>
       <li><b>Deadline</b>: {{ tender.deadline|datetime|safe }}.&nbsp;&nbsp; <strong>Deadline in: {{ tender.deadline|deadline }}</strong></li>
       <li><b>Description</b>: {{ tender.description|safe }}</li>

@@ -19,11 +19,6 @@ class User(UserMixin):
         return self.id
 
 
-@login_manager.user_loader
-def load_user(userid):
-    return userid and User(userid)
-
-
 def login():
     username, password = (
         current_app.config['USERNAME'], current_app.config['PASSWORD']
@@ -45,6 +40,11 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('.tenders'))
+
+
+@login_manager.user_loader
+def load_user(userid):
+    return userid and User(userid)
 
 
 @auth.before_app_request

@@ -1,9 +1,36 @@
 <!doctype html>
 <html>
-<head></head>
+<head>
+  <style>
+    * {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serifrial;
+    }
+    .title {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    ul.details {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    ul.details li {
+      margin: 0;
+    }
+    footer {
+      font-size: 0.9em;
+      text-align: center;
+    }
+    footer, footer a {
+      color: #aaa;
+    }
+  </style>
+</head>
 <body>
+{% block content %}{% endblock %}
 
-  {% block content %}{% endblock %}
-
+<footer>
+  <p>Powered by <a href="{{ url_for('.homepage', _external=True) }}">Scratch</a></p>
+</footer>
 </body>
 </html>

@@ -43,13 +43,13 @@ def send_updates_mail(changed_tenders, attachment, digest):
     recipients = app.config.get('NOTIFY_EMAILS', [])
     if digest:
         html = render_template('mails/tender_update.html',
-                               tenders=changed_tenders)
+                               tender_updates=changed_tenders)
         send_mail(subject, recipients, html, attachment)
     else:
         for tender, changes, docs in changed_tenders:
             html = render_template(
                 'mails/tender_update.html',
-                tenders=[(tender, changes, docs)],
+                tender_updates=[(tender, changes, docs)],
             ),
             send_mail(subject, recipients, html,
                       attachment=True, tender_id=tender.id, new_docs=docs)
@@ -93,5 +93,5 @@ def send_mail(subject, recipients, html, attachment=False, **kwargs):
         return True
     except smtplib.SMTPAuthenticationError:
         print 'Wrong username/password. ' + \
-            'Please review their values in settings.py'
+              'Please review their values in settings.py'
         return False

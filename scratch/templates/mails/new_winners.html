@@ -1,28 +1,21 @@
 {% extends 'mails/layout.html' %}
 
+{% block header %}New Contract Awards{% endblock %}
+
 {% block content %}
-  <h2>New Contract Awards</h2>
-
-  <ol>
+  <ol class="tender-list">
     {% for winner in winners %}
-      <li>
-        <span class="title">{{ winner.title }}</span>
-        <ul class="details">
-          <li><b>Organization</b>: {{ winner.organization }}</li>
-          <li><b>Contract vendor</b>: {{ winner.vendor or ' Unknown' }}</li>
-          <li><b>Contract
-            value</b>: {{ winner.value|format_digits or 'Unknown' }} {{ winner.currency or '' }}
-          </li>
-
-        </ul>
-        <a href="{{ url_for('.tender', tender_id=winner.tender_id, _external=True) }}">See
-          this contract award in-site</a>
-      </li>
-      <br/>
+    <li>
+      <h2>
+        <a href="{{ url_for('.tender', tender_id=winner.tender_id, _external=True) }}">{{ winner.title }}</a>
+      </h2>
+      <p class="published">{{ winner.organization }}</p>
+      <p class="winner">
+        Winner: <strong>{{ winner.vendor or ' Unknown' }}</strong> for
+        <strong>{{ winner.value|format_digits or 'Unknown' }} {{ winner.currency or '' }}</strong>
+      </p>
+    </li>
     {% endfor %}
   </ol>
-
-  </br></br>
-  <h4><a href="{{ url_for('.winners', _external=True) }}">See the in-site list
-    of all contract awards</a></h4>
 {% endblock %}
+  

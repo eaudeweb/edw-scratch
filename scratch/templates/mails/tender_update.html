@@ -1,46 +1,37 @@
 {% extends 'mails/layout.html' %}
 
+{% block header %}
+  {% if tenders|count == 1 %}
+    A tender has been updated
+  {% else %}
+    Several tenders have been updated
+  {% endif %}
+{% endblock %}
+
 {% block content %}
-  <h2>
-    {% if tenders|count == 1 %}
-      A tender has been updated
-    {% else %}
-      Several tenders have been updated
-    {% endif %}
-  </h2>
-
-  There are new changes in:
-  <ol>
+  <ol class="tender-list">
     {% for tender, changes, docs in tender_updates %}
-      <li>
-        <span class="title">{{ tender.title }}</span>
-
-        <ul class="details">
-          {% for attribute, values in changes.iteritems() %}
-            <li>
-              <strong>{{ attribute }}</strong> ({{ values }})
-            </li>
-          {% endfor %}
-          {% if docs %}
-            <h4>New documents available</h4>
-            <ul>
-              {% for doc in docs %}
-                <li>
-                  {{ doc.name }}<br/>
-                  Download: <a
-                    href="{{ doc.download_url }}">{{ doc.download_url }}</a>
-                </li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </ul>
-        <a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See
-          this tender in-site</a>
-
-      </li>
+    <li>
+      <h2>
+        <a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">{{ tender.title }}</a>
+      </h2>
+      <dl>
+        {% for attribute, values in changes.iteritems() %}
+        <dt>{{ attribute }}</dt>
+        <dd>{{ values }}</dd>
+        {% endfor %}
+      </dl>
+      {% if docs %}
+      <hr>
+      <ol>
+        {% for doc in docs %}
+        <li>
+          <a href="{{ doc.download_url }}">{{ doc.name }}</a>
+        </li>
+        {% endfor %}
+      </ol>
+      {% endif %}
+    </li>
     {% endfor %}
   </ol>
-
-  <h4><a href="{{ url_for('.tenders', _external=True) }}">See the in-site list
-    of all tenders</a></h4>
 {% endblock %}

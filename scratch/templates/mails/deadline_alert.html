@@ -1,15 +1,24 @@
 {% extends 'mails/layout.html' %}
 
+{% block header %}
+	Tender expires in less than {{ days_remained }} days!
+{% endblock %}
+
 {% block content %}
-	<h2>Tender expires in less than {{ days_remained }} days!</h2>
-
-    <span class="title">{{ tender.title }}</span>
-	<ul>
-		<li><b>Organization</b>: {{ tender.organization }}</li>
-		<li><b>Published</b>: {{ tender.published|datetime }}</li>
-		<li><b>Deadline</b>: {{ tender.deadline|datetime|safe }}.&nbsp;&nbsp; <strong>Deadline in: {{ tender.deadline|deadline }}</strong></li>
-		<li><b>Description</b>: {{ tender.description|safe }}</li>
-		<li><a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">See this tender in-site</a></li>
-	</ul>
-
+	<h2>
+    <a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">{{ tender.title }}</a>
+  </h2>
+  {% if tender.deadline %}
+  <p class="deadline">
+    Deadline: {{ tender.deadline|deadline }} | {{ tender.deadline|datetime|safe }}
+  </p>
+  {% else %}
+  <p>Deadline unknown</p>
+  {% endif %}
+  <hr>
+  <h3>Description</h3>
+  <p class="description">{{ tender.description|safe }}</p>
+  <p class="published clip">
+  	Published: {{ tender.published|datetime }} &ndash; {{ tender.organization }}
+  </p>
 {% endblock %}

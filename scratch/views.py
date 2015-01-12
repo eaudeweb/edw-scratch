@@ -216,10 +216,12 @@ def preview(mail):
     ]
     tender_updates = [
         ({'title': 'Example title', 'organization': 'IAEA', 'value': 42},
-         {'title': 'New Title', 'deadline': datetime.now(), 'published': date.today()},
+         {'title': 'New Title', 'deadline': datetime.now(),
+          'published': date.today(), 'description': '<ul><li>test</li></ul>'},
          None)
     ]
-    context = {'tenders': tenders, 'winners': winners, 'tender_updates': tender_updates}
+    context = {'tenders': tenders, 'winners': winners,
+               'tender_updates': tender_updates}
     if mail in _known:
         return render_template(_known[mail], **context)
     abort(404)

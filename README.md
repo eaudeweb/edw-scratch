@@ -97,6 +97,10 @@ Setup the production environment like this (using an unprivileged user):
 
 Write a Crontab job as specified above.
 
+Create a database setting both character set and collation, for example:
+
+    mysql> create database scratch character set utf8 collate utf8_general_ci;
+
 Management commands
 -------------------
 
@@ -233,7 +237,7 @@ CONTACTS
 
 People involved in this project are:
 
-+ Cornel Nit (cornel.nitu at eaudeweb.ro)
++ Cornel Nitu (cornel.nitu at eaudeweb.ro)
 + Alex Eftimie (alex.eftimie at eaudeweb.ro)
 + Iulia Chriac (iulia.chiriac at eaudeweb.ro)
 + Mihai Zamfir (mihai.zamfir at eaudeweb.ro)

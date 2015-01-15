@@ -1,3 +1,5 @@
+import datetime
+
 from scratch.models import (
     Tender, Winner, save_tender, save_winner, update_tender,
     save_document_to_filesystem, save_document_to_models,
@@ -48,7 +50,6 @@ def get_new_tenders(last_date, request_cls):
     if not requested_html_tenders:
         return []
     extracted_tenders = parse_tenders_list(requested_html_tenders)
-
     new_tenders = filter(
         lambda x: (
             string_to_date(x['published']) >= last_date and
@@ -70,11 +71,18 @@ def get_new_tenders(last_date, request_cls):
             save_document_to_filesystem(document, str(tender.id), request_cls)
 
 
-def scrap_favorites(request_cls):
-    tenders = Tender.query.filter_by(favourite=True, source='UNGM').all()
+def get_favorite_tenders():
+    tenders = (Tender.query
+               .filter_by(favourite=True, source='UNGM')
+               .filter(Tender.deadline is not None and
+                       Tender.deadline > datetime.datetime.now()))
+    return tenders.all()
 
+
+def scrap_favorites(request_cls):
+    favorites = get_favorite_tenders()
     changed_tenders = []
-    for tender in tenders:
+    for tender in favorites:
         html_data = request_cls.get_request(tender.url)
         tender_fields = parse_tender(html_data)
 

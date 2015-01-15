@@ -17,8 +17,8 @@
       </h2>
       <dl>
         {% for attribute, values in changes.iteritems() %}
-        <dt>{{ attribute }}</dt>
-        <dd>{{ values|datetime|safe }}</dd>
+        <dt>{{ attribute|capitalize }}</dt>
+        <dd><s class="muted">{{ values[0]|datetime|safe }}</s> {{ values[1]|datetime|safe }}</dd>
         {% endfor %}
       </dl>
       {% if docs %}

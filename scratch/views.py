@@ -1,7 +1,7 @@
-from datetime import datetime, date
+from datetime import datetime, timedelta
+
 from flask import (
-    render_template, request, redirect, url_for, current_app as app,
-    Blueprint, abort,
+    render_template, request, redirect, url_for, current_app as app, abort,
 )
 from flask.views import View
 from sqlalchemy import desc
@@ -215,10 +215,14 @@ def preview(mail):
         }
     ]
     tender_updates = [
-        ({'title': 'Example title', 'organization': 'IAEA', 'value': 42},
-         {'title': 'New Title', 'deadline': datetime.now(),
-          'published': date.today(), 'description': '<ul><li>test</li></ul>'},
-         None)
+        (
+            {'title': 'Example title', 'organization': 'IAEA', 'value': 42}, # Tender
+            {'title': ('Old title', 'New Title'),
+             'deadline': (datetime.now() - timedelta(days=1), datetime.now()),
+             'description': ('<ul><li>test</li></ul>',  '<ul><li>test\n mai multe\n randuri</li></ul>'),
+             }, # Changes
+            None # docs
+        )
     ]
     context = {'tenders': tenders, 'winners': winners,
                'tender_updates': tender_updates}

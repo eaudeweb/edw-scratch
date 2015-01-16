@@ -18,7 +18,10 @@
       <dl>
         {% for attribute, values in changes.iteritems() %}
         <dt>{{ attribute|capitalize }}</dt>
-        <dd><s class="muted">{{ values[0]|datetime|safe }}</s> {{ values[1]|datetime|safe }}</dd>
+        <dd>
+          <s class="muted">{{ values[0]|datetime|striptags|safe }}</s>
+          {{ values[1]|datetime|striptags|safe }}
+        </dd>
         {% endfor %}
       </dl>
       {% if docs %}

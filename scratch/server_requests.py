@@ -24,6 +24,8 @@ class Requester(object):
         try:
             response = requests.get(url)
         except requests.exceptions.ConnectionError:
+            if 'sentry' in app.extensions:
+                app.extensions['sentry'].captureException()
             return None
 
         if response.status_code == 200:

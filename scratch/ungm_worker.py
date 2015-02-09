@@ -33,6 +33,8 @@ def get_new_winners(request_cls):
 
     for new_winner in new_winners:
         html_data = request_cls.get_request(new_winner['url'])
+        if html_data is None:
+            continue
         tender_fields, winner_fields = parse_winner(html_data)
         tender = save_winner(tender_fields, winner_fields)
         update_tender(tender, 'url', new_winner['url'])
@@ -64,6 +66,8 @@ def get_new_tenders(last_date, request_cls):
     for new_tender in new_tenders:
         url = new_tender['url']
         html_data = request_cls.get_request(url)
+        if html_data is None:
+            continue
         tender_fields = parse_tender(html_data)
         tender_fields.update({'url': url})
         tender = save_tender(tender_fields)
@@ -84,6 +88,8 @@ def scrap_favorites(request_cls):
     changed_tenders = []
     for tender in favorites:
         html_data = request_cls.get_request(tender.url)
+        if html_data is None:
+            continue
         tender_fields = parse_tender(html_data)
 
         attr_changes = {}

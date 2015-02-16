@@ -72,7 +72,12 @@ class TEDWorker(object):
         url = form.get('action')
         resp = request(session, 'post', url, data=data, allow_redirects=True)
 
-        a = BeautifulSoup(resp.content).find('a', {'id': 'fallbackLink'})
+        soup = BeautifulSoup(resp.content)
+        a = soup.find('a', {'id': 'fallbackLink'})
+        if not a:
+            error = soup.find('ul', {'class': 'error'})
+            if error:
+                raise(Exception(error.text))
         resp = request(session, 'get', a.get('href'))
 
         form = BeautifulSoup(resp.content).find(

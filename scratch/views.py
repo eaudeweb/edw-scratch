@@ -179,6 +179,8 @@ class OverviewView(GenericView):
             'notify_emails': app.config['NOTIFY_EMAILS'],
             'UNSPSC_CODES': app.config.get('UNSPSC_CODES', []),
             'CPV_CODES': app.config.get('CPV_CODES', []),
+            'DEADLINE_NOTIFICATIONS': [str(i) for i in
+                                       app.config['DEADLINE_NOTIFICATIONS']],
             'tenders_count': Tender.query.count(),
             'winners_count': Winner.query.count(),
         }
@@ -216,12 +218,14 @@ def preview(mail):
     ]
     tender_updates = [
         (
-            {'title': 'Example title', 'organization': 'IAEA', 'value': 42}, # Tender
+            {'title': 'Example title', 'organization': 'IAEA', 'value': 42},
+            # Tender
             {'title': ('Old title', 'New Title'),
              'deadline': (datetime.now() - timedelta(days=1), datetime.now()),
-             'description': ('<ul><li>test</li></ul>',  '<ul><li>test\n mai multe\n randuri</li></ul>'),
-             }, # Changes
-            None # docs
+             'description': ('<ul><li>test</li></ul>',
+                             '<ul><li>test\n mai multe\n randuri</li></ul>'),
+            },  # Changes
+            None  # docs
         )
     ]
     context = {'tenders': tenders, 'winners': winners,

@@ -26,6 +26,7 @@ _BUNDLE_JS = (
 DEFAULT_CONFIG = {
     'USERNAME': 'edw',
     'PASSWORD': 'edw',
+    'DEADLINE_NOTIFICATIONS': [2],
 }
 
 def create_app():

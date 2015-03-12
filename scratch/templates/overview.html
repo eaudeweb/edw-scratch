@@ -6,6 +6,8 @@
   <h4>Data</h4>
 
   <p>Tenders: {{ tenders_count }}, Winners: {{ winners_count }}</p>
+  <p>Deadline notifications: {{ 'days, '.join(DEADLINE_NOTIFICATIONS) or '-' }} days</p>
+
   <h4>List of mails to be notified about the tender news:</h4>
   <ol>
     {% for email in notify_emails %}

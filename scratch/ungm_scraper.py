@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 import json
+import re
 from bs4 import BeautifulSoup
 from datetime import date, timedelta
 
@@ -53,7 +54,7 @@ def parse_tender(html):
             for document in documents
         ]
     }
-    gmt = details[7].span.string.split('GMT')[1].split(')')[0]
+    gmt = re.findall('\d.\d\d', details[7].span.string)[0]
     if gmt:
         tender['deadline'] -= timedelta(hours=float(gmt[1:]))
         tender['deadline'] += timedelta(hours=get_local_gmt())

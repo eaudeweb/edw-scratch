@@ -100,7 +100,7 @@ def parse_winner(html):
     winner_fields = {
         'award_date': string_to_date(details[3].span.string) or date.today(),
         'vendor': to_unicode(details[4].span.string),
-        'value': float(details[5].span.string) if details[5].span.string
+        'value': float(details[5].span.string) if details[5].span
         else None
     }
     if winner_fields['value']:

@@ -1,6 +1,7 @@
 import os
 from urllib import urlencode
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from ftplib import FTP
 
 import requests
 from bs4 import BeautifulSoup
@@ -44,78 +45,49 @@ def request(session, request_type, *args, **kwargs):
 
 
 class TEDWorker(object):
-    HOMEPAGE_URL = 'http://ted.europa.eu/TED/main/HomePage.do'
-    DOWNLOAD_URL = 'http://ted.europa.eu/TED/misc/bulkDownloadExport.do'
+    FTP_URL = 'ted.europa.eu'
 
     def __init__(self, archives=[]):
         self.path = get_archives_path()
         self.archives = archives
 
-    def _initialize_session(self):
-        session = requests.Session()
-        request(session, 'get', self.HOMEPAGE_URL)
+    def get_archive_name(self, last_date, archives):
+        starting_name = last_date.strftime('%Y%m%d')
+        for archive_name in archives:
+            if archive_name.startswith(starting_name):
+                return archive_name
+        return None
 
-        data = {'action': 'gp'}
-        additional_params = {'pid': 'secured'}
-        url = '?'.join((self.HOMEPAGE_URL, urlencode(additional_params)))
-        resp = request(session, 'post', url, data=data, allow_redirects=True)
-
-        a = BeautifulSoup(resp.content).find('a', {'title': 'External'})
-        resp = request(session, 'get', a.get('href'))
-
-        form = BeautifulSoup(resp.content).find('form', {'id': 'loginForm'})
-        data = {i.get('name'): i.get('value') for i in form.find_all('input')}
-        data['username'] = app.config.get('TED_USERNAME')
-        data['password'] = app.config.get('TED_PASSWORD')
-        data['selfHost'] = 'webgate.ec.europa.eu'
-        data['timeZone'] = 'GMT+03:00'
-        url = form.get('action')
-        resp = request(session, 'post', url, data=data, allow_redirects=True)
-
-        soup = BeautifulSoup(resp.content)
-        a = soup.find('a', {'id': 'fallbackLink'})
-        if not a:
-            error = soup.find('ul', {'class': 'error'})
-            if error:
-                raise(Exception(error.text))
-        resp = request(session, 'get', a.get('href'))
-
-        form = BeautifulSoup(resp.content).find(
-            'form', {'id': 'showAccountDetailsForm'})
-        data = {i.get('name'): i.get('value') for i in form.find_all('input')}
-        url = form.get('action')
-        resp = request(session, 'post', url, data=data, allow_redirects=True)
-
-        a = BeautifulSoup(resp.content).select('p.note > a')[0]
-        request(session, 'get', a.get('href'))
-        return session
-
-    def _download_by_id(self, archive_id):
-        data = {'action': 'dlTedExport'}
-        additional_params = {'dlTedExportojsId': archive_id}
-        url = '?'.join((self.DOWNLOAD_URL, urlencode(additional_params)))
-        resp = request(self.session, 'post', url, data=data,
-                       allow_redirects=True)
-
-        if resp.status_code == 200:
-            archive_name = archive_id + '.tgz'
-            archive_path = save_file(self.path, archive_name, resp.content)
-            self.archives.append(archive_path)
-
-    def download_latest(self):
-        self.session = self._initialize_session()
-        resp = request(self.session, 'get', self.DOWNLOAD_URL)
-        soup = BeautifulSoup(resp.content)
-        rows = soup.select('table#availableBulkDownloadRelease tr')[1:]
+    def ftp_download(self):
+        ftp = FTP(self.FTP_URL)
+        ftp.login(user='guest', passwd='guest')
         last_date = last_update('TED') or \
             days_ago(app.config.get('TED_DAYS_AGO', 30))
-        for row in rows:
-            publication_date = get_publication_date(row)
-            if publication_date <= last_date:
-                break
-            archive_id = row.find('input', {'type': 'hidden'}).get('value')
-            self._download_by_id(archive_id)
-        add_worker_log('TED', get_publication_date(rows[0]))
+        last_month = last_date.strftime('%m')
+        ftp.cwd('daily-packages/2015/' + last_month)
+        archives = ftp.nlst()
+        today = date.today()
+
+        while last_date < today:
+            archive_name = self.get_archive_name(last_date, archives)
+            if archive_name:
+                if not os.path.exists(self.path):
+                    os.makedirs(self.path)
+                file_path = os.path.join(self.path, archive_name)
+                with open(file_path, 'wb') as f:
+                    def callback(data):
+                        f.write(data)
+                    ftp.retrbinary('RETR %s' % archive_name, callback)
+                self.archives.append(file_path)
+
+            last_date += timedelta(1)
+            if last_month != last_date.strftime('%m'):
+                last_month = last_date.strftime('%m')
+                ftp.cwd('../' + last_month)
+                archives = ftp.nlst()
+
+        add_worker_log('TED', last_date)
+        ftp.quit()
 
     def extract_archives(self):
         self.folder_names = []

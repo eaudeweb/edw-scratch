@@ -119,7 +119,7 @@ def update(days, public):
 @worker_manager.command
 def update_ted():
     w = TEDWorker()
-    w.download_latest()
+    w.ftp_download()
     w.extract_archives()
 
     p = TEDParser(w.path, w.folder_names)
@@ -189,9 +189,9 @@ def send_deadline_notifications():
     for tender in tenders:
         for days in days_list:
             if (
-                datetime.today()+timedelta(days=days) >
+                datetime.today() + timedelta(days=days) >
                 tender.deadline >=
-                datetime.today()+timedelta(days=days-1)
+                datetime.today() + timedelta(days=days - 1)
             ):
                 send_deadline_mail(tender, days)
                 break

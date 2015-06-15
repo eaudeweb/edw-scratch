@@ -95,6 +95,12 @@ class TEDWorker(object):
             folder_name = extract_data(archive_path, self.path)
             self.folder_names.append(folder_name)
 
+    def parse_notices(self):
+        for archive_path in self.archives:
+            folder_name = extract_data(archive_path, self.path)
+            p = TEDParser(self.path, [folder_name])
+            p.parse_notices()
+
 
 class TEDParser(object):
 

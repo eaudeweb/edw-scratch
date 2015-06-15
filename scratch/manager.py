@@ -120,10 +120,7 @@ def update(days, public):
 def update_ted():
     w = TEDWorker()
     w.ftp_download()
-    w.extract_archives()
-
-    p = TEDParser(w.path, w.folder_names)
-    p.parse_notices()
+    w.parse_notices()
 
 
 @utils_manager.option('-t', '--text', dest='text',

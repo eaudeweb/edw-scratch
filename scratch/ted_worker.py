@@ -79,6 +79,7 @@ class TEDWorker(object):
                         f.write(data)
                     ftp.retrbinary('RETR %s' % archive_name, callback)
                 self.archives.append(file_path)
+            add_worker_log('TED', last_date)
 
             last_date += timedelta(1)
             if last_month != last_date.strftime('%m'):
@@ -86,7 +87,6 @@ class TEDWorker(object):
                 ftp.cwd('../' + last_month)
                 archives = ftp.nlst()
 
-        add_worker_log('TED', last_date)
         ftp.quit()
 
     def extract_archives(self):
@@ -138,6 +138,7 @@ class TEDParser(object):
         desc = section.find('short_contract_description') if section else None
         tender['description'] = ''.join([str(e) for e in desc.contents]) \
             if desc else ''
+        tender['description'] = tender['description'].decode('utf-8')
         url = soup.find('uri_doc')
         tender['url'] = url.text.replace(url.get('lg'), 'EN')
         tender['source'] = 'TED'

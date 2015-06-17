@@ -140,7 +140,8 @@ def save_file(path, filename, content):
 
 
 def save_winner(tender_fields, winner_fields):
-    tender = Tender.query.filter_by(**tender_fields).first()
+    reference = tender_fields['reference']
+    tender = Tender.query.filter_by(reference=reference).first()
     if not tender:
         tender_entry = Tender(**tender_fields)
         db.session.add(tender_entry)

@@ -103,10 +103,12 @@ def add_winner(filename, public=False):
 
 
 @worker_manager.option('-d', '--days', dest='days', default=30)
-@worker_manager.option('-p', '--public', dest='public', default=True)
+@worker_manager.option('-p', '--public', dest='public', choices="yes/no", default="yes")
 def update(days, public):
-    if public is not True:
+    if public == "no":
         public = False
+    else:
+        public = True
     request_cls = get_request_class(public)
     last_date = last_update('UNGM') or days_ago(int(days))
 
@@ -156,7 +158,7 @@ def notify(attachment, digest):
     tenders = Tender.query.filter_by(notified=False).all()
     winners = Winner.query.filter_by(notified=False).all()
     if tenders:
-        send_tenders_mail(tenders, attachment, digest)
+       send_tenders_mail(tenders, attachment, digest)
     if winners:
         send_winners_mail(winners, digest)
 

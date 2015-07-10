@@ -158,7 +158,7 @@ def notify(attachment, digest):
     tenders = Tender.query.filter_by(notified=False).all()
     winners = Winner.query.filter_by(notified=False).all()
     if tenders:
-       send_tenders_mail(tenders, attachment, digest)
+        send_tenders_mail(tenders, attachment, digest)
     if winners:
         send_winners_mail(winners, digest)
 

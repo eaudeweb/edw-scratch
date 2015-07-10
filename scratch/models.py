@@ -144,9 +144,9 @@ def save_winner(tender_fields, winner_fields):
     tender = Tender.query.filter_by(reference=reference).first()
     if not tender:
         tender_entry = Tender(**tender_fields)
+        set_notified(tender_entry)
         db.session.add(tender_entry)
         db.session.commit()
-        set_notified(tender_entry)
     else:
         tender_entry = tender
     winner_entry = Winner(tender=tender_entry, **winner_fields)

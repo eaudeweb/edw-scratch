@@ -1,4 +1,3 @@
-LOCAL_ENDPOINT_URI = 'http://localhost:8080'
 LIVE_ENDPOINT_URI = 'https://www.ungm.org'
 TENDERS_ENDPOINT_URI = 'https://www.ungm.org/Public/Notice'
 WINNERS_ENDPOINT_URI = 'https://www.ungm.org/Public/ContractAward'

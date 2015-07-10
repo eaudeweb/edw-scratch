@@ -220,7 +220,7 @@ testing/server/Public/ContractAward/*.html, excluding contract_winners.html
 5.Run the following command to scrap and find the new tenders and then adding
 them to the DB:
 
-    ./manage.py worker update
+    ./manage.py worker update -p
 
 5.Run the server:
 

@@ -10,6 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 json_unspsc_codes = os.path.join(BASE_DIR, 'UNSPSC_codes_software.json')
 CSS_ROW_LIST_NAME = 'tableRow dataRow'
 CSS_TITLE = 'Title'
+CSS_LIST_TITLE = 'tableCell resultTitle'
 CSS_ORGANIZATION = 'AgencyId'
 CSS_REFERENCE = 'Reference'
 CSS_AWARD_DATE = 'AwardDate'
@@ -85,7 +86,7 @@ def parse_tenders_list(html):
     Example: [{reference: ... , url: ...}, ...]
     """
 
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, 'html.parser')
     tenders = soup.find_all('div', CSS_ROW_LIST_NAME)
 
     tenders_list = [
@@ -143,17 +144,16 @@ def parse_winners_list(html):
     Example: [{reference: ... , url: ...}, ...]
     """
 
-    soup = BeautifulSoup(html)
-    winners = soup.find_all('div', CSS_ROW_LIST_NAME)
-
+    soup = BeautifulSoup(html, 'html.parser')
+    references = soup.find_all('div', attrs={'data-description': CSS_REFERENCE})
+    urls = soup.find_all('div', attrs={'class': CSS_LIST_TITLE})
     winners_list = [
         {
-            'reference': winner.contents[7].span.string,
-            'url': ENDPOINT_URI + winner.contents[1].a['href']
+            'reference': references[i].span.string,
+            'url': ENDPOINT_URI + urls[i].a['href']
         }
-        for winner in winners
+        for i in range(0, len(references))
     ]
-
     return winners_list
 
 

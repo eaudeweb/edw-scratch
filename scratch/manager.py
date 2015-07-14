@@ -3,6 +3,7 @@ import urllib
 from datetime import datetime, timedelta
 
 from flask.ext.script import Manager
+from flask.ext.sqlalchemy import SQLAlchemy
 from flask import current_app
 
 from scratch.server_requests import get_request_class
@@ -151,6 +152,35 @@ def search_unspscs(text):
     else:
         print 'POST request failed.'
 
+
+@utils_manager.command
+def remove_duplicates():
+    db = SQLAlchemy()
+    winners = db.session.query(Winner.id, Tender.reference).join(Tender).all()
+    clean_win = {}
+    for winner_id, tender_reference in winners:
+        clean_win.update({tender_reference: winner_id})
+    count = 0
+    for winner in winners:
+        if winner[0] not in clean_win.values():
+            item = db.session.query(Winner).filter_by(id=winner[0]).first()
+            db.session.delete(item)
+            db.session.commit()
+            count += 1
+    clean_ten = {}
+    tenders = db.session.query(Tender.id, Tender.reference).all()
+    for tender_id, ref in tenders:
+        clean_ten.update({ref: tender_id})
+    for tender in tenders:
+        if tender[0] not in clean_ten.values():
+            item = db.session.query(Tender).filter_by(id=tender[0]).first()
+            db.session.delete(item)
+            db.session.commit()
+            count += 1
+    if count:
+        print 'Deleted '+str(count)+' duplicates'
+    else:
+        print 'No duplicates found'
 
 @worker_manager.option('-a', '--attachment', dest='attachment', default=False)
 @worker_manager.option('-d', '--dailydigest', dest='digest', default=True)

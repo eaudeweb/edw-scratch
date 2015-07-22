@@ -7,7 +7,7 @@ from time import sleep
 from flask import current_app as app
 
 from scratch.common import (
-    LOCAL_ENDPOINT_URI, LIVE_ENDPOINT_URI, TENDERS_ENDPOINT_URI,
+    LIVE_ENDPOINT_URI, TENDERS_ENDPOINT_URI,
     WINNERS_ENDPOINT_URI, HEADERS, PAYLOAD,
 )
 from scratch.utils import random_sleeper
@@ -108,7 +108,7 @@ class LOCALrequester(Requester):
     WINNERS_ENDPOINT_URI = WINNERS_ENDPOINT_URI + '/contract_winners'
 
     def get_request(self, url):
-        url = url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
+        url = url.replace(LIVE_ENDPOINT_URI, app.config['LOCAL_ENDPOINT_URI'])
         url += '.html'
         return super(LOCALrequester, self).get_request(url)
 
@@ -116,7 +116,7 @@ class LOCALrequester(Requester):
         return self.get_request(url)
 
     def request_document(self, url):
-        url = url.replace(LIVE_ENDPOINT_URI, LOCAL_ENDPOINT_URI)
+        url = url.replace(LIVE_ENDPOINT_URI, app.config['LOCAL_ENDPOINT_URI'])
         splitted_url = url.split('?docId=')
         url = splitted_url[0] + '/' + splitted_url[1]
         return super(LOCALrequester, self).request_document(url)

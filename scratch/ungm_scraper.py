@@ -130,7 +130,7 @@ def parse_winner(html):
     winner_fields = {
         'award_date': string_to_date(award_date.string) or date.today(),
         'vendor': vendor_list,
-        'value': float(value.string or 0) if value.span
+        'value': float(value.string or 0) if value.string
         else None
     }
     if winner_fields['value']:
@@ -152,7 +152,7 @@ def parse_winners_list(html):
             'reference': references[i].span.string,
             'url': ENDPOINT_URI + urls[i].a['href']
         }
-        for i in range(0, len(references))
+        for i in range(len(references))
     ]
     return winners_list
 

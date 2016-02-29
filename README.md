@@ -1,5 +1,5 @@
-ungm-scraper
-============
+edw-scratch
+===========
 
 System prerequisites
 --------------------
@@ -44,7 +44,7 @@ be run as an unprivileged user in the product directory:
 
 Clone the repository:
 
-    git clone git@bitbucket.org:edw_pure/ungm-scraper.git
+    git clone git@github.com:eaudeweb/edw-scratch.git
 
 Create & activate a virtual environment:
 
@@ -238,6 +238,6 @@ CONTACTS
 People involved in this project are:
 
 + Cornel Nitu (cornel.nitu at eaudeweb.ro)
-+ Alex Eftimie (alex.eftimie at eaudeweb.ro)
 + Iulia Chriac (iulia.chiriac at eaudeweb.ro)
-+ Mihai Zamfir (mihai.zamfir at eaudeweb.ro)
++ Taygun Agiali (taygun.agiali at eaudeweb.ro)
++ Andreea Dima (andreea.dima at eaudeweb.ro)

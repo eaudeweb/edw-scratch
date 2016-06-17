@@ -22,7 +22,7 @@ from scratch.utils import days_ago
 from scratch.common import (
     TENDERS_ENDPOINT_URI, WINNERS_ENDPOINT_URI, SEARCH_UNSPSCS_URI, PAYLOAD,
 )
-from scratch.ted_worker import TEDWorker, TEDParser
+from scratch.ted_worker import TEDWorker
 from scratch.mails import (
     send_tenders_mail, send_winners_mail, send_updates_mail, send_deadline_mail,
 )
@@ -181,6 +181,7 @@ def remove_duplicates():
         print 'Deleted '+str(count)+' duplicates'
     else:
         print 'No duplicates found'
+
 
 @worker_manager.option('-a', '--attachment', dest='attachment', default=False)
 @worker_manager.option('-d', '--dailydigest', dest='digest', default=True)

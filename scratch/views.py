@@ -187,7 +187,7 @@ class OverviewView(GenericView):
 
 
 def toggle(tender_id, attribute):
-    if not attribute in ('favourite', 'hidden'):
+    if attribute not in ('favourite', 'hidden'):
         return ''
     tender_object = Tender.query.get_or_404(tender_id)
     value = getattr(tender_object, attribute)
@@ -224,7 +224,7 @@ def preview(mail):
              'deadline': (datetime.now() - timedelta(days=1), datetime.now()),
              'description': ('<ul><li>test</li></ul>',
                              '<ul><li>test\n mai multe\n randuri</li></ul>'),
-            },  # Changes
+             },  # Changes
             None  # docs
         )
     ]

@@ -1,15 +1,11 @@
 import os
-from urllib import urlencode
 from datetime import datetime, date, timedelta
 from ftplib import FTP
 
-import requests
 from bs4 import BeautifulSoup
 from flask import current_app as app
 
-from scratch.models import (
-    last_update, add_worker_log, save_tender, save_winner, save_file,
-)
+from scratch.models import last_update, add_worker_log, save_tender, save_winner
 from scratch.utils import days_ago, extract_data, random_sleeper
 
 
@@ -64,7 +60,9 @@ class TEDWorker(object):
         last_date = last_update('TED') or \
             days_ago(app.config.get('TED_DAYS_AGO', 30))
         last_month = last_date.strftime('%m')
-        ftp.cwd('daily-packages/2015/' + last_month)
+        last_year = last_date.strftime('%Y')
+        ftp.cwd('daily-packages/{year}/{month}'.format(
+            year=last_year, month=last_month))
         archives = ftp.nlst()
         today = date.today()
 
@@ -75,9 +73,8 @@ class TEDWorker(object):
                     os.makedirs(self.path)
                 file_path = os.path.join(self.path, archive_name)
                 with open(file_path, 'wb') as f:
-                    def callback(data):
-                        f.write(data)
-                    ftp.retrbinary('RETR %s' % archive_name, callback)
+                    ftp.retrbinary('RETR %s' % archive_name,
+                                   lambda data: f.write(data))
                 self.archives.append(file_path)
             add_worker_log('TED', last_date)
 

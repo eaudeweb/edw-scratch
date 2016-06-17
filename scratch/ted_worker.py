@@ -57,10 +57,12 @@ class TEDWorker(object):
     def ftp_download(self):
         ftp = FTP(self.FTP_URL)
         ftp.login(user='guest', passwd='guest')
+
         last_date = last_update('TED') or \
             days_ago(app.config.get('TED_DAYS_AGO', 30))
         last_month = last_date.strftime('%m')
         last_year = last_date.strftime('%Y')
+
         ftp.cwd('daily-packages/{year}/{month}'.format(
             year=last_year, month=last_month))
         archives = ftp.nlst()
@@ -79,9 +81,15 @@ class TEDWorker(object):
             add_worker_log('TED', last_date)
 
             last_date += timedelta(1)
-            if last_month != last_date.strftime('%m'):
+
+            if last_year != last_date.strftime('%Y'):
+                last_year = last_date.strftime('%Y')
                 last_month = last_date.strftime('%m')
-                ftp.cwd('../' + last_month)
+                ftp.cwd('../../{}/{}'.format(last_year, last_month))
+                archives = ftp.nlst()
+            elif last_month != last_date.strftime('%m'):
+                last_month = last_date.strftime('%m')
+                ftp.cwd('../{}'.format(last_month))
                 archives = ftp.nlst()
 
         ftp.quit()

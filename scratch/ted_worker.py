@@ -2,7 +2,7 @@ import os
 from datetime import datetime, date, timedelta
 from ftplib import FTP
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, element
 from flask import current_app as app
 
 from scratch.models import last_update, add_worker_log, save_tender, save_winner
@@ -116,10 +116,11 @@ class TEDParser(object):
         tender = {}
         tender['reference'] = soup.find('ted_export').get('doc_id')
         tender['notice_type'] = soup.find('td_document_type').text
-        parts = [e.text for e in soup.find('ml_ti_doc', {'lg': 'EN'}).children]
+        parts = [e.text for e in soup.find('ml_ti_doc', {'lg': 'EN'}).children
+                if isinstance(e, element.Tag)]
         tender['title'] = u'{0}-{1}: {2}'.format(*parts)
         tender['organization'] = (soup.find('aa_name', {'lg': 'EN'}) or
-                                  soup.find('aa_name')).text
+                                soup.find('aa_name')).text
         published_str = soup.find('date_pub').text
         tender['published'] = datetime.strptime(published_str, '%Y%m%d').date()
 

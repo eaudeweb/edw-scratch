@@ -25,8 +25,10 @@ CSS_GMT = 'Timezone'
 ENDPOINT_URI = 'https://www.ungm.org'
 DOWNLOAD_PATH = '/UNUser/Documents/DownloadPublicDocument?docId='
 
+
 def find_by_label(soup, label):
     return soup.find('label', attrs={'for': label}).next_sibling.next_sibling
+
 
 def parse_tender(html):
     """ Parse a tender HTML and return a dictionary with information such
@@ -149,7 +151,7 @@ def parse_winners_list(html):
     urls = soup.find_all('div', attrs={'class': CSS_LIST_TITLE})
     winners_list = [
         {
-            'reference': references[i].span.string,
+            'reference': references[i].span.string.strip(),
             'url': ENDPOINT_URI + urls[i].a['href']
         }
         for i in range(len(references))

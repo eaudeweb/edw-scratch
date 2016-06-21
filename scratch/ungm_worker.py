@@ -11,12 +11,13 @@ from scratch.utils import string_to_date
 
 
 def get_new_winners(request_cls):
-    saved_winners = (
+    saved_winners = [
+        w for w, in
         Winner.query
         .with_entities(Winner.tender)
         .with_entities(Tender.reference)
         .all()
-    )
+    ]
 
     requested_html_winners = request_cls.request_winners_list()
     if not requested_html_winners:
@@ -24,7 +25,7 @@ def get_new_winners(request_cls):
     requested_winners = parse_winners_list(requested_html_winners)
 
     new_winners = filter(
-        lambda x: (x['reference'], ) not in saved_winners,
+        lambda x: x['reference'] not in saved_winners,
         requested_winners
     )
 

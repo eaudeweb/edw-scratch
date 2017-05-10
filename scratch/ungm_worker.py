@@ -19,6 +19,7 @@ def get_new_winners(request_cls):
         .all()
     ]
 
+    saved_winners = [unicode.strip(x) for x in saved_winners]
     requested_html_winners = request_cls.request_winners_list()
     if not requested_html_winners:
         return []

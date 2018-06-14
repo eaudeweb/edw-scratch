@@ -66,7 +66,7 @@ def parse_tender(html):
         'unspsc_codes': ', '.join(unspsc_codes),
         'documents': [
             {
-                'name': to_unicode(document.span.string),
+                'name': to_unicode(document.span.a.string.strip()),
                 'download_url': (
                     ENDPOINT_URI + DOWNLOAD_PATH + document['data-documentid']
                 )

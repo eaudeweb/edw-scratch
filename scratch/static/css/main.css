@@ -1,3 +1,19 @@
-.aligned {
-    margin: 14px;
+.padding-nav {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.extend-width {
+  width: 90% !important;
+}
+
+.filters select {
+  max-width: 170px;
+  margin-right: 10px;
+}
+
+.legend-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid black;
 }

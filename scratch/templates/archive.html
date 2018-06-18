@@ -3,16 +3,29 @@
 {% block title %}Archive{% endblock %}
 
 {% block content %}
+  <div class="row">
+    <h1 class="col-sm-12">
+      <span>Archieve</span>
+    </h1>
+  </div>
 
   {% include 'filters/tenders_filters.html' %}
 
   <div class="row">
-    <div class="col-sm-1 bg-info" style="width: 20px; height: 20px; border: 1px solid black"></div>
-    <div class="col-sm-1">Recents</div>
-    <div class="col-sm-1 bg-warning" style="width: 20px; height: 20px; border: 1px solid black"></div>
-    <div class="col-sm-1">Favourites</div>
-    <div class="col-sm-1 bg-danger" style="width: 20px; height: 20px; border: 1px solid black"></div>
-    <div class="col-sm-1">Closed</div>
+    <div class="col-lg-12">
+      <div style="display:table;">
+        <div class="col-sm-2 bg-info legend-box"></div>
+        <label class="col-sm-2">Recents</label>
+      </div>
+      <div style="display:table;">
+        <div class="col-sm-2 bg-warning legend-box"></div>
+        <label class="col-sm-2">Favourites</label>
+      </div>
+      <div style="display:table;">
+        <div class="col-sm-1 bg-danger legend-box"></div>
+        <label class="col-sm-2">Closed</label>
+      </div>
+    </div>
   </div>
 
   <table class='table table-condensed table-hover'>

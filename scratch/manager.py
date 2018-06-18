@@ -183,6 +183,16 @@ def remove_duplicates():
         print 'No duplicates found'
 
 
+@utils_manager.command
+def remove_unnecesary_newlines():
+    db = SQLAlchemy()
+    winners = db.session.query(Winner).all()
+    for winner in winners:
+        winner.vendor = winner.vendor.strip()
+        db.session.add(winner)
+    db.session.commit()
+
+
 @worker_manager.option('-a', '--attachment', dest='attachment', default=False)
 @worker_manager.option('-d', '--dailydigest', dest='digest', default=True)
 def notify(attachment, digest):

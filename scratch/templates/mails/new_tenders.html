@@ -7,7 +7,7 @@
     {% for tender in tenders %}
     <li>
       <h2>
-        <a href="{{ url_for('.tender', tender_id=tender.id, _external=True) }}">{{ tender.title }}</a>
+        <a href="{{ tender.url }}">{{ tender.title }}</a>
       </h2>
       <p class="published clip">
         Published: {{ tender.published|datetime }} &ndash; {{ tender.organization }}

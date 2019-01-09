@@ -111,7 +111,7 @@ def update(days, public):
     else:
         public = True
     request_cls = get_request_class(public)
-    last_date = last_update('UNGM') or days_ago(int(days))
+    last_date =  days_ago(int(days)) or last_update('UNGM')
 
     get_new_tenders(last_date, request_cls)
     get_new_winners(request_cls)

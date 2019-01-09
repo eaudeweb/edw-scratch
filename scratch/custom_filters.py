@@ -47,7 +47,7 @@ def get_favorite_class(tender):
 def get_filename(tender_id, name):
     return url_for(
         'files',
-        filename='{folder}/{doc_name}'.format(
+        filename=u'{folder}/{doc_name}'.format(
             folder=tender_id,
             doc_name=name
         )

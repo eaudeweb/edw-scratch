@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import re
 import json
 from bs4 import BeautifulSoup
 from datetime import date, timedelta
@@ -29,52 +30,60 @@ DOWNLOAD_PATH = '/UNUser/Documents/DownloadPublicDocument?docId='
 def find_by_label(soup, label):
     return soup.find('label', attrs={'for': label}).next_sibling.next_sibling
 
+def find_by_class(soup, class_value, element_type="span", text_return=False):
+    try:
+        result = soup.find_all(element_type, {"class": class_value })
+        if text_return:
+            result = result[0].text.strip()
+        return result
+    except IndexError:
+        return None
 
 def parse_tender(html):
     """ Parse a tender HTML and return a dictionary with information such
      as: title, description, published etc
     """
     soup = BeautifulSoup(html, 'html.parser')
-    documents = soup.find_all('div', 'docslist')[0]
-    if documents:
-        documents = documents.find_all('div', 'filterDiv')
-    description = soup.find_all('div', CSS_DESCRIPTION)
-    unspsc_tree = soup.find_all('div', {'class': 'unspscTree'})[0]
-    nodes = unspsc_tree.findAll('span', {'class': 'nodeName'})
-    scraped_nodes = [node.text for node in nodes]
+
+    documents = find_by_class(soup, "lnkShowDocument", "a")
+    description = find_by_class(soup, "ungm-list-item ungm-background", "div")
+    description = description[1].text.strip().lstrip('Description')
+    nodes = find_by_class(soup, "nodeName", "span")
+    scraped_nodes =  [parent.find_all("span")[0].text for parent in nodes[1:]]
     with open(json_unspsc_codes, 'rb') as fp:
         codes = json.load(fp)
-    unspsc_codes = [code['id']
-                    for code in codes
-                    if code['name'] in scraped_nodes]
+    unspsc_codes = [
+        code['id'] for code in codes
+        if code['id_ungm'] in scraped_nodes
+    ]
+    notice_type = find_by_class(soup, "status-tag", "span", True)
+    title = find_by_class(soup, "title", "span", True)
+    organization = find_by_class(soup, "highlighted", "span", True)
 
-    notice_type = find_by_label(soup, CSS_NOTICE_TYPE)
-    title = find_by_label(soup, CSS_TITLE)
-    organization = find_by_label(soup, CSS_ORGANIZATION)
-    reference = find_by_label(soup, CSS_REFERENCE)
-    published = find_by_label(soup, CSS_PUBLISHED)
-    deadline = find_by_label(soup, CSS_DEADLINE)
+    reference = soup.find('span', text = re.compile('Reference:')).next_sibling.next_sibling.text
+    published = soup.find('span', text = re.compile('Published on:')).next_sibling.next_sibling.text
+    deadline = soup.find('span', text = re.compile('Deadline on:')).next_sibling.next_sibling.text
+
     tender = {
         'source': 'UNGM',
-        'notice_type': to_unicode(notice_type.string),
-        'title': to_unicode(title.string),
-        'organization': to_unicode(organization.string),
-        'reference': to_unicode(reference.string),
-        'published': string_to_date(published.string) or date.today(),
-        'deadline': string_to_datetime(deadline.string),
-        'description': to_unicode(str(description[0])),
+        'notice_type': notice_type,
+        'title': title,
+        'organization': organization,
+        'reference': reference,
+        'published': string_to_date(published) or date.today(),
+        'deadline': string_to_datetime(deadline[:17]),
+        'description': description,
         'unspsc_codes': ', '.join(unspsc_codes),
         'documents': [
             {
-                'name': to_unicode(document.span.a.string.strip()),
-                'download_url': (
-                    ENDPOINT_URI + DOWNLOAD_PATH + document['data-documentid']
-                )
+                'name': document.text.strip(),
+                'download_url': ENDPOINT_URI + documents[0]['href']
             }
             for document in documents
-        ]
+        ],
     }
-    gmt = find_by_label(soup, CSS_GMT).string
+
+    gmt = deadline
     gmt = gmt[gmt.find("GMT")+4:gmt.find(")")]
     if gmt:
         tender['deadline'] -= timedelta(hours=float(gmt))
@@ -115,7 +124,7 @@ def parse_winner(html):
         vendors = vendors_div.descendants
         for vendor in vendors:
             if vendor.name == 'div' and vendor.get('class', '') == ['editableListItem']:
-                vendor_list.append(vendor.text)
+                vendor_list.append(vendor.text.strip())
     vendor_list = ', '.join(vendor_list)
     title = find_by_label(soup, CSS_TITLE)
     organization = find_by_label(soup, CSS_ORGANIZATION)
@@ -124,7 +133,7 @@ def parse_winner(html):
         'source': 'UNGM',
         'title': to_unicode(title.string),
         'organization': to_unicode(organization.string),
-        'reference': to_unicode(reference.string),
+        'reference': to_unicode(reference.string.strip()),
         'description': to_unicode(str(description[0])),
     }
     award_date = find_by_label(soup, CSS_AWARD_DATE)

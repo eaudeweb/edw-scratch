@@ -2,6 +2,7 @@ import os
 instance_dir = os.path.abspath(os.path.dirname(__file__))
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(instance_dir, 'scraper.db')
+#SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://scratch:scratch@mysql/scratch?charset=utf8&use_unicode=0'
 DEBUG = True
 
 WHOOSH_BASE = os.path.join(

@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+
+  app:
+    image: eaudeweb/scratch:latest
+    build: .
+    container_name: scratch.app
+    depends_on:
+    - mysql
+    env_file:
+    - ./docker/mysql.env
+    - ./docker/app.env
+    ports:
+    - 5000:5000
+
+  mysql:
+    image: mariadb:5.5
+    container_name: scratch.db
+    env_file:
+    - ./docker/mysql.env
+    volumes:
+    - data:/var/lib/mysql/data
+
+volumes:
+  data:
+    driver: local

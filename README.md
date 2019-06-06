@@ -1,6 +1,9 @@
 edw-scratch
 ===========
 
+[![Updates](https://pyup.io/repos/github/eaudeweb/edw-scratch/shield.svg)](https://pyup.io/repos/github/eaudeweb/edw-scratch/)
+
+
 System prerequisites
 --------------------
 

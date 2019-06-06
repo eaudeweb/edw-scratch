@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  app:
+    volumes:
+      - ./scratch:/var/local/scratch/scratch
+      - ./testing:/var/local/scratch/testing
+
+  smtp:
+    image: eaudeweb/mailtrap
+    ports:
+      - "8025:80"

@@ -64,6 +64,7 @@ class TendersView(TendersFilterView):
         return (
             Tender.query
             .filter_by(hidden=False)
+            .filter(Tender.winner == None)
             .order_by(desc(Tender.published))
         )
 

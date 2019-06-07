@@ -111,7 +111,7 @@ def update(days, public):
     else:
         public = True
     request_cls = get_request_class(public)
-    last_date =  days_ago(int(days)) or last_update('UNGM')
+    last_date = days_ago(int(days)) or last_update('UNGM')
 
     get_new_tenders(last_date, request_cls)
     get_new_winners(request_cls)
@@ -178,21 +178,19 @@ def remove_duplicates():
             db.session.commit()
             count += 1
     if count:
-        print
-        'Deleted ' + str(count) + ' duplicates'
+        print('Deleted ' + str(count) + ' duplicates')
     else:
-        print
-        'No duplicates found'
-
-
-import datetime
+        print('No duplicates found')
 
 
 @utils_manager.command
 def archive_expired():
     db = SQLAlchemy()
-    db.session.query(Tender).filter(Tender.deadline < datetime.datetime.now()). \
-        update({Tender.hidden: True}, synchronize_session='evaluate')
+    db.session.query(Tender).filter(
+        Tender.deadline < datetime.now()
+    ).update({
+        Tender.hidden: True
+    })
     db.session.commit()
 
 

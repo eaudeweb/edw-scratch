@@ -178,9 +178,22 @@ def remove_duplicates():
             db.session.commit()
             count += 1
     if count:
-        print 'Deleted '+str(count)+' duplicates'
+        print
+        'Deleted ' + str(count) + ' duplicates'
     else:
-        print 'No duplicates found'
+        print
+        'No duplicates found'
+
+
+import datetime
+
+
+@utils_manager.command
+def archive_expired():
+    db = SQLAlchemy()
+    db.session.query(Tender).filter(Tender.deadline < datetime.datetime.now()). \
+        update({Tender.hidden: True}, synchronize_session='evaluate')
+    db.session.commit()
 
 
 @utils_manager.command

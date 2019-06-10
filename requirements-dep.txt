@@ -1,5 +1,5 @@
 -r requirements.txt
 MySQL-python==1.2.5
 raven==2.0.12.2
-supervisor==3.1.1
+supervisor==4.0.3
 waitress==0.8.9

@@ -11,7 +11,7 @@ MarkupSafe==0.23
 SQLAlchemy==0.9.6
 WTForms==2.0.1
 Werkzeug==0.14
-Whoosh==2.6.0
+Whoosh==2.7.4
 argparse==1.2.1
 beautifulsoup4==4.3.2
 blinker==1.3

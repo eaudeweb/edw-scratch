@@ -16,6 +16,5 @@ WORKDIR $PROJ_DIR
 RUN pip install -r $REQFILE
 
 COPY . $PROJ_DIR
-COPY docker/settings.py $PROJ_DIR/instance/
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

@@ -6,6 +6,8 @@ services:
     image: eaudeweb/scratch:latest
     build: .
     container_name: scratch.app
+    environment:
+      - INIT_DB=yes
     depends_on:
     - mysql
     env_file:

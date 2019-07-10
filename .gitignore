@@ -54,9 +54,9 @@ docs/_build/
 
 # Local
 sandbox/
-instance/
+instance/files
 whoosh_index/
-settings.py
+
 
 # Frond-end
 .sass-cache/
@@ -64,3 +64,5 @@ settings.py
 docker-compose.override.yml
 *.env
 scratch/static
+
+*.db

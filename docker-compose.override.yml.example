@@ -3,9 +3,8 @@ version: '2'
 services:
   app:
     volumes:
-      - ./scratch:/var/local/scratch/scratch
-      - ./testing:/var/local/scratch/testing
-
+      - ./:/var/local/scratch/
+    entrypoint: ["/usr/bin/tail", "-f", "/dev/null"]
   smtp:
     image: eaudeweb/mailtrap
     ports:

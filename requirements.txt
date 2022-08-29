@@ -20,4 +20,4 @@ requests==2.3.0
 webassets==0.10.1
 wsgiref==0.1.2
 alembic==0.6.7
-Mako==1.0.0
+Mako==1.2.2
